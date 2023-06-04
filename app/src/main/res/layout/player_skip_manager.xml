@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="false"
+>
+    <LinearLayout
+        android:id="@+id/skip_container_left"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="200dp"
+        android:background="@drawable/bg_player_left_fade"
+        android:clickable="false"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+    >
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/skip_animation_left"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="false"
+            app:lottie_rawRes="@raw/an_skip_back"
+            app:lottie_speed="2"
+        />
+
+        <TextView
+            android:id="@+id/skip_amount_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:text="10s"
+            android:textColor="@color/player_item"
+            tools:ignore="HardcodedText"
+        />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+    />
+
+    <LinearLayout
+        android:id="@+id/skip_container_right"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="200dp"
+        android:background="@drawable/bg_player_right_fade"
+        android:clickable="false"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+    >
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/skip_animation_right"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="false"
+            app:lottie_rawRes="@raw/an_skip_forward"
+            app:lottie_speed="2"
+        />
+
+        <TextView
+            android:id="@+id/skip_amount_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:text="10s"
+            android:textColor="@color/player_item"
+            tools:ignore="HardcodedText"
+        />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

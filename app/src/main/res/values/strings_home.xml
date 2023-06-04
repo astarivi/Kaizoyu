@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="trending_anime">Trending</string>
+    <string name="popular_anime">All-time popular</string>
+    <string name="home_beloved">Beloved and popular</string>
+    <string name="home_seinen">Best for mature audiences</string>
+    <string name="top_old_anime">Old but gold</string>
+    <string name="trash_anime">Trash taste</string>
+</resources>

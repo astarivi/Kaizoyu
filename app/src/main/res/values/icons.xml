@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="icono_emision">&#xe91c;</string>
+    <string name="icono_libreria">&#xe920;</string>
+    <string name="icono_carpeta">&#xe92f;</string>
+    <string name="icono_carpeta_abierta">&#xe930;</string>
+    <string name="icono_configuracion">&#xe994;</string>
+    <string name="icono_lupa">&#xe986;</string>
+    <string name="icono_casa">&#xe902;</string>
+</resources>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_rounded_upper"
+    android:backgroundTint="?attr/colorSurfaceVariant"
+>
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/bottom_sheet_handle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+    />
+
+    <TextView
+        android:layout_marginStart="14dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/new_update"
+        android:fontFamily="@font/lato_bold"
+        android:textSize="18sp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="6dp"
+        android:textColor="@color/branding_accent"
+    />
+
+    <TextView
+        android:id="@+id/version_jump"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="14dp"
+        android:fontFamily="@font/lato_regular"
+        android:text="@string/update_version_change"
+        android:textSize="16sp"
+    />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/bg_rounded_all"
+        android:backgroundTint="?attr/colorSurface"
+        android:padding="16dp"
+    >
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+        />
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="14dp"
+        android:gravity="center_horizontal"
+    >
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/never_install"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/update_choice_skip"
+            android:textColor="?attr/colorOnSurface"
+        />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/later_install"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:text="@string/update_choice_later"
+            android:textColor="?attr/colorOnSurface"
+        />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/now_install"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.Material3.Button"
+            android:text="@string/update_choice_install"
+            android:textColor="?attr/colorOnSurface"
+            android:backgroundTint="@color/branding_accent"
+        />
+    </LinearLayout>
+</LinearLayout>

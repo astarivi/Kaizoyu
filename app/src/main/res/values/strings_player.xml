@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="starting_download">Starting download</string>
+    <string name="subtitles">Subtitles</string>
+    <string name="audio">Audio</string>
+    <string name="episode">Episode</string>
+    <string name="no_subtitles_choice">Disable subtitles</string>
+    <string name="starting_irc_handshake">Preparing handshake</string>
+    <string name="executing_irc_handshake">Performing handshake</string>
+    <string name="downloading_buffer">Downloading initial buffer</string>
+    <string name="advanced_mode_title">Playing in Advanced Mode. Progress won\'t be saved</string>
+</resources>

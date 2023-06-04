@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:id="@+id/root_layout"
+    android:gravity="center_vertical"
+    tools:ignore="UseCompoundDrawables">
+
+    <ImageView
+        android:id="@+id/item_history"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="20dp"
+        android:visibility="visible"
+        app:srcCompat="@drawable/ic_search_history"
+        app:tint="?attr/colorOnSurfaceVariant"
+        android:contentDescription="@string/search_history_icon_desc"
+    />
+
+    <TextView
+        android:id="@+id/item_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="20dp"
+        android:text=""
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="16sp"
+        android:fontFamily="@font/lato_regular"
+        android:singleLine="true"
+    />
+</LinearLayout>

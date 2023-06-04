@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BaseTheme" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/avd_launch</item>
+        <item name="android:windowSplashScreenAnimationDuration">400</item>
+    </style>
+</resources>

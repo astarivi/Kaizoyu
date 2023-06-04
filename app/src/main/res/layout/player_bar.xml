@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_player_lower_fade">
+
+    <SeekBar
+        android:id="@+id/video_progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="20dp"
+        android:max="1000"
+        android:progress="20"
+        android:progressBackgroundTint="@color/player_outline"
+        android:progressTint="@color/player_item"
+        android:secondaryProgress="60"
+        android:secondaryProgressTint="@color/branding_accent"
+        android:splitTrack="false"
+        android:thumb="@drawable/seekbar_thumb"
+        android:thumbTint="@color/player_item"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+    />
+
+    <ImageView
+        android:id="@+id/hide_bar"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="50dp"
+        android:contentDescription="@string/skip_intro"
+        app:layout_constraintEnd_toStartOf="@+id/pause"
+        app:layout_constraintTop_toBottomOf="@+id/video_progress_bar"
+        app:srcCompat="@drawable/ic_player_hide"
+        app:tint="@color/player_item"
+    />
+
+    <ImageView
+        android:id="@+id/pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:contentDescription="@string/pause_video"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/video_progress_bar"
+        app:srcCompat="@drawable/ic_stop"
+    />
+
+    <ImageView
+        android:id="@+id/skip_intro"
+        android:layout_width="28dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="13dp"
+        android:contentDescription="@string/skip_intro"
+        app:layout_constraintStart_toEndOf="@+id/pause"
+        app:layout_constraintTop_toBottomOf="@+id/video_progress_bar"
+        app:srcCompat="@drawable/ic_skip_intro"
+        app:tint="@color/player_item"
+    />
+
+    <TextView
+        android:id="@+id/current_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
+        android:text="00:32:11"
+        android:textColor="@color/player_item"
+        app:layout_constraintStart_toStartOf="@+id/video_progress_bar"
+        app:layout_constraintTop_toBottomOf="@+id/video_progress_bar"
+        android:fontFamily="@font/lato_regular"
+        tools:ignore="HardcodedText"
+    />
+
+    <TextView
+        android:id="@+id/video_separator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="15dp"
+        android:text="/"
+        android:textColor="@color/player_item"
+        app:layout_constraintStart_toEndOf="@+id/current_time"
+        app:layout_constraintTop_toBottomOf="@+id/video_progress_bar"
+        android:fontFamily="@font/lato_regular"
+        tools:ignore="HardcodedText"
+    />
+
+    <TextView
+        android:id="@+id/download_speed_meter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="15dp"
+        android:text="4.52 Mbps"
+        android:textColor="@color/player_item"
+        app:layout_constraintStart_toEndOf="@+id/total_time"
+        app:layout_constraintTop_toBottomOf="@+id/video_progress_bar"
+        android:fontFamily="@font/lato_regular"
+        tools:ignore="HardcodedText"
+    />
+
+    <TextView
+        android:id="@+id/total_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="15dp"
+        android:text="01:23:13"
+        android:textColor="@color/player_item"
+        app:layout_constraintStart_toEndOf="@+id/video_separator"
+        app:layout_constraintTop_toBottomOf="@+id/video_progress_bar"
+        android:fontFamily="@font/lato_regular"
+        tools:ignore="HardcodedText"
+    />
+
+    <ImageView
+        android:id="@+id/subtitles_selector"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="13dp"
+        android:contentDescription="@string/change_language_of_video"
+        app:layout_constraintEnd_toEndOf="@+id/video_progress_bar"
+        app:layout_constraintTop_toBottomOf="@+id/video_progress_bar"
+        app:srcCompat="@drawable/ic_subtitles"
+        app:tint="@color/player_item"
+    />
+</androidx.constraintlayout.widget.ConstraintLayout>

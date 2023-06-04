@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+        android:id="@+id/action_favorite"
+        android:orderInCategory="300"
+        android:title="Advanced search"
+        android:icon="@drawable/ic_search_advanced"
+        app:showAsAction="ifRoom"
+        tools:ignore="HardcodedText"
+    />
+</menu>

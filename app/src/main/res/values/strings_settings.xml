@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="theme">Theme</string>
+    <string name="theme_context">Select a theme</string>
+    <string name="theme_default">Default</string>
+    <string name="theme_system">System Accent Colour</string>
+    <string name="theme_crystal">Crystal (Experimental)</string>
+    <string name="analytics">Analytics</string>
+    <string name="analytics_description">Send anonymous usage and performance reports to help improve the app</string>
+    <string name="newsfeed">News Feed</string>
+    <string name="newsfeed_description">Show Anime news feed in the recent tab</string>
+    <string name="ipv6_sources">Show IPv6 Sources</string>
+    <string name="ipv6_sources_description">Include IPv6 download sources. This won\'t affect your watch history</string>
+    <string name="clear_watch_history">Clear Watch History</string>
+    <string name="clear_watch_history_description">Erase your stored watch history</string>
+    <string name="clear_cache">Clear Cache</string>
+    <string name="clear_cache_repository">Erase the stored cache files manually</string>
+    <string name="clear_search_history">Clear Search History</string>
+    <string name="clear_search_history_descriptions">Erase your stored search history</string>
+    <string name="night_theme">Night Theme</string>
+    <string name="night_theme_context">Select night theme preference</string>
+    <string name="night_theme_default">System Default</string>
+    <string name="night_theme_day">Day Theme</string>
+    <string name="night_theme_night">Night Theme</string>
+    <string name="cache_toast">The video cache has been cleared</string>
+    <string name="ipv6_toast">No IPv6 support detected</string>
+    <string name="search_limit">Results Limit</string>
+    <string name="search_default">20</string>
+    <string name="history_toast">The search history has been cleared</string>
+    <string name="qol_title">Quality of Life</string>
+    <string name="autofavorite_title">Auto-Favorite</string>
+    <string name="autofavorite_description">Automatically add watched anime to your favorites</string>
+    <string name="kaizohelper_title">Kaizo Services</string>
+    <string name="kaizohelper_description">Use Kaizo services (Like KaizoSearch and KaizoSchedule) to improve your experience</string>
+    <string name="preferenglish_title">Prefer English Titles</string>
+    <string name="preferenglish_description">Display English anime titles whenever available</string>
+    <string name="updatecheck_title">Check for Update</string>
+    <string name="updatecheck_description">Check KaizoDelivery for app updates</string>
+    <string name="licenses_title">Open Source Licenses</string>
+    <string name="licenses_description">See the licenses, copyright and attributions of the libraries used to make Kaizoyu! possible</string>
+    <string name="app_theme">App Theme</string>
+    <string name="app_theme_context">Select app theme</string>
+    <!-- Themes -->
+    <string name="theme_high_contrast">High Contrast (Default)</string>
+    <string name="theme_high_contrast_description">Night mode only, baby. A theme for dark mode lovers, especially tuned for AMOLED screens.</string>
+    <string name="theme_dynamic_colors">Dynamic Colors</string>
+    <string name="theme_dynamic_colors_description">Brings your own custom color palette to the app. If you haven\'t defined one, the default color palette for your Android version will be used.</string>
+    <string name="theme_low_contrast">Low Contrast</string>
+    <string name="theme_low_contrast_description">Smooth color changes, easy to follow, easy on your eyes.</string>
+    <string name="advanced_search_title">Show Advanced Search</string>
+    <string name="advanced_search_description">Shows advanced search icon in the home search bar</string>
+</resources>

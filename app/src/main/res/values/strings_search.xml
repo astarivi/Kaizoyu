@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_results">Sorry, we found no matches for your\nsearch. Try checking your spelling\nor searching for other related works.</string>
+    <string name="episode_no_results">Sorry, no results were found for this episode.</string>
+    <string name="episode_busy">We\'re already searching for an episode, please wait…</string>
+    <string name="episode_quality_popup_title">Select watch quality</string>
+    <string name="episode_popup_title">Select episode</string>
+    <string name="quality_unknown">Unknown</string>
+    <string name="anime_busy">We\'re already searching for an anime, please wait…</string>
+    <string name="fragment_search_hint">Search online anime library…</string>
+    <string name="advanced_search_hint">Search for XDCC files…</string>
+    <string name="short_search">Searches should be of at least %d characters.</string>
+    <string name="advanced_search_dialog_title">Entering Advanced Search</string>
+    <string name="advanced_search_dialog_description">You\'re about to enter Advanced Search mode. This mode allows you to search the full online library freely, but with a big trade-off. While using this mode, many cool features are disabled, and no watch history or favorites are saved. There\'s also little to no filtering of results. Be careful. This reminder will never be displayed again.</string>
+    <string name="advanced_search_dialog_accept">I know what I\'m doing</string>
+    <string name="advanced_search_dialog_finish">Every journey begins with a single step…</string>
+</resources>

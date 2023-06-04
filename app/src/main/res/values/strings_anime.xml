@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="type_ona">ONA</string>
+    <string name="type_ova">OVA</string>
+    <string name="type_tv">TV</string>
+    <string name="type_movie">Movie</string>
+    <string name="type_special">Special</string>
+    <string name="type_music">Unsupported</string>
+</resources>

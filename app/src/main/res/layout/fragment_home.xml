@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+    >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kaizoyu!"
+            tools:ignore="HardcodedText"
+            android:letterSpacing="-0.075"
+            android:textSize="28sp"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/lato_black"
+            android:id="@+id/mainAppTitle"
+        />
+
+        <com.google.android.material.search.SearchBar
+            android:id="@+id/mainSearchBar"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginBottom="0dp"
+            android:padding="0dp"
+            android:hint="@string/main_search_hint"
+            android:layout_gravity="center"
+            android:backgroundTint="?attr/colorSurfaceVariant"
+        />
+    </LinearLayout>
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+    >
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/items_layout"
+                android:orientation="vertical"
+                android:showDividers="middle"
+                android:paddingTop="24dp"
+        >
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
