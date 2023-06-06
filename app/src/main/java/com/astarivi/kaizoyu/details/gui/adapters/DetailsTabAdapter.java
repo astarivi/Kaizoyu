@@ -10,35 +10,29 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.astarivi.kaizoyu.details.gui.AnimeEpisodesFragment;
 import com.astarivi.kaizoyu.details.gui.AnimeInfoFragment;
 
-import java.util.Arrays;
-import java.util.List;
-
 
 public class DetailsTabAdapter extends FragmentStateAdapter {
-    private final List<Fragment> fragmentList;
+    private final Bundle bundle;
 
     public DetailsTabAdapter(AppCompatActivity activity, Bundle arguments) {
         super(activity);
-
-        fragmentList = Arrays.asList(
-                new AnimeInfoFragment(),
-                new AnimeEpisodesFragment()
-        );
-
-        for (Fragment fg : fragmentList) {
-            fg.setArguments(arguments);
-        }
+        this.bundle = arguments;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return fragmentList.get(position);
-    }
+        Fragment fragment;
 
-    // Why is this duplicated?, check kaizoyu.gui.adapters.TabAdapter
-    public Fragment getFragment(int position) {
-        return fragmentList.get(position);
+        if (position == 0) {
+            fragment = new AnimeInfoFragment();
+        } else {
+            fragment = new AnimeEpisodesFragment();
+        }
+
+        fragment.setArguments(bundle);
+
+        return fragment;
     }
 
     @Override

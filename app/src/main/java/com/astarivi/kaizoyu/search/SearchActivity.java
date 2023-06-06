@@ -11,7 +11,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.MainActivity;
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.storage.database.data.search.SearchHistory;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
@@ -40,11 +42,12 @@ public class SearchActivity extends AppCompatActivityTheme {
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.rootSearchLayout.getLayoutTransition().setAnimateParentHierarchy(false);
+
         viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
         // Mixed
         binding.noResultsPrompt.setVisibility(View.GONE);
-//        binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
 
         // RecyclerView
         RecyclerView recyclerView = binding.searchResults;
@@ -154,6 +157,11 @@ public class SearchActivity extends AppCompatActivityTheme {
         }
 
         searchSuggestions.removeAllViews();
+
+        if (MainActivity.weakActivity == null) {
+            AnalyticsClient.logEvent("mainactivity_null_search_history");
+            return;
+        }
 
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
             List<SearchHistory> searchHistoryList = Data.getRepositories()

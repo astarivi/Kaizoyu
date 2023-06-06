@@ -15,6 +15,9 @@ without any torrents, web-scraping, or highly compressed online video files.
 ¹ Although we consider the app to be a streaming platform, it is, in fact, a Kitsu, Nibl.co.uk and XDCC client
 combination.
 
+**Keep in mind the app is still in open beta, and any king of feedback/reports are greatly appreciated.**
+**Missing episodes for shows can be reported at our Discord server**
+
 [Want to jump right in?, download here](https://github.com/astarivi/KaizoDelivery/releases)
 
 ## Features
@@ -28,6 +31,9 @@ The Kaizoyu App ships with many features out of the box, some of them are:
 - Add your favorite shows to favorites, and find them later easily
 - No torrents, no web-scraping, no file sharing, only direct downloads
 - Secure; encrypted where possible
+- In-app auto updater
+
+Powered by **[KaizoLib](https://gitlab.com/kaizoproject/KaizoLib)**
 
 ## Download
 

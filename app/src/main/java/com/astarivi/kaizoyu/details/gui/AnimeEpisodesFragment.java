@@ -62,6 +62,9 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
+        binding.linearRoot.getLayoutTransition().setAnimateParentHierarchy(false);
+        binding.episodeSelectorChips.getLayoutTransition().setAnimateParentHierarchy(false);
         // Anime object
         viewModel = new ViewModelProvider(this).get(AnimeEpisodesViewModelV2.class);
 
@@ -83,7 +86,6 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
         // Mixed
 
         binding.episodeSelectorScroll.setVisibility(View.GONE);
-        binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
 
         // Recycler View
 
@@ -159,6 +161,7 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
 
     @Override
     public boolean shouldFragmentInterceptBack() {
+        if (isDetached()) return false;
         ((AnimeDetailsActivity) requireActivity()).setCurrentFragment(0);
         return true;
     }

@@ -131,8 +131,8 @@ public class Utils {
                 0,
                 textSize,
                 new int[] {
-                        Color.parseColor("#E174AF"),
-                        Color.parseColor("#51879E")
+                        Color.parseColor("#363d80"),
+                        Color.parseColor("#9240aa")
                 },
                 null,
                 Shader.TileMode.CLAMP

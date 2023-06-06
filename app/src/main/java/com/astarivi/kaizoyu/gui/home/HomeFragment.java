@@ -103,8 +103,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
-
-
     }
 
     private void initializeAll() {

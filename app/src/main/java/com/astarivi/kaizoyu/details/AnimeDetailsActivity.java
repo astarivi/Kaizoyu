@@ -38,7 +38,6 @@ import io.github.tonnyl.spark.Spark;
 
 public class AnimeDetailsActivity extends AppCompatActivityTheme {
     private ActivityAnimeDetailsBinding binding;
-    private DetailsTabAdapter detailsTabAdapter;
     private Spark spark;
     private AnimeBase anime;
     private ModelType.Anime animeType;
@@ -52,6 +51,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         super.onCreate(savedInstanceState);
 
         binding = ActivityAnimeDetailsBinding.inflate(getLayoutInflater());
+        binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
         setContentView(binding.getRoot());
 
         Bundle bundle = getIntent().getExtras();
@@ -258,7 +258,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         Bundle bundle = new Bundle();
         bundle.putParcelable("anime", ((Anime) anime));
 
-        detailsTabAdapter = new DetailsTabAdapter(this, bundle);
+        DetailsTabAdapter detailsTabAdapter = new DetailsTabAdapter(this, bundle);
         viewPager.setAdapter(detailsTabAdapter);
 
         final String[] tabTitles = new String[]{
@@ -309,7 +309,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
                 if (currentTabPosition != reselectedTabPosition) return;
 
-                Fragment fragment = detailsTabAdapter.getFragment(reselectedTabPosition);
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag("f" + reselectedTabPosition);
 
                 if (fragment instanceof AnimeEpisodesFragment) {
                     ((AnimeEpisodesFragment) fragment).scrollTop();
@@ -327,7 +327,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     public void onBackPressed() {
         int position = binding.informationViewPager.getCurrentItem();
 
-        Fragment fragment = detailsTabAdapter.getFragment(position);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("f" + position);
 
         if (fragment == null) {
             super.onBackPressed();

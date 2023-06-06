@@ -43,6 +43,8 @@ public class FullSearchActivity extends AppCompatActivityTheme {
         binding = ActivityFullsearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.rootSearchLayout.getLayoutTransition().setAnimateParentHierarchy(false);
+
         viewModel = new ViewModelProvider(this).get(FullSearchViewModel.class);
 
         binding.noResultsPrompt.setVisibility(View.GONE);

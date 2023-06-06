@@ -45,6 +45,7 @@ public class ScheduleFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
 
         binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
+        binding.dowSelectorChips.getLayoutTransition().setAnimateParentHierarchy(false);
 
         // RecyclerView
         RecyclerView recyclerView = binding.scheduleAnimeRecycler;

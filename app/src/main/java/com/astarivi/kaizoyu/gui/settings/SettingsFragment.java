@@ -294,14 +294,22 @@ public class SettingsFragment extends Fragment {
 
             Data.saveProperties(Data.CONFIGURATION.APP);
 
-            binding.textView5.setOnClickListener(
-                    v -> Toast.makeText(getContext(), getString(R.string.ipv6_toast), Toast.LENGTH_SHORT).show()
-            );
+            try {
+                binding.textView5.setOnClickListener(
+                        v -> Toast.makeText(getContext(), getString(R.string.ipv6_toast), Toast.LENGTH_SHORT).show()
+                );
+            } catch (NullPointerException ignored) {
+                // This view doesn't exist anymore or is not in focus
+            }
 
             return;
         }
 
-        binding.ipv6SorcesValue.setEnabled(true);
+        try {
+            binding.ipv6SorcesValue.setEnabled(true);
+        } catch (NullPointerException ignored) {
+            // This view doesn't exist anymore or is not in focus
+        }
     }
     // endregion
 }
