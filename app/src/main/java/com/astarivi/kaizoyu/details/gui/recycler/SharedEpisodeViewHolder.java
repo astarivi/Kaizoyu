@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.Episode;
@@ -99,13 +100,19 @@ public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements 
 
         builder.setItems(options, (dialog, index) -> {
             if (index == 0) {
+                KitsuEpisode.KitsuEpisodeAttributes attributes = episode.getKitsuEpisode().attributes;
+
+                if (attributes.length == null || attributes.length <= 0) {
+                    attributes.length = 24;
+                }
+
                 Data.getRepositories()
                         .getSeenAnimeRepository()
                         .saveSeenEpisodeAsync(
                                 anime,
                                 episode,
                                 (int) TimeUnit.MINUTES.toMillis(
-                                        episode.getKitsuEpisode().attributes.length != null ? episode.getKitsuEpisode().attributes.length : 24
+                                        attributes.length != null ? attributes.length : 24
                                 ),
                                 this::triggerSeenRefresh
                         );

@@ -3,6 +3,7 @@ package com.astarivi.kaizoyu.core.storage;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.Episode;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 
 // This class doesn't belong in this package... too bad
@@ -41,7 +43,12 @@ public class AnimeEpisodeManager {
         );
     }
 
-    public void saveProgress(int playTime) {
+    public void saveProgress(int playTime, int totalLength) {
+        KitsuEpisode.KitsuEpisodeAttributes attributes = episode.getKitsuEpisode().attributes;
+        if (totalLength > 0 && (attributes.length == null || attributes.length <= 0)) {
+            attributes.length = (int) TimeUnit.MILLISECONDS.toMinutes(totalLength);
+        }
+
         Data.getRepositories()
                 .getSeenAnimeRepository()
                 .saveSeenEpisodeAsync(anime, episode, playTime);

@@ -393,10 +393,14 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     private void saveSeenEpisode() {
         if (animeEpisodeManager == null) return;
 
-        animeEpisodeManager.saveProgress((int) mMediaPlayer.getTime());
+        animeEpisodeManager.saveProgress(
+                (int) mMediaPlayer.getTime(),
+                (int) mMediaPlayer.getLength()
+        );
     }
 
     public void doubleTap(int x, int y) {
+        // FIXME: Modernize this
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
