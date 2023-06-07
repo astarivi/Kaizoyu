@@ -18,6 +18,7 @@ import com.astarivi.kaizolib.kitsu.Kitsu;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.Episode;
+import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.models.Result;
 import com.astarivi.kaizoyu.databinding.ComponentSuggestionChipBinding;
@@ -120,13 +121,19 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
             KitsuAnime kitsuAnime = anime.getKitsuAnime();
             int kitsuId = Integer.parseInt(kitsuAnime.id);
 
-            Kitsu kitsu = new Kitsu(
-                    Data.getUserHttpClient()
-            );
+            int animeLength;
 
-            int animeLength = kitsu.getAnimeEpisodesLength(
-                    kitsuId
-            );
+            if (anime instanceof SeasonalAnime && ((SeasonalAnime) anime).getCurrentEpisode() > 0) {
+                animeLength = ((SeasonalAnime) anime).getCurrentEpisode();
+            } else {
+                Kitsu kitsu = new Kitsu(
+                        Data.getUserHttpClient()
+                );
+
+                animeLength = kitsu.getAnimeEpisodesLength(
+                        kitsuId
+                );
+            }
 
             binding.getRoot().post(() -> {
                 if (animeLength > 20) {

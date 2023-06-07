@@ -20,6 +20,7 @@ public class SeasonalAnime extends Anime {
     private final String emissionTime;
     private final DayOfWeek emissionDay;
     private final boolean hasAired;
+    private int currentEpisode = -1;
 
     public DayOfWeek getEmissionDay() {
         return emissionDay;
@@ -33,6 +34,10 @@ public class SeasonalAnime extends Anime {
         return hasAired;
     }
 
+    public int getCurrentEpisode() {
+        return currentEpisode;
+    }
+
     // region Parcelable implementation
 
     protected SeasonalAnime(Parcel parcel) {
@@ -40,6 +45,7 @@ public class SeasonalAnime extends Anime {
         emissionTime = parcel.readString();
         emissionDay = DayOfWeek.of(parcel.readInt());
         hasAired = parcel.readByte() != 0;
+        currentEpisode = parcel.readInt();
     }
 
     public static final Creator<SeasonalAnime> CREATOR = new Creator<SeasonalAnime>() {
@@ -60,6 +66,7 @@ public class SeasonalAnime extends Anime {
         dest.writeString(emissionTime);
         dest.writeInt(emissionDay.getValue());
         dest.writeByte((byte) (hasAired ? 1 : 0));
+        dest.writeInt(currentEpisode);
     }
 
     // endregion
@@ -71,8 +78,10 @@ public class SeasonalAnime extends Anime {
         this.emissionTime = builder.emissionTime;
         this.emissionDay = builder.emissionDay;
         this.hasAired = builder.hasAired;
+        this.currentEpisode = builder.currentEpisode;
     }
 
+    // Unused
     private SeasonalAnime(@NotNull AdditionalSeasonalAnimeBuilder builder) {
         super(builder.anime);
         this.emissionTime = builder.subsPleaseAnime.time;
@@ -85,6 +94,7 @@ public class SeasonalAnime extends Anime {
         private String emissionTime;
         private DayOfWeek emissionDay;
         private boolean hasAired;
+        private int currentEpisode = -1;
 
         public SeasonalAnimeBuilder(KitsuAnime anime) {
             this.anime = anime;
@@ -105,6 +115,11 @@ public class SeasonalAnime extends Anime {
             return this;
         }
 
+        public SeasonalAnimeBuilder setCurrentEpisode(int episodeNumber) {
+            this.currentEpisode = episodeNumber;
+            return this;
+        }
+
         public @Nullable SeasonalAnime build() {
             if (emissionTime == null || emissionDay == null) return null;
 
@@ -112,6 +127,7 @@ public class SeasonalAnime extends Anime {
         }
     }
 
+    // Unused
     public static class AdditionalSeasonalAnimeBuilder {
         private KitsuAnime anime;
         private SubsPleaseAnime subsPleaseAnime;
@@ -138,6 +154,7 @@ public class SeasonalAnime extends Anime {
         }
     }
 
+    // Unused
     public static class BulkSeasonalAnimeBuilder {
         private final DayOfWeek emissionDay;
         private final List<Pair<KitsuAnime, SubsPleaseAnime>> anime = new ArrayList<>();

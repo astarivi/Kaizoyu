@@ -60,6 +60,7 @@ public class AssistedScheduleFetcher {
             final SeasonalAnime seasonalAnime = new SeasonalAnime.SeasonalAnimeBuilder(anime.kitsu)
                     .setEmissionDay(dow)
                     .setHasAired(anime.aired)
+                    .setCurrentEpisode(anime.episode)
                     .setEmissionTime(
                             calendarOfDate
                                     .toInstant()

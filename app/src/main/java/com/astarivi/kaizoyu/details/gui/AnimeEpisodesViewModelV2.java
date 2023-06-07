@@ -82,10 +82,14 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
                     episodeCount
             );
 
-            // TODO Handle this
             if (kitsuEpisodes == null) {
                 episodes.postValue(null);
                 return;
+            }
+
+            if (episodeCount <= 20) {
+                if (episodeCount > kitsuEpisodes.size()) episodeCount = kitsuEpisodes.size();
+                if (episodeCount < kitsuEpisodes.size()) kitsuEpisodes = kitsuEpisodes.subList(0, episodeCount);
             }
 
             currentPage = page;
