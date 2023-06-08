@@ -3,6 +3,7 @@ package com.astarivi.kaizoyu.core.schedule;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.core.adapters.WebAdapter;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
+import com.astarivi.kaizoyu.core.annotations.ThreadedOnly;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,8 +24,42 @@ import java.util.TreeMap;
 import okhttp3.HttpUrl;
 
 
+@ThreadedOnly
 public class AssistedScheduleFetcher {
     public @Nullable TreeMap<DayOfWeek, @NotNull ArrayList<SeasonalAnime>> getSchedule() {
+        ScheduledAnime[] scheduledAnime = getScheduledAnime();
+
+        if (scheduledAnime == null) return null;
+
+        return parse(scheduledAnime);
+    }
+
+    private @Nullable TreeMap<DayOfWeek, @NotNull ArrayList<SeasonalAnime>> parse(ScheduledAnime[] scheduledAnime) {
+        TreeMap<DayOfWeek, @NotNull ArrayList<SeasonalAnime>> result = new TreeMap<>();
+
+        for (ScheduledAnime anime :  scheduledAnime) {
+            final SeasonalAnime seasonalAnime = anime.toSeasonalAnime();
+
+            if (seasonalAnime == null) continue;
+
+            DayOfWeek dow = seasonalAnime.getEmissionDay();
+
+            ArrayList<SeasonalAnime> sAnime = result.get(dow);
+
+            if (sAnime == null) {
+                sAnime = new ArrayList<>();
+                result.put(dow, sAnime);
+            }
+
+            sAnime.add(seasonalAnime);
+        }
+
+        if (result.size() == 0) return null;
+
+        return result;
+    }
+
+    public static @Nullable ScheduledAnime[] getScheduledAnime() {
         String body = WebAdapter.getJSON(
                 new HttpUrl.Builder()
                         .scheme("https")
@@ -45,45 +80,7 @@ public class AssistedScheduleFetcher {
             return null;
         }
 
-        return parse(scheduledAnime);
-    }
-
-    private @Nullable TreeMap<DayOfWeek, @NotNull ArrayList<SeasonalAnime>> parse(ScheduledAnime[] scheduledAnime) {
-        TreeMap<DayOfWeek, @NotNull ArrayList<SeasonalAnime>> result = new TreeMap<>();
-
-        for (ScheduledAnime anime :  scheduledAnime) {
-            Calendar calendarOfDate = Calendar.getInstance(new Locale("en","UK"));
-            calendarOfDate.setTimeInMillis(anime.timestamp * 1000);
-            // Holy spaghetti
-            DayOfWeek dow = calendarOfDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getDayOfWeek();
-
-            final SeasonalAnime seasonalAnime = new SeasonalAnime.SeasonalAnimeBuilder(anime.kitsu)
-                    .setEmissionDay(dow)
-                    .setHasAired(anime.aired)
-                    .setCurrentEpisode(anime.episode)
-                    .setEmissionTime(
-                            calendarOfDate
-                                    .toInstant()
-                                    .atZone(ZoneId.systemDefault())
-                                    .toLocalTime()
-                                    .format(
-                                            DateTimeFormatter.ofPattern("hh:mm a")
-                                    )
-                    ).build();
-
-            ArrayList<SeasonalAnime> sAnime = result.get(dow);
-
-            if (sAnime == null) {
-                sAnime = new ArrayList<>();
-                result.put(dow, sAnime);
-            }
-
-            sAnime.add(seasonalAnime);
-        }
-
-        if (result.size() == 0) return null;
-
-        return result;
+        return scheduledAnime;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -96,6 +93,27 @@ public class AssistedScheduleFetcher {
         public KitsuAnime kitsu;
 
         public ScheduledAnime() {
+        }
+
+        public @Nullable SeasonalAnime toSeasonalAnime() {
+            Calendar calendarOfDate = Calendar.getInstance(new Locale("en","UK"));
+            calendarOfDate.setTimeInMillis(timestamp * 1000);
+            // Holy spaghetti
+            DayOfWeek dow = calendarOfDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getDayOfWeek();
+
+            return new SeasonalAnime.SeasonalAnimeBuilder(kitsu)
+                    .setEmissionDay(dow)
+                    .setHasAired(aired)
+                    .setCurrentEpisode(episode)
+                    .setEmissionTime(
+                            calendarOfDate
+                                    .toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalTime()
+                                    .format(
+                                            DateTimeFormatter.ofPattern("hh:mm a")
+                                    )
+                    ).build();
         }
     }
 }

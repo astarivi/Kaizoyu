@@ -12,10 +12,12 @@ import com.astarivi.kaizolib.kitsu.Kitsu;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
+import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.models.base.ImageSize;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.models.base.AnimeBase;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
+import com.astarivi.kaizoyu.core.schedule.AnimeScheduleChecker;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnime;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnimeDao;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
@@ -97,6 +99,45 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
         setLoadingScreen();
 
+        Threading.submitTask(Threading.TASK.INSTANT, () -> {
+            SeasonalAnime seasonalAnime = AnimeScheduleChecker.getSeasonalAnime((Anime) anime);
+
+            if (seasonalAnime == null) {
+                binding.getRoot().post(this::initializeLocal);
+                return;
+            }
+
+            anime = seasonalAnime;
+            animeType = ModelType.Anime.SEASONAL;
+
+            binding.getRoot().post(this::initializeLocal);
+        });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("index", binding.informationTabLayout.getSelectedTabPosition());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    public void triggerFavoriteRefresh() {
+        Threading.submitTask(Threading.TASK.DATABASE, () -> {
+            int animeKtId = Integer.parseInt(anime.getKitsuAnime().id);
+            SeenAnimeDao seenAnimeDao = Data.getRepositories().getSeenAnimeRepository().getAnimeDao();
+            seenAnime = seenAnimeDao.getFromKitsuId(animeKtId);
+
+            if (seenAnime != null && seenAnime.isFavorite())
+                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active);
+        });
+    }
+
+    private void initializeLocal() {
         if (animeType == ModelType.Anime.LOCAL) {
             LocalAnime localAnime = (LocalAnime) anime;
 
@@ -121,29 +162,6 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         }
 
         initializeFavorite();
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putInt("index", binding.informationTabLayout.getSelectedTabPosition());
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    public void triggerFavoriteRefresh() {
-        Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            int animeKtId = Integer.parseInt(anime.getKitsuAnime().id);
-            SeenAnimeDao seenAnimeDao = Data.getRepositories().getSeenAnimeRepository().getAnimeDao();
-            seenAnime = seenAnimeDao.getFromKitsuId(animeKtId);
-
-            if (seenAnime != null && seenAnime.isFavorite())
-                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active);
-        });
     }
 
     private void initializeFavorite() {

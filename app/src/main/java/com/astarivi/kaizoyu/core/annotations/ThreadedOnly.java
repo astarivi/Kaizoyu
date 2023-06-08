@@ -8,6 +8,6 @@ import java.lang.annotation.*;
  * in a thread.
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface ThreadedOnly {
 }
