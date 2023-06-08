@@ -35,12 +35,9 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.jetbrains.annotations.NotNull;
 
-import io.github.tonnyl.spark.Spark;
-
 
 public class AnimeDetailsActivity extends AppCompatActivityTheme {
     private ActivityAnimeDetailsBinding binding;
-    private Spark spark;
     private AnimeBase anime;
     private ModelType.Anime animeType;
     private SeenAnime seenAnime;
@@ -189,11 +186,8 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     }
 
     private void continueInitialization() {
-        if (spark != null) {
-            spark.stopAnimation();
-            binding.loadingScreen.setVisibility(View.GONE);
-            binding.posterImage.setVisibility(View.VISIBLE);
-        }
+        binding.loadingScreen.setVisibility(View.GONE);
+        binding.posterImage.setVisibility(View.VISIBLE);
 
         TabLayout tabLayout = binding.informationTabLayout;
 
@@ -262,12 +256,6 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     private void setLoadingScreen() {
         binding.posterImage.setVisibility(View.INVISIBLE);
         binding.loadingScreen.setVisibility(View.VISIBLE);
-        spark = new Spark.Builder()
-                .setView(binding.loadingScreenOverlay)
-                .setDuration(3000)
-                .setAnimList(Spark.ANIM_BLUE_PURPLE)
-                .build();
-        spark.startAnimation();
     }
 
     private void configureTabAdapter(TabLayout tabLayout){
