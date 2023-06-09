@@ -42,6 +42,8 @@ public class SearchActivity extends AppCompatActivityTheme {
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
+
         binding.searchResults.setVisibility(View.GONE);
 
         viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
@@ -64,6 +66,11 @@ public class SearchActivity extends AppCompatActivityTheme {
         recyclerView.setAdapter(adapter);
 
         viewModel.getResults().observe(this, results -> {
+            if (viewModel.hasOptedOutOfSearch()) {
+                optOutOfSearch();
+                return;
+            }
+
             if (results == null) {
                 binding.noResultsPrompt.setVisibility(View.VISIBLE);
                 binding.loadingBar.setVisibility(View.GONE);
@@ -112,8 +119,7 @@ public class SearchActivity extends AppCompatActivityTheme {
                 String search = searchView.getText().toString();
 
                 if (search.equals("")) {
-                    binding.searchResults.setVisibility(View.GONE);
-                    binding.searchAppBar.setExpanded(true, true);
+                    optOutOfSearch();
                     return false;
                 }
 
@@ -228,22 +234,32 @@ public class SearchActivity extends AppCompatActivityTheme {
         // Look at that indentation, damn
         if (
                 (
+                    viewModel != null && viewModel.checkIfHasSearchAndCancel()
+                )
+                ||
+                (
                     binding.searchResults.getVisibility() == View.VISIBLE &&
                     viewModel != null && viewModel.hasSearch()
-                ) ||
+                )
+                ||
                 (
                     binding.noResultsPrompt.getVisibility() == View.VISIBLE
                 )
         ) {
-            binding.noResultsPrompt.setVisibility(View.GONE);
-            binding.searchResults.setVisibility(View.GONE);
-            binding.searchBar.setText("");
-            binding.searchView.setText("");
-            binding.searchAppBar.setExpanded(true, true);
-
+            optOutOfSearch();
             return;
         }
 
         super.onBackPressed();
+    }
+
+    private void optOutOfSearch() {
+        binding.loadingBar.setVisibility(View.GONE);
+        binding.noResultsPrompt.setVisibility(View.GONE);
+        binding.searchResults.setVisibility(View.GONE);
+        binding.searchBar.setText("");
+        binding.searchView.setText("");
+        binding.searchAppBar.setExpanded(true, true);
+        if (viewModel != null) viewModel.optOutOfSearch();
     }
 }

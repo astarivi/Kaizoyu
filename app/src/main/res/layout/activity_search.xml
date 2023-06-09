@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".search.SearchActivity"
+    android:animateLayoutChanges="true"
 >
     <LinearLayout
         android:id="@+id/no_results_prompt"

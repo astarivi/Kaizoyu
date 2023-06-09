@@ -37,6 +37,7 @@
             android:name=".fullsearch.FullSearchActivity"
             android:exported="true"
             android:label="@string/title_activity_fullsearch"
+            android:screenOrientation="userPortrait"
             tools:ignore="LockedOrientationActivity"
         />
         <activity

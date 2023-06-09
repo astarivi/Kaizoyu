@@ -369,8 +369,12 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     }
 
     private void startPlayer(){
+        if (isDestroyed()) return;
+
         PlayerBarView playerBar = binding.playerBar;
-        spark.stopAnimation();
+        if (spark != null) {
+            spark.stopAnimation();
+        }
         ConstraintLayout background = binding.videoBackground;
         background.setBackgroundColor(Color.BLACK);
         binding.initialDownloadProgress.setVisibility(View.GONE);

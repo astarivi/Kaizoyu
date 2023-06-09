@@ -26,6 +26,7 @@ import java.util.concurrent.Future;
 public class SearchViewModel extends ViewModel {
     private final MutableLiveData<ArrayList<Anime>> results = new MutableLiveData<>();
     private Future searchingFuture = null;
+    private boolean isSearchActive = false;
 
     public MutableLiveData<ArrayList<Anime>> getResults() {
         return results;
@@ -33,6 +34,23 @@ public class SearchViewModel extends ViewModel {
 
     public boolean hasSearch() {
         return results.getValue() != null;
+    }
+
+    public boolean hasOptedOutOfSearch() {
+        return !isSearchActive;
+    }
+
+    public void optOutOfSearch() {
+        isSearchActive = false;
+    }
+
+    public boolean checkIfHasSearchAndCancel() {
+        if (searchingFuture != null && !searchingFuture.isDone()) {
+            searchingFuture.cancel(true);
+            return true;
+        }
+
+        return false;
     }
 
     public void searchAnime(
@@ -67,6 +85,8 @@ public class SearchViewModel extends ViewModel {
                             20
                     )
             );
+
+            isSearchActive = true;
 
             if (searchResults == null || searchResults.isEmpty()) {
                 results.postValue(null);
