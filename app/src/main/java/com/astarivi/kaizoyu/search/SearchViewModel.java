@@ -50,7 +50,7 @@ public class SearchViewModel extends ViewModel {
             return;
         }
 
-        binding.searchResults.setVisibility(View.INVISIBLE);
+        binding.searchResults.setVisibility(View.GONE);
         binding.noResultsPrompt.setVisibility(View.GONE);
         binding.loadingBar.setVisibility(View.VISIBLE);
 

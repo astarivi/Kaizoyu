@@ -42,7 +42,7 @@ public class SearchActivity extends AppCompatActivityTheme {
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.rootSearchLayout.getLayoutTransition().setAnimateParentHierarchy(false);
+        binding.searchResults.setVisibility(View.GONE);
 
         viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
@@ -67,7 +67,7 @@ public class SearchActivity extends AppCompatActivityTheme {
             if (results == null) {
                 binding.noResultsPrompt.setVisibility(View.VISIBLE);
                 binding.loadingBar.setVisibility(View.GONE);
-                binding.searchResults.setVisibility(View.INVISIBLE);
+                binding.searchResults.setVisibility(View.GONE);
                 return;
             }
 
@@ -87,12 +87,12 @@ public class SearchActivity extends AppCompatActivityTheme {
         // Absolutely horrendous code
         searchView.addTransitionListener((searchView1, previousState, newState) -> {
             if (newState == SearchView.TransitionState.SHOWING) {
-                displaySearchHistory();
                 isInsideSearchView = true;
                 return;
             }
 
             if (newState == SearchView.TransitionState.SHOWN) {
+                displaySearchHistory();
                 isInsideSearchView = true;
                 return;
             }
@@ -112,7 +112,8 @@ public class SearchActivity extends AppCompatActivityTheme {
                 String search = searchView.getText().toString();
 
                 if (search.equals("")) {
-                    binding.searchResults.setVisibility(View.INVISIBLE);
+                    binding.searchResults.setVisibility(View.GONE);
+                    binding.searchAppBar.setExpanded(true, true);
                     return false;
                 }
 
@@ -224,11 +225,21 @@ public class SearchActivity extends AppCompatActivityTheme {
             return;
         }
 
-        if (binding.searchResults.getVisibility() == View.VISIBLE &&
-                viewModel != null && viewModel.hasSearch()) {
-            binding.searchResults.setVisibility(View.INVISIBLE);
+        // Look at that indentation, damn
+        if (
+                (
+                    binding.searchResults.getVisibility() == View.VISIBLE &&
+                    viewModel != null && viewModel.hasSearch()
+                ) ||
+                (
+                    binding.noResultsPrompt.getVisibility() == View.VISIBLE
+                )
+        ) {
+            binding.noResultsPrompt.setVisibility(View.GONE);
+            binding.searchResults.setVisibility(View.GONE);
             binding.searchBar.setText("");
             binding.searchView.setText("");
+            binding.searchAppBar.setExpanded(true, true);
 
             return;
         }

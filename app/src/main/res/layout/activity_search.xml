@@ -32,37 +32,38 @@
             />
     </LinearLayout>
 
-    <LinearLayout
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="65dp"
+        android:paddingBottom="10dp"
+        app:layout_behavior="@string/searchbar_scrolling_view_behavior"
+    />
+
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/root_search_layout"
-        android:animateLayoutChanges="true"
+        android:background="@drawable/bg_item_upper_fade"
+        android:id="@+id/search_app_bar"
+        app:layout_scrollFlags="enterAlwaysCollapsed"
     >
-        <com.google.android.material.appbar.AppBarLayout
+        <com.google.android.material.search.SearchBar
+            android:id="@+id/search_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-        >
-            <com.google.android.material.search.SearchBar
-                android:id="@+id/search_bar"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:hint="@string/fragment_search_hint"
-                app:collapseIcon="@drawable/ic_favorite"
-                android:backgroundTint="?attr/colorSurfaceVariant"
-                app:defaultMarginsEnabled="false"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-            />
-        </com.google.android.material.appbar.AppBarLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/search_results"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="44dp"
+            android:hint="@string/fragment_search_hint"
+            app:collapseIcon="@drawable/ic_favorite"
+            android:backgroundTint="?attr/colorSurfaceVariant"
+            app:defaultMarginsEnabled="false"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
         />
-    </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/loading_bar"
@@ -87,7 +88,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            >
+        >
             <LinearLayout
                 android:id="@+id/search_suggestions"
                 android:layout_width="match_parent"
