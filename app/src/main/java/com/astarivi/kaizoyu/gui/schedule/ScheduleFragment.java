@@ -114,6 +114,7 @@ public class ScheduleFragment extends Fragment {
     }
 
     private void displaySchedule(ArrayList<DayOfWeek> daysOfWeek) {
+        binding.dowSelectorChips.removeAllViews();
         viewModel.showDaySchedule(daysOfWeek.get(0));
 
         boolean firstDone = false;

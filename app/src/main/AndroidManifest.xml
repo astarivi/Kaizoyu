@@ -32,14 +32,11 @@
             android:name=".licenses.LicensesActivity"
             android:exported="true"
             android:label="@string/title_activity_licenses"
-            android:screenOrientation="userPortrait"
-            tools:ignore="LockedOrientationActivity"
         />
         <activity
             android:name=".fullsearch.FullSearchActivity"
             android:exported="true"
             android:label="@string/title_activity_fullsearch"
-            android:screenOrientation="userPortrait"
             tools:ignore="LockedOrientationActivity"
         />
         <activity
@@ -53,8 +50,6 @@
             android:name=".search.SearchActivity"
             android:exported="true"
             android:label="AnimeSearch"
-            android:screenOrientation="userPortrait"
-            tools:ignore="LockedOrientationActivity"
         />
         <activity
             android:name=".updater.UpdaterActivity"
