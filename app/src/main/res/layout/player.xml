@@ -6,6 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/black"
+    android:id="@+id/player_background"
 >
     <org.videolan.libvlc.util.VLCVideoLayout
         android:fitsSystemWindows="true"

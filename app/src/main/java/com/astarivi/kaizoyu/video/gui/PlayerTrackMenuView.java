@@ -236,14 +236,14 @@ public class PlayerTrackMenuView extends LinearLayout {
         final PlayerTrackMenuView view = new PlayerTrackMenuView(context);
 
         ConstraintSet set = new ConstraintSet();
-        ConstraintLayout layout = playerBinding.getRoot();
+        ConstraintLayout layout = playerBinding.playerBackground;
 
         view.initialize(mediaPlayer, shouldResume);
         view.setId(View.generateViewId());
 
-        playerBinding.getRoot().addView(
+        layout.addView(
                 view,
-                playerBinding.getRoot().getChildCount() - 1
+                layout.getChildCount()
         );
 
         int id = view.getId();

@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.GestureDetectorCompat;
 
 import com.astarivi.kaizoyu.databinding.PlayerBinding;
 
@@ -25,9 +24,7 @@ import java.util.ArrayList;
 
 public class PlayerView extends LinearLayout {
     private PlayerBinding binding;
-    private LayoutInflater inflater;
     private PlayerEventListener listener;
-    private GestureDetectorCompat gestureDetector;
     private MediaPlayer mediaPlayer;
 
     public PlayerView(Context context) {
@@ -51,7 +48,7 @@ public class PlayerView extends LinearLayout {
     }
 
     private void inflateView(Context context) {
-        inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
 
         binding = PlayerBinding.inflate(
                 inflater,
@@ -60,22 +57,8 @@ public class PlayerView extends LinearLayout {
         );
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (gestureDetector.onTouchEvent(event)) {
-            return true;
-        }
-
-        performClick();
-
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean performClick() {
-        super.performClick();
-
-        return true;
+    public PlayerBinding getBinding() {
+        return binding;
     }
 
     public void initialize(
@@ -95,11 +78,6 @@ public class PlayerView extends LinearLayout {
         binding.playerInfoBar.setVisibility(View.INVISIBLE);
 
         binding.topBackButton.setOnClickListener(v -> listener.onBackPressed());
-
-        gestureDetector = new GestureDetectorCompat(
-                getContext(),
-                new PlayerView.PlayerGestureListener()
-        );
 
         binding.skipManager.initialize(binding.playerBar);
     }
@@ -153,7 +131,12 @@ public class PlayerView extends LinearLayout {
         mediaPlayer = null;
     }
 
-    public class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener {
+    public static class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener {
+        private final PlayerBinding binding;
+
+        public PlayerGestureListener (PlayerBinding binding) {
+            this.binding = binding;
+        }
         @Override
         public boolean onSingleTapConfirmed(@NonNull MotionEvent event) {
             binding.playerBar.show();
