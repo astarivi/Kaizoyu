@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.video;
+package com.astarivi.kaizoyu.video.utils;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-public class VideoPlayerUtils {
+public class BundleUtils {
     @SuppressWarnings("deprecation")
     public static @Nullable Result getResultFromBundle(@NotNull Bundle bundle) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

@@ -4,17 +4,22 @@ import android.content.Context;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.databinding.PlayerBinding;
 import com.astarivi.kaizoyu.databinding.PlayerTrackItemBinding;
 import com.astarivi.kaizoyu.databinding.PlayerTrackMenuBinding;
 
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.interfaces.IMedia;
+
 
 public class PlayerTrackMenuView extends LinearLayout {
     private PlayerTrackMenuBinding binding;
@@ -23,7 +28,6 @@ public class PlayerTrackMenuView extends LinearLayout {
     private PlayerTrackItemBinding selectedSubtitles;
     private String selectedSubtitlesId;
     private LayoutInflater inflater;
-    private MediaPlayer mediaPlayer;
 
     private boolean shouldResume = false;
 
@@ -60,7 +64,6 @@ public class PlayerTrackMenuView extends LinearLayout {
     }
 
     public void initialize(MediaPlayer mediaPlayer, boolean shouldResume) {
-        this.mediaPlayer = mediaPlayer;
         this.shouldResume = shouldResume;
 
         this.addTracks(
@@ -70,7 +73,7 @@ public class PlayerTrackMenuView extends LinearLayout {
                 mediaPlayer.getTracks(IMedia.Track.Type.Text)
         );
 
-        binding.closePopupBtn.setOnClickListener(v -> close());
+        binding.closePopupBtn.setOnClickListener(v -> close(mediaPlayer));
     }
 
     private void addTracks(IMedia.Track currentAudioTrack, IMedia.Track currentSubtitleTrack,
@@ -184,7 +187,7 @@ public class PlayerTrackMenuView extends LinearLayout {
         this.exit();
     }
 
-    private void close(){
+    private void close(MediaPlayer mediaPlayer){
         if (selectedAudioId == null) {
             mediaPlayer.unselectTrackType(IMedia.Track.Type.Audio);
         } else {
@@ -204,6 +207,7 @@ public class PlayerTrackMenuView extends LinearLayout {
     }
 
     private void exit() {
+        // Self destruction go brr
         this.removeAllViews();
         if (this.getParent() != null) {
             ((ViewGroup) this.getParent()).removeView(this);
@@ -214,10 +218,43 @@ public class PlayerTrackMenuView extends LinearLayout {
         selectedSubtitles = null;
         selectedSubtitlesId = null;
         inflater = null;
-        mediaPlayer = null;
     }
 
     public PlayerTrackMenuBinding getBinding() {
         return this.binding;
+    }
+
+    public static void show(
+            Context context,
+            PlayerBinding playerBinding,
+            MediaPlayer mediaPlayer
+    ) {
+        boolean shouldResume = mediaPlayer.isPlaying();
+
+        mediaPlayer.pause();
+
+        final PlayerTrackMenuView view = new PlayerTrackMenuView(context);
+
+        ConstraintSet set = new ConstraintSet();
+        ConstraintLayout layout = playerBinding.getRoot();
+
+        view.initialize(mediaPlayer, shouldResume);
+        view.setId(View.generateViewId());
+
+        playerBinding.getRoot().addView(
+                view,
+                playerBinding.getRoot().getChildCount() - 1
+        );
+
+        int id = view.getId();
+        set.clone(layout);
+        set.connect(id, ConstraintSet.BOTTOM, layout.getId(), ConstraintSet.BOTTOM, 0);
+        set.connect(id, ConstraintSet.TOP, layout.getId(), ConstraintSet.TOP, 0);
+        set.connect(id, ConstraintSet.LEFT, layout.getId(), ConstraintSet.LEFT, 0);
+        set.connect(id, ConstraintSet.RIGHT, layout.getId(), ConstraintSet.RIGHT, 0);
+        set.constrainHeight(id, 0);
+        set.constrainWidth(id, 0);
+        set.applyTo(layout);
+        view.requestLayout();
     }
 }

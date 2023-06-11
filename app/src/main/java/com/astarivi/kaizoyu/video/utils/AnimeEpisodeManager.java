@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.core.storage;
+package com.astarivi.kaizoyu.video.utils;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,16 +10,13 @@ import com.astarivi.kaizoyu.core.models.Episode;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Utils;
-import com.astarivi.kaizoyu.video.VideoPlayerUtils;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 
-// This class doesn't belong in this package... too bad
 public class AnimeEpisodeManager {
     private final Anime anime;
     private final Episode episode;
@@ -61,26 +58,24 @@ public class AnimeEpisodeManager {
             bundle = from;
         }
 
-        public @Nullable AnimeEpisodeManager build() {
+        public @NotNull AnimeEpisodeManager build() throws IllegalArgumentException {
             final String type = bundle.getString("type");
 
             if (type == null || type.equals("")) {
-                return null;
+                throw new IllegalArgumentException("The type bundle cannot be empty");
             }
 
             ModelType.Anime animeType;
 
-            try {
-                animeType = ModelType.Anime.valueOf(type);
-            } catch(IllegalArgumentException e) {
-                return null;
-            }
+            animeType = ModelType.Anime.valueOf(type);
 
-            Episode episode = VideoPlayerUtils.getEpisodeFromBundle(bundle);
+            Episode episode = BundleUtils.getEpisodeFromBundle(bundle);
             // Guaranteed to cast
             Anime anime = (Anime) Utils.getAnimeFromBundle(bundle, animeType);
 
-            if (anime == null || episode == null) return null;
+            if (anime == null || episode == null) {
+                throw new IllegalArgumentException("No anime and episode were given");
+            }
 
             return new AnimeEpisodeManager(anime, episode);
         }

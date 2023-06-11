@@ -114,9 +114,6 @@ public class PlayerBarView extends LinearLayout {
     }
 
     private void setProgressFromTime(long time) {
-        // Don't update the bar unless we're seeing it
-        if (!isShowingBar) return;
-
         float length = mediaPlayer.getLength();
         float progress = (float) (((float) time / length) * 1000.0);
 
