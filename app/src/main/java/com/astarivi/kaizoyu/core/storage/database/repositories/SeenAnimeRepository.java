@@ -1,6 +1,6 @@
 package com.astarivi.kaizoyu.core.storage.database.repositories;
 
-import com.astarivi.kaizoyu.MainActivity;
+import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.Episode;
 import com.astarivi.kaizoyu.core.models.base.AnimeBase;
@@ -47,7 +47,7 @@ public class SeenAnimeRepository {
 
     private void saveSeenEpisodeAsync(int currentPlayerTime, AnimeBase anime, Episode episode, Runnable callback) {
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            if (MainActivity.weakActivity == null) return;
+            if (KaizoyuApplication.application == null) return;
 
             long timestamp = System.currentTimeMillis();
             final int animeId = Integer.parseInt(anime.getKitsuAnime().id);
@@ -144,7 +144,7 @@ public class SeenAnimeRepository {
 
     private void deleteSeenEpisodeAsync(Runnable runnable, Anime anime, Episode episode) {
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            if (MainActivity.weakActivity == null) return;
+            if (KaizoyuApplication.application == null) return;
 
             final int animeId = Integer.parseInt(anime.getKitsuAnime().id);
 

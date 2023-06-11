@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.astarivi.kaizoyu.MainActivity;
+import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
@@ -165,8 +165,8 @@ public class SearchActivity extends AppCompatActivityTheme {
 
         searchSuggestions.removeAllViews();
 
-        if (MainActivity.weakActivity == null) {
-            AnalyticsClient.logEvent("mainactivity_null_search_history");
+        if (KaizoyuApplication.application == null) {
+            AnalyticsClient.logEvent("application_null_search_history");
             return;
         }
 

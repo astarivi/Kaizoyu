@@ -163,7 +163,6 @@ public class PlayerView extends LinearLayout {
         }
     }
 
-
     public interface PlayerEventListener {
         void onBackPressed();
     }

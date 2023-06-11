@@ -2,7 +2,7 @@ package com.astarivi.kaizoyu.core.theme;
 
 import android.content.Context;
 
-import com.astarivi.kaizoyu.MainActivity;
+import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.utils.Data;
 
@@ -47,7 +47,7 @@ public enum Theme {
     }
 
     public static @NotNull Theme getCurrentTheme() {
-        if (MainActivity.weakActivity == null) return HIGH_CONTRAST;
+        if (KaizoyuApplication.application == null) return HIGH_CONTRAST;
 
         int currentTheme = Integer.parseInt(
                 Data.getProperties(

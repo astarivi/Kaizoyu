@@ -1,18 +1,31 @@
 package com.astarivi.kaizoyu;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.flurry.android.FlurryAgent;
 import com.google.android.material.color.DynamicColors;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 
 public class KaizoyuApplication extends Application {
+    public static WeakReference<Application> application;
+
+    public static Application getApplication() {
+        return application.get();
+    }
+
+    public static Context getContext() {
+        return getApplication().getApplicationContext();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        application = new WeakReference<>(KaizoyuApplication.this);
         checkDynamicColors();
 
         if (BuildConfig.DEBUG) {

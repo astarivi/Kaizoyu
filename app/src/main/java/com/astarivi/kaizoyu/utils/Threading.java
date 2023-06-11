@@ -3,7 +3,7 @@ package com.astarivi.kaizoyu.utils;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.astarivi.kaizoyu.MainActivity;
+import com.astarivi.kaizoyu.core.threading.ThreadingAssistant;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -15,19 +15,17 @@ public class Threading {
         new Handler(Looper.getMainLooper()).post(r);
     }
 
-    public static Future submitTask(@NotNull TASK type, @NotNull Runnable task) {
+    public static Future<?> submitTask(@NotNull TASK type, @NotNull Runnable task) {
         switch(type) {
             case DATABASE:
-                return MainActivity.getInstance().getDataAssistant().getThreadingAssistant().submitToDatabaseThread(task);
+                return ThreadingAssistant.getInstance().submitToDatabaseThread(task);
             case INSTANT:
-                return MainActivity.getInstance().getDataAssistant().getThreadingAssistant().submitToInstantThread(task);
-            case BACKGROUND:
             default:
-                return MainActivity.getInstance().getDataAssistant().getThreadingAssistant().submitToGeneralThread(task);
+                return ThreadingAssistant.getInstance().submitToInstantThread(task);
         }
     }
 
     public enum TASK {
-        BACKGROUND, DATABASE, INSTANT
+        DATABASE, INSTANT
     }
 }

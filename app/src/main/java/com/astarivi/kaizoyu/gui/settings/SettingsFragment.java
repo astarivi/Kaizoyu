@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.astarivi.kaizoyu.MainActivity;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.theme.Theme;
@@ -84,7 +83,7 @@ public class SettingsFragment extends Fragment {
         });
 
         binding.clearCacheTrigger.setOnClickListener(view -> {
-            MainActivity.getInstance().getDataAssistant().clearCache();
+            Utils.clearCache();
             Toast.makeText(getContext(), getString(R.string.cache_toast), Toast.LENGTH_SHORT).show();
         });
 

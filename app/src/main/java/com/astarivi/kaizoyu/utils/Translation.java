@@ -1,9 +1,7 @@
 package com.astarivi.kaizoyu.utils;
 
 import android.content.Context;
-import android.content.res.Resources;
 
-import com.astarivi.kaizoyu.MainActivity;
 import com.astarivi.kaizoyu.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -60,10 +58,5 @@ public class Translation {
                 return context.getResources().getString(R.string.sunday);
         }
 
-    }
-
-    // QoL function to be used in safe functions
-    public static Resources getResources() {
-        return MainActivity.getInstance().getResources();
     }
 }

@@ -1,7 +1,7 @@
 package com.astarivi.kaizoyu.utils;
 
 import com.astarivi.kaizolib.common.network.UserHttpClient;
-import com.astarivi.kaizoyu.MainActivity;
+import com.astarivi.kaizoyu.core.storage.PersistenceRepository;
 import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
 import com.astarivi.kaizoyu.core.storage.database.repositories.RepositoryDirectory;
 
@@ -14,43 +14,39 @@ public class Data {
     private static final TemporarySwitches temporarySwitches = new TemporarySwitches();
 
     public static UserHttpClient getUserHttpClient() {
-        return MainActivity.getInstance().getDataAssistant().getUserHttpClient();
+        return PersistenceRepository.getInstance().getHttpClient();
     }
 
     public static Properties getProperties(@NotNull CONFIGURATION type) {
         switch (type) {
             case BOTS:
-                return MainActivity.getInstance().getDataAssistant().getBotsConfiguration().getConfiguration();
-            case SCHEDULE:
-                return MainActivity.getInstance().getDataAssistant().getScheduleConfiguration().getConfiguration();
+                return PersistenceRepository.getInstance().getBotsConfiguration().getConfiguration();
             case APP:
             default:
-                return MainActivity.getInstance().getDataAssistant().getConfiguration().getConfiguration();
+                return PersistenceRepository.getInstance().getAppConfiguration().getConfiguration();
         }
     }
 
     public static void saveProperties(@NotNull CONFIGURATION type) {
         switch (type) {
             case BOTS:
-                MainActivity.getInstance().getDataAssistant().getBotsConfiguration().save();
-            case SCHEDULE:
-                MainActivity.getInstance().getDataAssistant().getScheduleConfiguration().save();
+                PersistenceRepository.getInstance().getBotsConfiguration().save();
             case APP:
             default:
-                MainActivity.getInstance().getDataAssistant().getConfiguration().save();
+                PersistenceRepository.getInstance().getAppConfiguration().save();
         }
     }
 
     public static void reloadProperties() {
-        MainActivity.getInstance().getDataAssistant().initializeSettings();
+        PersistenceRepository.getInstance().applyConfigurationChanges();
     }
 
     public static AppDatabase getDatabase() {
-        return MainActivity.getInstance().getDataAssistant().getDatabase();
+        return PersistenceRepository.getInstance().getDatabase();
     }
 
     public static RepositoryDirectory getRepositories() {
-        return MainActivity.getInstance().getDataAssistant().getRepositoryDirectory();
+        return PersistenceRepository.getInstance().getRepositoryDirectory();
     }
 
     public static TemporarySwitches getTemporarySwitches() {
@@ -58,7 +54,7 @@ public class Data {
     }
 
     public enum CONFIGURATION {
-        APP, BOTS, SCHEDULE
+        APP, BOTS
     }
 
     public static class TemporarySwitches {

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.astarivi.kaizoyu.core.storage.DataAssistant;
+import com.astarivi.kaizoyu.core.storage.PersistenceRepository;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.ActivityMainBinding;
@@ -15,38 +15,24 @@ import com.astarivi.kaizoyu.gui.adapters.TabAdapter;
 import com.astarivi.kaizoyu.updater.UpdaterActivity;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
+import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.Properties;
 
 
 public class MainActivity extends AppCompatActivityTheme {
-    public static WeakReference<MainActivity> weakActivity;
-    private DataAssistant dataAssistant;
     private ActivityMainBinding binding;
     private TabLayout tabLayout;
 
-    public DataAssistant getDataAssistant() {
-        return dataAssistant;
-    }
-
-    public static MainActivity getInstance() {
-        return weakActivity.get();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Do this before initialization to have DataAssistant ready before starting the View.
-        weakActivity = new WeakReference<>(MainActivity.this);
-        dataAssistant = new DataAssistant(this, weakActivity);
-
         super.onCreate(savedInstanceState);
 
-        dataAssistant.clearCache();
-        dataAssistant.initializeSettings();
+        Utils.clearCache();
 
         binding = ActivityMainBinding.inflate(this.getLayoutInflater());
 
@@ -112,14 +98,12 @@ public class MainActivity extends AppCompatActivityTheme {
     protected void onPause() {
         super.onPause();
 
-        this.dataAssistant.save();
+        PersistenceRepository.getInstance().saveSettings();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        this.dataAssistant.close();
     }
 
     @Override
