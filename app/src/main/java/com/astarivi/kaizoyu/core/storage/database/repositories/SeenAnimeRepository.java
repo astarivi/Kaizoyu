@@ -75,10 +75,9 @@ public class SeenAnimeRepository {
                 shouldCheckExisting = false;
             }
 
-            final boolean isAutoFavorite = Boolean.parseBoolean(
-                    Data.getProperties(Data.CONFIGURATION.APP)
-                            .getProperty("auto_favorite", "false")
-            );
+            final boolean isAutoFavorite = Data.getProperties(Data.CONFIGURATION.APP)
+                    .getBooleanProperty("auto_favorite", false);
+
 
             // Auto-Favorite
             if (isAutoFavorite && !parentAnime.isFavorite()) {

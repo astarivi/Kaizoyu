@@ -3,6 +3,7 @@ package com.astarivi.kaizoyu.core.search;
 import com.astarivi.kaizolib.nibl.Nibl;
 import com.astarivi.kaizolib.nibl.model.NiblResult;
 import com.astarivi.kaizoyu.core.models.Result;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.video.VideoParser;
 import com.astarivi.kaizoyu.core.video.VideoQuality;
 import com.astarivi.kaizoyu.utils.Data;
@@ -12,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 
 public class SearchUtils {
@@ -21,13 +21,11 @@ public class SearchUtils {
             @NotNull Nibl nibl)
     {
         ArrayList<Result> parsedResults = new ArrayList<>();
-        Properties botsMap = Data.getProperties(Data.CONFIGURATION.BOTS);
+        ExtendedProperties botsMap = Data.getProperties(Data.CONFIGURATION.BOTS);
 
         // Filters
-        boolean ipv6Capable = Boolean.parseBoolean(
-                Data.getProperties(Data.CONFIGURATION.APP)
-                        .getProperty("show_ipv6", "false")
-        );
+        boolean ipv6Capable = Data.getProperties(Data.CONFIGURATION.APP)
+                .getBooleanProperty("show_ipv6", false);
 
         for (NiblResult result : results) {
             // Don't show empty results
@@ -35,15 +33,14 @@ public class SearchUtils {
 
             // Filters
             String botName = botsMap.getProperty(
-                    String.valueOf(result.botId),
-                    null
+                    String.valueOf(result.botId)
             );
 
             if (botName == null) {
                 nibl.getBotsMap(botsMap);
                 if (!botsMap.containsKey(String.valueOf(result.botId))) continue;
 
-                Data.saveProperties(Data.CONFIGURATION.BOTS);
+                botsMap.save();
 
                 botName = botsMap.getProperty(
                         String.valueOf(result.botId)

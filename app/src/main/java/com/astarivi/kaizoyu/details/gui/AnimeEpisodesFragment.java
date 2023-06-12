@@ -21,6 +21,7 @@ import com.astarivi.kaizoyu.core.models.Episode;
 import com.astarivi.kaizoyu.core.models.Result;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.databinding.ComponentSuggestionChipBinding;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeEpisodesBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
@@ -71,17 +72,19 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
 
         // Reminder dialog
 
-        String scheduleReminder = Data.getProperties(Data.CONFIGURATION.APP)
-                .getProperty("episodes_reminder", "true");
+        final boolean scheduleReminder = Data.getProperties(Data.CONFIGURATION.APP)
+                .getBooleanProperty("episodes_reminder", true);
 
-        if (!Boolean.parseBoolean(scheduleReminder)) {
+        if (scheduleReminder) {
             binding.episodeCardButton.setVisibility(View.GONE);
         }
 
         binding.scheduleHideTip.setOnClickListener(v -> {
             binding.episodeCardButton.setVisibility(View.GONE);
 
-            Data.getProperties(Data.CONFIGURATION.APP).setProperty("episodes_reminder", "false");
+            ExtendedProperties appConfig = Data.getProperties(Data.CONFIGURATION.APP);
+            appConfig.setBooleanProperty("episodes_reminder", false);
+            appConfig.save();
         });
 
         // Mixed

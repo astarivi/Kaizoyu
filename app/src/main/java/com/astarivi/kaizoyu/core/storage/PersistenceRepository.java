@@ -10,19 +10,18 @@ import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
 import com.astarivi.kaizoyu.core.storage.database.repositories.RepositoryDirectory;
-import com.astarivi.kaizoyu.core.storage.properties.AppConfiguration;
-import com.astarivi.kaizoyu.core.storage.properties.BotsConfiguration;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
+import com.astarivi.kaizoyu.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Properties;
 import java.util.concurrent.FutureTask;
 
 
 public class PersistenceRepository {
     private static volatile PersistenceRepository instance = null;
-    private final AppConfiguration appConfiguration;
-    private final BotsConfiguration botsConfiguration;
+    private final ExtendedProperties appConfiguration;
+    private final ExtendedProperties botsConfiguration;
     private final AppDatabase database;
     private final RepositoryDirectory repositoryDirectory;
     private final UserHttpClient httpClient = new UserHttpClient();
@@ -38,8 +37,11 @@ public class PersistenceRepository {
 
         Context context = KaizoyuApplication.getContext();
 
-        appConfiguration = new AppConfiguration(context);
-        botsConfiguration = new BotsConfiguration(context);
+        appConfiguration = new ExtendedProperties(context, "Kaizoyu.properties");
+        Utils.generateIrcUsername(appConfiguration);
+
+        botsConfiguration = new ExtendedProperties(context, "NiblBots.properties");
+
         database = Room.databaseBuilder(
                 KaizoyuApplication.getApplication().getApplicationContext(),
                 AppDatabase.class,
@@ -60,11 +62,7 @@ public class PersistenceRepository {
     }
 
     public void applyConfigurationChanges() {
-        Properties appConfig = appConfiguration.getConfiguration();
-
-        int nightTheme = Integer.parseInt(appConfig.getProperty("night_theme", "0"));
-
-        switch (nightTheme) {
+        switch (appConfiguration.getIntProperty("night_theme", 0)) {
             case 0:
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                 break;
@@ -76,9 +74,7 @@ public class PersistenceRepository {
                 break;
         }
 
-        AnalyticsClient.isEnabled = Boolean.parseBoolean(
-                appConfig.getProperty("analytics", "false")
-        );
+        AnalyticsClient.isEnabled = appConfiguration.getBooleanProperty("analytics", true);
     }
 
     public void saveSettings() {
@@ -86,11 +82,11 @@ public class PersistenceRepository {
         botsConfiguration.save();
     }
 
-    public AppConfiguration getAppConfiguration() {
+    public ExtendedProperties getAppConfiguration() {
         return appConfiguration;
     }
 
-    public BotsConfiguration getBotsConfiguration() {
+    public ExtendedProperties getBotsConfiguration() {
         return botsConfiguration;
     }
 
@@ -115,7 +111,7 @@ public class PersistenceRepository {
             // Closing an HttpClient means it will join the main thread. If that were to happen,
             // android would raise a security exception. We close it inside another thread to avoid
             // this issue.
-            FutureTask<Void> closingFuture = new FutureTask<>((Runnable) httpClient::close, null);
+            FutureTask<Void> closingFuture = new FutureTask<>(httpClient::close, null);
             Thread thread = new Thread(closingFuture);
             thread.start();
             thread.join(10000);

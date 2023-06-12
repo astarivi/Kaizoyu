@@ -41,10 +41,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        boolean showAdvancedSearch = Boolean.parseBoolean(
-                Data.getProperties(Data.CONFIGURATION.APP)
-                        .getProperty("advanced_search", "false")
-        );
+        boolean showAdvancedSearch = Data.getProperties(Data.CONFIGURATION.APP)
+                .getBooleanProperty("advanced_search", false);
 
         binding.mainSearchBar.getMenu().clear();
 

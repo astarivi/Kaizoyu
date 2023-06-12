@@ -39,10 +39,9 @@ public class Anime extends AnimeBase implements Parcelable {
     public String getDisplayTitle() {
         KitsuAnime.KitsuAnimeTitles titles = anime.attributes.titles;
 
-        boolean preferEnglish = Boolean.parseBoolean(
-                Data.getProperties(Data.CONFIGURATION.APP)
-                        .getProperty("prefer_english", "true")
-        );
+        boolean preferEnglish = Data.getProperties(Data.CONFIGURATION.APP)
+                .getBooleanProperty("prefer_english", true);
+
 
         if (preferEnglish) {
             if (titles.en != null) return titles.en;

@@ -4,10 +4,9 @@ import com.astarivi.kaizolib.common.network.UserHttpClient;
 import com.astarivi.kaizoyu.core.storage.PersistenceRepository;
 import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
 import com.astarivi.kaizoyu.core.storage.database.repositories.RepositoryDirectory;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Properties;
 
 
 public class Data {
@@ -17,23 +16,13 @@ public class Data {
         return PersistenceRepository.getInstance().getHttpClient();
     }
 
-    public static Properties getProperties(@NotNull CONFIGURATION type) {
+    public static ExtendedProperties getProperties(@NotNull CONFIGURATION type) {
         switch (type) {
             case BOTS:
-                return PersistenceRepository.getInstance().getBotsConfiguration().getConfiguration();
+                return PersistenceRepository.getInstance().getBotsConfiguration();
             case APP:
             default:
-                return PersistenceRepository.getInstance().getAppConfiguration().getConfiguration();
-        }
-    }
-
-    public static void saveProperties(@NotNull CONFIGURATION type) {
-        switch (type) {
-            case BOTS:
-                PersistenceRepository.getInstance().getBotsConfiguration().save();
-            case APP:
-            default:
-                PersistenceRepository.getInstance().getAppConfiguration().save();
+                return PersistenceRepository.getInstance().getAppConfiguration();
         }
     }
 

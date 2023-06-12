@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.database.data.search.SearchHistory;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.databinding.ActivityFullsearchBinding;
 import com.astarivi.kaizoyu.databinding.FragmentSearchSuggestionBinding;
@@ -27,7 +28,6 @@ import com.google.android.material.search.SearchView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 
 // Is this a copy of SearchActivity? yes.
@@ -145,11 +145,9 @@ public class FullSearchActivity extends AppCompatActivityTheme {
 
         // Popup dialog
 
-        Properties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
+        ExtendedProperties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
 
-        if (Boolean.parseBoolean(
-                appProperties.getProperty("advanced_search_reminder", "true")
-        )) {
+        if (appProperties.getBooleanProperty("advanced_search_reminder", true)) {
             new MaterialAlertDialogBuilder(this)
                     .setTitle(getString(R.string.advanced_search_dialog_title))
                     .setMessage(getString(R.string.advanced_search_dialog_description))
@@ -163,8 +161,8 @@ public class FullSearchActivity extends AppCompatActivityTheme {
                         ).show(
                         );
 
-                        appProperties.setProperty("advanced_search_reminder", "false");
-                        Data.saveProperties(Data.CONFIGURATION.APP);
+                        appProperties.setBooleanProperty("advanced_search_reminder", false);
+                        appProperties.save();
                     })
                     .show();
         }

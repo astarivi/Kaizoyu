@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.astarivi.kaizoyu.core.models.base.ModelType;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.databinding.ComponentSuggestionChipBinding;
 import com.astarivi.kaizoyu.databinding.FragmentScheduleBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
@@ -62,18 +63,18 @@ public class ScheduleFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
 
-        String scheduleReminder = Data.getProperties(Data.CONFIGURATION.APP)
-                .getProperty("schedule_reminder", "true");
-
-        if (!Boolean.parseBoolean(scheduleReminder)) {
+        if (
+                Data.getProperties(Data.CONFIGURATION.APP)
+                        .getBooleanProperty("schedule_reminder", true)
+        ) {
             binding.episodeCardButton.setVisibility(View.GONE);
         }
 
         binding.scheduleHideTip.setOnClickListener(v -> {
             binding.episodeCardButton.setVisibility(View.GONE);
-
-            Data.getProperties(Data.CONFIGURATION.APP).setProperty("schedule_reminder", "false");
-            Data.saveProperties(Data.CONFIGURATION.APP);
+            ExtendedProperties appConfig = Data.getProperties(Data.CONFIGURATION.APP);
+            appConfig.setBooleanProperty("schedule_reminder", false);
+            appConfig.save();
         });
 
         viewModel.getAnimeFromSchedule().observe(getViewLifecycleOwner(), seasonalAnimeList -> {

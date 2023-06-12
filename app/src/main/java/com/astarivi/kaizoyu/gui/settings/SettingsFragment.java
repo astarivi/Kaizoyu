@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.Theme;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.FragmentSettingsBinding;
@@ -30,7 +31,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.text.ParseException;
-import java.util.Properties;
 
 
 public class SettingsFragment extends Fragment {
@@ -136,10 +136,10 @@ public class SettingsFragment extends Fragment {
                     UpdaterModalBottomSheet modalBottomSheet = new UpdaterModalBottomSheet(latestUpdate, (result, update) -> {
                         if (result == UpdaterModalBottomSheet.Result.SKIP) return;
 
-                        Properties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
+                        ExtendedProperties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
 
                         if (result == UpdaterModalBottomSheet.Result.UPDATE_NOW) {
-                            appProperties.setProperty("skip_version", "false");
+                            appProperties.setBooleanProperty("skip_version", false);
                             Intent intent = new Intent(getContext(), UpdaterActivity.class);
                             intent.putExtra("latestUpdate", update);
                             startActivity(intent);
@@ -149,7 +149,7 @@ public class SettingsFragment extends Fragment {
                             appProperties.setProperty("skip_version", update.version);
                         }
 
-                        Data.saveProperties(Data.CONFIGURATION.APP);
+                        appProperties.save();
                     });
 
                     modalBottomSheet.show(getParentFragmentManager(), UpdaterModalBottomSheet.TAG);
@@ -190,55 +190,49 @@ public class SettingsFragment extends Fragment {
 
     // region Configuration save and load
     private void saveSettings(){
-        Properties config = Data.getProperties(Data.CONFIGURATION.APP);
+        ExtendedProperties config = Data.getProperties(Data.CONFIGURATION.APP);
 
-        config.setProperty(
+        config.setIntProperty(
                 "night_theme",
-                Integer.toString(nightTheme)
+                nightTheme
         );
 
-        MaterialSwitch analytics = binding.analyticsValue;
-        config.setProperty(
+        config.setBooleanProperty(
                 "analytics",
-                String.valueOf(analytics.isChecked())
+                binding.analyticsValue.isChecked()
         );
 
-        MaterialSwitch ipv6Sources = binding.ipv6SorcesValue;
-        config.setProperty(
+        config.setBooleanProperty(
                 "show_ipv6",
-                String.valueOf(ipv6Sources.isChecked())
+                binding.ipv6SorcesValue.isChecked()
         );
 
-        MaterialSwitch preferEnglishTitles = binding.preferEnglishValue;
-        config.setProperty(
+        config.setBooleanProperty(
                 "prefer_english",
-                String.valueOf(preferEnglishTitles.isChecked())
+                binding.preferEnglishValue.isChecked()
         );
 
-        config.setProperty(
+        config.setBooleanProperty(
                 "auto_favorite",
-                String.valueOf(
-                        binding.autoFavoriteValue.isChecked()
-                )
+                binding.autoFavoriteValue.isChecked()
         );
 
-        config.setProperty(
+        config.setBooleanProperty(
                 "advanced_search",
-                String.valueOf(
-                        binding.advancedSearch.isChecked()
-                )
+                binding.advancedSearch.isChecked()
         );
 
-        Data.saveProperties(Data.CONFIGURATION.APP);
+        config.save();
+
         Data.reloadProperties();
     }
 
     private void loadSettings() {
-        Properties config = Data.getProperties(Data.CONFIGURATION.APP);
+        ExtendedProperties config = Data.getProperties(Data.CONFIGURATION.APP);
 
         // Translated Values
         TextView nightThemeText = binding.nightThemeValue;
-        nightTheme = Integer.parseInt(config.getProperty("night_theme", "0"));
+        nightTheme = config.getIntProperty("night_theme", 0);
 
         nightThemeText.setText(
                 Translation.getNightThemeTranslation(
@@ -248,23 +242,16 @@ public class SettingsFragment extends Fragment {
         );
 
         // Switches
-        MaterialSwitch analytics = binding.analyticsValue;
-        analytics.setChecked(
-                Boolean.parseBoolean(config.getProperty("analytics", "true"))
+        binding.analyticsValue.setChecked(
+                config.getBooleanProperty("analytics", true)
         );
 
-        MaterialSwitch ipv6Sources = binding.ipv6SorcesValue;
-        ipv6Sources.setChecked(
-                Boolean.parseBoolean(config.getProperty("show_ipv6", "false"))
-        );
-
-        MaterialSwitch preferEnglishTitles = binding.preferEnglishValue;
-        preferEnglishTitles.setChecked(
-                Boolean.parseBoolean(config.getProperty("prefer_english", "true"))
+        binding.preferEnglishValue.setChecked(
+                config.getBooleanProperty("prefer_english", true)
         );
 
         binding.autoFavoriteValue.setChecked(
-                Boolean.parseBoolean(config.getProperty("auto_favorite", "false"))
+                config.getBooleanProperty("auto_favorite", false)
         );
 
         binding.themeValue.setText(
@@ -272,10 +259,17 @@ public class SettingsFragment extends Fragment {
         );
 
         binding.advancedSearch.setChecked(
-                Boolean.parseBoolean(config.getProperty("advanced_search", "false"))
+                config.getBooleanProperty("advanced_search", false)
+        );
+
+        // IPv6 stuff
+        MaterialSwitch ipv6Sources = binding.ipv6SorcesValue;
+        ipv6Sources.setChecked(
+                config.getBooleanProperty("show_ipv6", false)
         );
 
         ipv6Sources.setEnabled(false);
+
         Threading.submitTask(Threading.TASK.INSTANT, () -> {
             boolean ipv6Capable = Utils.isIPv6Capable();
             ipv6Sources.post(() -> setIPv6Capability(ipv6Capable));
@@ -284,14 +278,14 @@ public class SettingsFragment extends Fragment {
 
     private void setIPv6Capability(boolean isIpv6Capable) {
         if (!isIpv6Capable) {
-            Properties config = Data.getProperties(Data.CONFIGURATION.APP);
+            ExtendedProperties config = Data.getProperties(Data.CONFIGURATION.APP);
 
-            config.setProperty(
+            config.setBooleanProperty(
                     "show_ipv6",
-                    "false"
+                    false
             );
 
-            Data.saveProperties(Data.CONFIGURATION.APP);
+            config.save();
 
             try {
                 binding.textView5.setOnClickListener(

@@ -14,6 +14,7 @@ import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.models.base.AnimeBase;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,7 @@ import java.net.InetAddress;
 import java.time.LocalDate;
 import java.time.temporal.IsoFields;
 import java.util.Locale;
+import java.util.Random;
 
 
 public class Utils {
@@ -93,6 +95,27 @@ public class Utils {
         return new int[]{start, Math.min(start + perPage - 1, total)};
     }
 
+    public static void generateIrcUsername(ExtendedProperties appProperties) {
+        if (!appProperties.getFilename().equals("Kaizoyu.properties")) return;
+
+        String ircName = appProperties.getProperty("ircName");
+
+        // Name already exists
+        if (ircName != null && !ircName.equals("null")){
+            return;
+        }
+
+        String randomChars = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
+        StringBuilder randomString = new StringBuilder();
+        Random random = new Random();
+        while (randomString.length() < 7) {
+            int index = (int) (random.nextFloat() * randomChars.length());
+            randomString.append(randomChars.charAt(index));
+        }
+        appProperties.setProperty("ircName", "KaiZ" + randomString);
+        appProperties.save();
+    }
+
     public static void clearCache() {
         if (KaizoyuApplication.application == null) return;
 
@@ -102,8 +125,7 @@ public class Utils {
         }
 
         for(File file : files) {
-            //noinspection ResultOfMethodCallIgnored
-            file.delete();
+            if (!file.delete()) file.deleteOnExit();
         }
     }
 }

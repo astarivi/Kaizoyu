@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.utils.Data;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,14 +50,11 @@ public enum Theme {
     public static @NotNull Theme getCurrentTheme() {
         if (KaizoyuApplication.application == null) return HIGH_CONTRAST;
 
-        int currentTheme = Integer.parseInt(
-                Data.getProperties(
-                        Data.CONFIGURATION.APP
-                ).getProperty(
+        int currentTheme = Data.getProperties(Data.CONFIGURATION.APP)
+                .getIntProperty(
                         "app_theme",
-                        "0"
-                )
-        );
+                        0
+                );
 
         return Theme.values()[currentTheme];
     }
@@ -65,16 +63,9 @@ public enum Theme {
         //noinspection ResultOfMethodCallIgnored
         new File(context.getFilesDir(), "config/disabledcolor.bool").delete();
 
-        Data.getProperties(
-                Data.CONFIGURATION.APP
-        ).setProperty(
-                "app_theme",
-                String.valueOf(
-                        themeToApply.getId()
-                )
-        );
-
-        Data.saveProperties(Data.CONFIGURATION.APP);
+        ExtendedProperties appConfig = Data.getProperties(Data.CONFIGURATION.APP);
+        appConfig.setIntProperty("app_theme", themeToApply.getId());
+        appConfig.save();
 
         if (themeToApply != DYNAMIC_COLORS) {
             try {

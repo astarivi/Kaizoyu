@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.astarivi.kaizoyu.core.storage.PersistenceRepository;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.ActivityMainBinding;
@@ -20,7 +21,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.text.ParseException;
-import java.util.Properties;
 
 
 public class MainActivity extends AppCompatActivityTheme {
@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivityTheme {
                 return;
             }
 
-            Properties properties = Data.getProperties(Data.CONFIGURATION.APP);
-            String versionToSkip = properties.getProperty("skip_version", "false");
+            String versionToSkip = Data.getProperties(Data.CONFIGURATION.APP)
+                    .getProperty("skip_version", "false");
 
             if (latestUpdate == null || versionToSkip.equals(latestUpdate.version)) return;
 
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivityTheme {
                 UpdaterModalBottomSheet modalBottomSheet = new UpdaterModalBottomSheet(latestUpdate, (result, update) -> {
                     if (result == UpdaterModalBottomSheet.Result.SKIP) return;
 
-                    Properties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
+                    ExtendedProperties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
 
                     if (result == UpdaterModalBottomSheet.Result.UPDATE_NOW) {
                         appProperties.setProperty("skip_version", "false");
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivityTheme {
                         appProperties.setProperty("skip_version", update.version);
                     }
 
-                    Data.saveProperties(Data.CONFIGURATION.APP);
+                    appProperties.save();
                 });
 
                 modalBottomSheet.show(getSupportFragmentManager(), UpdaterModalBottomSheet.TAG);
