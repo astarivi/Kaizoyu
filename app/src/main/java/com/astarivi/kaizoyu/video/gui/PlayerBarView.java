@@ -60,6 +60,14 @@ public class PlayerBarView extends LinearLayout {
 
     // endregion
 
+    private void inflateView(Context context) {
+        binding = PlayerBarBinding.inflate(
+                LayoutInflater.from(context),
+                this,
+                true
+        );
+    }
+
     @Override
     public Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
@@ -93,20 +101,12 @@ public class PlayerBarView extends LinearLayout {
         return bundle.getParcelable(State.STATE);
     }
 
-    private void inflateView(Context context) {
-        binding = PlayerBarBinding.inflate(
-                LayoutInflater.from(context),
-                this,
-                true
-        );
-    }
-
     @NotNull
     private String verboseMillisecondsToDuration(long duration) {
         if (duration < 0) return "??:??:??";
 
 
-        long seconds = (duration / 1000) % 60 ;
+        long seconds = (duration / 1000) % 60;
         long minutes = (duration / (1000*60)) % 60;
         long hours = (duration / (1000*60*60)) % 24;
 

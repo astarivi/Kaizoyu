@@ -3,13 +3,10 @@ package com.astarivi.kaizoyu.video.gui;
 import android.content.Context;
 import android.net.Uri;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.astarivi.kaizoyu.databinding.PlayerBinding;
@@ -131,36 +128,12 @@ public class PlayerView extends LinearLayout {
         mediaPlayer = null;
     }
 
-    public static class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener {
-        private final PlayerBinding binding;
+    public void showPlayerBar() {
+        binding.playerBar.show();
+    }
 
-        public PlayerGestureListener (PlayerBinding binding) {
-            this.binding = binding;
-        }
-        @Override
-        public boolean onSingleTapConfirmed(@NonNull MotionEvent event) {
-            binding.playerBar.show();
-
-            return super.onSingleTapConfirmed(event);
-        }
-
-        @Override
-        public boolean onDoubleTap(@NonNull MotionEvent event) {
-
-            int eventX = (int)event.getX();
-            int eventY = (int)event.getY();
-            int height = binding.getRoot().getHeight();
-            int width = binding.getRoot().getWidth();
-            int halfWidth = width / 2;
-
-            if (eventX > halfWidth) {
-                binding.skipManager.skipAhead();
-            } else {
-                binding.skipManager.skipBack();
-            }
-
-            return super.onDoubleTap(event);
-        }
+    public PlayerSkipView getSkipManager() {
+        return binding.skipManager;
     }
 
     public interface PlayerEventListener {

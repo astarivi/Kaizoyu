@@ -23,16 +23,14 @@ public class ExtendedProperties extends Properties {
 
         localFile = new File(context.getFilesDir(), subFolder + filename);
         if (!localFile.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            localFile.mkdirs();
+            ensureDirectory();
             return;
         }
 
         try (FileInputStream fileInputStream = new FileInputStream(localFile)){
             this.load(fileInputStream);
         } catch(FileNotFoundException e) {
-            //noinspection ResultOfMethodCallIgnored
-            localFile.mkdirs();
+            ensureDirectory();
         } catch(IllegalArgumentException | IOException e) {
             Logger.debug(e);
             if (!localFile.delete()) localFile.deleteOnExit();
@@ -41,8 +39,7 @@ public class ExtendedProperties extends Properties {
     }
 
     public synchronized void save(){
-        //noinspection ResultOfMethodCallIgnored
-        localFile.mkdirs();
+        ensureDirectory();
 
         try (FileOutputStream fileOutput = new FileOutputStream(localFile)){
             this.store(fileOutput, filename);
@@ -101,6 +98,15 @@ public class ExtendedProperties extends Properties {
             return false;
         } else {
             throw new IllegalArgumentException("Value cannot be converted to boolean");
+        }
+    }
+
+    private void ensureDirectory() {
+        try {
+            //noinspection ResultOfMethodCallIgnored
+            Objects.requireNonNull(localFile.getParentFile()).mkdirs();
+        } catch(NullPointerException ignored) {
+
         }
     }
 }

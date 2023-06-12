@@ -4,9 +4,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.WindowCompat;
@@ -19,7 +21,7 @@ import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.Result;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.databinding.ActivityVideoPlayerBinding;
-import com.astarivi.kaizoyu.video.gui.PlayerView;
+import com.astarivi.kaizoyu.video.gui.PlayerSkipView;
 import com.astarivi.kaizoyu.video.utils.AnimeEpisodeManager;
 import com.astarivi.kaizoyu.video.utils.BundleUtils;
 import com.google.android.material.snackbar.Snackbar;
@@ -78,7 +80,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
         // Everything else
         binding.downloadStatus.setText(getResources().getString(R.string.executing_irc_handshake));
-        gestureDetector = new GestureDetectorCompat(this, new PlayerView.PlayerGestureListener(binding.mainPlayer.getBinding()));
+        gestureDetector = new GestureDetectorCompat(this, new PlayerGestureListener());
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
         binding.mainPlayer.initialize(
@@ -169,8 +171,6 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         viewModel.getDownloadFile().observe(this, file -> {
             if (isDestroyed()) return;
 
-            isPlaying = true;
-
             if (spark != null) spark.stopAnimation();
             binding.getRoot().setBackgroundColor(Color.BLACK);
             binding.initialDownloadProgress.setVisibility(View.GONE);
@@ -179,6 +179,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
             binding.mainPlayer.play(file);
             binding.mainPlayer.setVisibility(View.VISIBLE);
+            isPlaying = true;
         });
 
         viewModel.startDownload(this, result);
@@ -247,10 +248,56 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     private void hideSystemUI(){
         WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
         windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
+
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE
+                        // Set the content to appear under the system bars so that the
+                        // content doesn't resize when the system bars hide and show.
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        // Hide the nav bar and status bar
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
     private void delayedExit(){
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(this::finish, 5000);
+    }
+
+    public class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onSingleTapConfirmed(@NonNull MotionEvent event) {
+            if (!isPlaying) return true;
+            binding.mainPlayer.showPlayerBar();
+
+            return super.onSingleTapConfirmed(event);
+        }
+
+        @Override
+        public boolean onDoubleTap(@NonNull MotionEvent event) {
+            if (!isPlaying) return true;
+
+            PlayerSkipView skipView = binding.mainPlayer.getSkipManager();
+
+            if (skipView == null) return true;
+
+            int eventX = (int)event.getX();
+            int eventY = (int)event.getY();
+            int height = binding.getRoot().getHeight();
+            int width = binding.getRoot().getWidth();
+            int halfWidth = width / 2;
+
+            if (eventX > halfWidth) {
+                skipView.skipAhead();
+            } else {
+                skipView.skipBack();
+            }
+
+            return super.onDoubleTap(event);
+        }
     }
 }
