@@ -64,7 +64,7 @@ public class ScheduleFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         if (
-                Data.getProperties(Data.CONFIGURATION.APP)
+                !Data.getProperties(Data.CONFIGURATION.APP)
                         .getBooleanProperty("schedule_reminder", true)
         ) {
             binding.episodeCardButton.setVisibility(View.GONE);

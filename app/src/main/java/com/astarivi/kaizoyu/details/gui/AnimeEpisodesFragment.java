@@ -75,7 +75,7 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
         final boolean scheduleReminder = Data.getProperties(Data.CONFIGURATION.APP)
                 .getBooleanProperty("episodes_reminder", true);
 
-        if (scheduleReminder) {
+        if (!scheduleReminder) {
             binding.episodeCardButton.setVisibility(View.GONE);
         }
 
