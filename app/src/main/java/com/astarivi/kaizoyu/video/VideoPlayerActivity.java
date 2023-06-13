@@ -1,12 +1,14 @@
 package com.astarivi.kaizoyu.video;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -81,13 +83,36 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         // Everything else
         binding.downloadStatus.setText(getResources().getString(R.string.executing_irc_handshake));
         gestureDetector = new GestureDetectorCompat(this, new PlayerGestureListener());
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
         binding.mainPlayer.initialize(
                 animeEpisodeManager != null ? animeEpisodeManager.getAnimeTitle() : result.getCleanedFilename(),
                 animeEpisodeManager != null ? animeEpisodeManager.getEpisodeTitle(this) : getString(R.string.advanced_mode_title),
                 this::finish
         );
+
+        // Fullscreen setup
+
+        // Draw behind screen cutout
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+            final WindowManager.LayoutParams wManager = getWindow().getAttributes();
+            wManager.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+
+        // Draw behind system bars (edge to edge)
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false); // This doesn't seem to do the trick by itself
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        );
+
+        // Show system bars only when swiping down, and hide them again automatically
+        WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        windowInsetsController.setSystemBarsBehavior(
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        );
+
+        // Actually hide the goddamn bars.
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
 
         spark = new Spark.Builder()
                 .setView(binding.getRoot())
@@ -246,20 +271,19 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     }
 
     private void hideSystemUI(){
-        WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
-
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+//            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
+//        } else {
+//            getWindow().getDecorView().setSystemUiVisibility(
+//                    View.SYSTEM_UI_FLAG_FULLSCREEN
+//                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                            | View.SYSTEM_UI_FLAG_IMMERSIVE
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//            );
+//        }
     }
 
     private void delayedExit(){
