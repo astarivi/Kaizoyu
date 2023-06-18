@@ -66,6 +66,7 @@
             android:paddingRight="8dp"
             android:showDividers="middle"
             android:divider="@drawable/empty_divider"
+            android:paddingBottom="10dp"
         >
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
