@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -18,6 +16,7 @@ import androidx.annotation.Nullable;
 
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.databinding.PlayerBarBinding;
+import com.astarivi.kaizoyu.utils.Threading;
 
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
@@ -25,16 +24,17 @@ import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.interfaces.IMedia;
 
 import java.util.Locale;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 
 public class PlayerBarView extends LinearLayout {
     private MediaPlayer mediaPlayer;
     private LinearLayout playerInfoView;
     private PlayerBarBinding binding;
-    private boolean isShowingBar = false;
     private boolean isInteractive = false;
     private View darkOverlay;
-    private long pendingSkip;
+    private ScheduledFuture<?> showFuture;
 
     // region Constructors
 
@@ -146,7 +146,6 @@ public class PlayerBarView extends LinearLayout {
     }
 
     public void setDownloadSpeed(String speed) {
-        if (!isShowingBar) return;
         binding.downloadSpeedMeter.setText(speed);
     }
 
@@ -290,9 +289,9 @@ public class PlayerBarView extends LinearLayout {
             }
         });
 
-        // TODO Fix hide bar button not working correctly.
         binding.hideBar.setOnClickListener(v -> {
             isInteractive = false;
+            if (showFuture != null && !showFuture.isDone()) showFuture.cancel(false);
             this.hide();
         });
 
@@ -316,32 +315,43 @@ public class PlayerBarView extends LinearLayout {
     public void terminate() {
         if (mediaPlayer != null) mediaPlayer.setEventListener(null);
         mediaPlayer = null;
+        if (showFuture != null && !showFuture.isDone()) showFuture.cancel(true);
     }
 
     public void show() {
-        if (isShowingBar) return;
+        if (showFuture != null && !showFuture.isDone()) return;
 
         this.setVisibility(VISIBLE);
         playerInfoView.setVisibility(VISIBLE);
         darkOverlay.setVisibility(VISIBLE);
+        scheduleShow();
+    }
 
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(this::hide, 4000);
-        isShowingBar = true;
+    private void scheduleShow() {
+        showFuture = Threading.submitScheduledTask(this::hide, 4, TimeUnit.SECONDS);
     }
 
     public void hide() {
-        isShowingBar = false;
-
         if (isInteractive) {
             isInteractive = false;
-            this.show();
+            scheduleShow();
             return;
         }
 
-        this.setVisibility(INVISIBLE);
-        darkOverlay.setVisibility(INVISIBLE);
-        playerInfoView.setVisibility(INVISIBLE);
+        // If view is detached.
+        try {
+            binding.getRoot().post(() -> {
+                // Very stupid try block inside try block, but not actually because they're not in
+                // the same thread. Still as stupid, though.
+                try {
+                    this.setVisibility(INVISIBLE);
+                    darkOverlay.setVisibility(INVISIBLE);
+                    playerInfoView.setVisibility(INVISIBLE);
+                } catch (Exception ignored) {
+                }
+            });
+        } catch (Exception ignored) {
+        }
     }
 
     public void setSubtitlesOnClickListener(OnClickListener listener) {

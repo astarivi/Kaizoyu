@@ -8,6 +8,8 @@ import com.astarivi.kaizoyu.core.threading.ThreadingAssistant;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 
 public class Threading {
@@ -25,7 +27,12 @@ public class Threading {
         }
     }
 
+    public static ScheduledFuture<?> submitScheduledTask(@NotNull Runnable task, long delay, @NotNull TimeUnit timeUnit) {
+        return ThreadingAssistant.getInstance().scheduleToPlayerThread(task, delay, timeUnit);
+    }
+
     public enum TASK {
         DATABASE, INSTANT
     }
+
 }

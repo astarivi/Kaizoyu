@@ -73,7 +73,7 @@ dependencies {
 
     // External libraries (third party)
     implementation 'io.github.tonnyl:spark:0.1.0-alpha'
-    implementation 'org.videolan.android:libvlc-all:4.0.0-eap6'
+    implementation 'org.videolan.android:libvlc-all:4.0.0-eap11'
     implementation 'com.airbnb.android:lottie:6.0.0'
     implementation 'com.github.bumptech.glide:glide:4.15.1'
     implementation 'com.github.bumptech.glide:recyclerview-integration:4.15.1'

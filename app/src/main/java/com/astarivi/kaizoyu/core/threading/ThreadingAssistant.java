@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 
@@ -12,6 +14,7 @@ public class ThreadingAssistant {
     private static volatile ThreadingAssistant instance = null;
     private final ExecutorService databaseThread = Executors.newSingleThreadExecutor();
     private final ExecutorService instantThread = Executors.newCachedThreadPool();
+    private final ScheduledExecutorService scheduledThread = Executors.newSingleThreadScheduledExecutor();
 
     private ThreadingAssistant() {
         if (instance != null) {
@@ -36,14 +39,20 @@ public class ThreadingAssistant {
         return databaseThread.submit(task);
     }
 
+    public ScheduledFuture<?> scheduleToPlayerThread(Runnable task, long delay, TimeUnit timeUnit) {
+        return scheduledThread.schedule(task, delay, timeUnit);
+    }
+
     @Override
     protected void finalize() throws Throwable {
         //noinspection CaughtExceptionImmediatelyRethrown
         try {
             databaseThread.shutdown();
             instantThread.shutdownNow();
+            scheduledThread.shutdownNow();
             instantThread.awaitTermination(2, TimeUnit.SECONDS);
             databaseThread.awaitTermination(40, TimeUnit.SECONDS);
+            scheduledThread.awaitTermination(2, TimeUnit.SECONDS);
         } catch (Throwable th) {
             throw th;
         } finally {
