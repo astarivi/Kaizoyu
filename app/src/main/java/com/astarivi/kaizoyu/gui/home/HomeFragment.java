@@ -11,14 +11,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.astarivi.kaizolib.kitsu.KitsuSearchParams;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.databinding.FragmentHomeBinding;
-import com.astarivi.kaizoyu.databinding.FragmentHomeItemBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
 import com.astarivi.kaizoyu.fullsearch.FullSearchActivity;
+import com.astarivi.kaizoyu.gui.home.recycler.HomeMainRecyclerAdapter;
 import com.astarivi.kaizoyu.gui.home.recycler.HomeRecyclerAdapter;
 import com.astarivi.kaizoyu.search.SearchActivity;
 import com.astarivi.kaizoyu.utils.Data;
@@ -95,78 +96,17 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         };
 
-        initializeAll();
-    }
+        RecyclerView recyclerView = binding.itemsLayout;
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setHasFixedSize(false);
 
-    @Override
-    public void setMenuVisibility(boolean menuVisible) {
-        super.setMenuVisibility(menuVisible);
-    }
+        HomeMainRecyclerAdapter adapter = new HomeMainRecyclerAdapter(requireContext(), listener);
 
-    private void initializeAll() {
-        inflateItemBinding(
-                getResources().getString(R.string.popular_anime),
-                new KitsuSearchParams().
-                        setLimit(
-                                15
-                        ).
-                        setCustomParameter(
-                                "sort",
-                                "popularityRank"
-                        )
-        );
+        recyclerView.setAdapter(adapter);
 
-        inflateItemBinding(
-                getResources().getString(R.string.home_beloved),
-                new KitsuSearchParams().
-                        setLimit(
-                                15
-                        ).
-                        setCustomParameter(
-                                "sort",
-                                "popularityRank"
-                        ).
-                        setCustomParameter(
-                                "sort",
-                                "-favoritesCount"
-                        )
-        );
+        viewModel.getContainers().observe(getViewLifecycleOwner(), adapter::replaceData);
 
-        inflateItemBinding(
-                getResources().getString(R.string.home_seinen),
-                new KitsuSearchParams().
-                        setLimit(
-                                15
-                        ).
-                        setCustomParameter(
-                                "filter[categories]",
-                                "seinen"
-                        ).
-                        setCustomParameter(
-                                "sort",
-                                "popularityRank"
-                        ).
-                        setCustomParameter(
-                                "sort",
-                                "-favoritesCount"
-                        )
-        );
-    }
-
-    private void inflateItemBinding(String title, KitsuSearchParams params) {
-        FragmentHomeItemBinding homeItemBinding = FragmentHomeItemBinding.inflate(
-                getLayoutInflater(),
-                binding.itemsLayout,
-                false
-        );
-
-        homeItemBinding.homeItemsTitle.setText(title);
-
-        viewModel.initializeItem(
-                homeItemBinding,
-                binding,
-                params,
-                listener
-        );
+        viewModel.reloadHome(binding);
     }
 }

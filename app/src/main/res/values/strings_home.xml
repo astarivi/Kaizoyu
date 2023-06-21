@@ -4,6 +4,10 @@
     <string name="popular_anime">All-time popular</string>
     <string name="home_beloved">Beloved and popular</string>
     <string name="home_seinen">Best for mature audiences</string>
+    <string name="popular_airing">Most popular currently airing</string>
+    <string name="popular_upcoming">Most anticipated</string>
     <string name="top_old_anime">Old but gold</string>
-    <string name="trash_anime">Trash taste</string>
+    <string name="trash_anime">Dumpster fire</string>
+    <string name="shoujo_anime">Best for feminine audiences</string>
+    <string name="shounen_anime">Best for young audiences</string>
 </resources>
