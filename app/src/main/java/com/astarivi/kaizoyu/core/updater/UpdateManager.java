@@ -30,8 +30,8 @@ import okhttp3.HttpUrl;
 
 public class UpdateManager {
     // TODO Change this for every release, doh.
-    public static String VERSION = "0.3";
-    public static String VERSION_NAME = "fool";
+    public static String VERSION = "0.4";
+    public static String VERSION_NAME = "magician";
 
     @ThreadedOnly
     public @Nullable LatestUpdate getLatestUpdate() throws ParseException {
