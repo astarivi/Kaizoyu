@@ -17,6 +17,7 @@ import com.astarivi.kaizolib.xdcc.base.XDCCFailure;
 import com.astarivi.kaizolib.xdcc.model.DCC;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.Result;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 
@@ -29,7 +30,7 @@ public class VideoPlayerViewModel extends ViewModel {
     private final MutableLiveData<Pair<Integer, String>> progress = new MutableLiveData<>();
     private final MutableLiveData<BaseIrcClient.FailureCode> ircFailure = new MutableLiveData<>();
     private final MutableLiveData<XDCCFailure> xdccFailure = new MutableLiveData<>();
-    private Future downloadFuture;
+    private Future<?> downloadFuture;
     private boolean hasStartedDownload = false;
 
     public MutableLiveData<File> getDownloadFile() {
@@ -51,14 +52,20 @@ public class VideoPlayerViewModel extends ViewModel {
     public void startDownload(Context context, Result result) {
         if (hasStartedDownload) return;
 
-        final String username = Data.getProperties(
-                Data.CONFIGURATION.APP
-        ).getProperty(
-                "ircName"
-        );
-
         downloadFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            IrcManager irc = new IrcManager(result.getXDCCCommand(), username, true, false);
+            ExtendedProperties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
+
+            final boolean alwaysTls = appProperties.getBooleanProperty(
+                    "strict_mode",
+                    false
+            );
+
+            final String username = appProperties.getProperty(
+                    "ircName"
+            );
+
+            IrcManager irc = new IrcManager(result.getXDCCCommand(), username, true, alwaysTls);
+
             irc.setIrcOnFailureListener(ircFailure::postValue);
             hasStartedDownload = true;
             DCC dcc = irc.execute();
