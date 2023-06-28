@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +59,14 @@ public class SettingsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View root, Bundle savedState) {
+        binding.updateSettingDescription.setText(
+                String.format(getString(R.string.updatecheck_description), UpdateManager.VERSION)
+        );
+
+        binding.discordServer.setOnClickListener(v ->
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/Yy6BphADFc")))
+        );
+
         loadSettings();
 
         // Set click listeners
@@ -74,6 +83,7 @@ public class SettingsFragment extends Fragment {
 
         binding.autoFavoriteValue.setOnCheckedChangeListener(this::triggerSave);
         binding.advancedSearch.setOnCheckedChangeListener(this::triggerSave);
+        binding.strictModeValue.setOnCheckedChangeListener(this::triggerSave);
 
         binding.openLicensesActivity.setOnClickListener(view -> {
             if (getActivity() == null) return;
@@ -222,6 +232,11 @@ public class SettingsFragment extends Fragment {
                 binding.advancedSearch.isChecked()
         );
 
+        config.setBooleanProperty(
+                "strict_mode",
+                binding.strictModeValue.isChecked()
+        );
+
         config.save();
 
         Data.reloadProperties();
@@ -244,6 +259,10 @@ public class SettingsFragment extends Fragment {
         // Switches
         binding.analyticsValue.setChecked(
                 config.getBooleanProperty("analytics", true)
+        );
+
+        binding.strictModeValue.setChecked(
+                config.getBooleanProperty("strict_mode", false)
         );
 
         binding.preferEnglishValue.setChecked(
