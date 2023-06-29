@@ -72,7 +72,9 @@ public class VideoPlayerViewModel extends ViewModel {
             try {
                 dcc = irc.execute();
             } catch (Exception e) {
-                ircFailure.postValue(IrcExceptionManager.getFailureCode(e));
+                IrcExceptionManager.FailureCode failureCode = IrcExceptionManager.getFailureCode(e);
+                AnalyticsClient.onError("handshake_error", failureCode.name(), e);
+                ircFailure.postValue(failureCode);
                 return;
             }
 

@@ -50,6 +50,7 @@ public class PersistenceRepository {
         );
 
         repositoryDirectory = new RepositoryDirectory(database);
+        AnalyticsClient.isEnabled = appConfiguration.getBooleanProperty("analytics", true);
     }
 
     public static @NotNull PersistenceRepository getInstance() {

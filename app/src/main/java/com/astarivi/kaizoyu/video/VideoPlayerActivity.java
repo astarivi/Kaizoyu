@@ -125,14 +125,20 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             String message;
 
             switch (failureCode) {
-                case NoQuickRetry:
-                    message = "You have been rate-limited by the server. Please wait some minutes.";
-                    break;
                 case TimeOut:
                     message = "Connection to IRC has timed out. Check your internet connection and retry later.";
                     break;
+                case NoQuickRetry:
+                    message = "You have been rate-limited by the server. Please wait some minutes.";
+                    break;
                 case StrictModeFailure:
                     message = "Strict mode has stopped this connection to protect your privacy.";
+                    break;
+                case BlacklistedIp:
+                    message = "Your IP seems to have been blacklisted. Try disabling/changing your VPN.";
+                    break;
+                case GenericHandshakeError:
+                    message = "The server has declined your handshake. Is your connection private?";
                     break;
                 default:
                     message = "There was a general I/O exception. Check your internet connection, and/or app permissions.";
