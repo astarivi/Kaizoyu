@@ -9,8 +9,8 @@ import android.util.Pair;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.astarivi.kaizolib.irc.IrcManager;
-import com.astarivi.kaizolib.irc.client.BaseIrcClient;
+import com.astarivi.kaizolib.irc.IrcClient;
+import com.astarivi.kaizolib.irc.exception.IrcExceptionManager;
 import com.astarivi.kaizolib.xdcc.XDCCDownloader;
 import com.astarivi.kaizolib.xdcc.base.XDCCDownloadListener;
 import com.astarivi.kaizolib.xdcc.base.XDCCFailure;
@@ -28,7 +28,7 @@ import java.util.concurrent.Future;
 public class VideoPlayerViewModel extends ViewModel {
     private final MutableLiveData<File> downloadFile = new MutableLiveData<>();
     private final MutableLiveData<Pair<Integer, String>> progress = new MutableLiveData<>();
-    private final MutableLiveData<BaseIrcClient.FailureCode> ircFailure = new MutableLiveData<>();
+    private final MutableLiveData<IrcExceptionManager.FailureCode> ircFailure = new MutableLiveData<>();
     private final MutableLiveData<XDCCFailure> xdccFailure = new MutableLiveData<>();
     private Future<?> downloadFuture;
     private boolean hasStartedDownload = false;
@@ -41,7 +41,7 @@ public class VideoPlayerViewModel extends ViewModel {
         return progress;
     }
 
-    public MutableLiveData<BaseIrcClient.FailureCode> getIrcFailure() {
+    public MutableLiveData<IrcExceptionManager.FailureCode> getIrcFailure() {
         return ircFailure;
     }
 
@@ -64,11 +64,17 @@ public class VideoPlayerViewModel extends ViewModel {
                     "ircName"
             );
 
-            IrcManager irc = new IrcManager(result.getXDCCCommand(), username, true, alwaysTls);
+            IrcClient irc = new IrcClient(result.getXDCCCommand(), username, true, alwaysTls);
 
-            irc.setIrcOnFailureListener(ircFailure::postValue);
             hasStartedDownload = true;
-            DCC dcc = irc.execute();
+
+            DCC dcc;
+            try {
+                dcc = irc.execute();
+            } catch (Exception e) {
+                ircFailure.postValue(IrcExceptionManager.getFailureCode(e));
+                return;
+            }
 
             if (context instanceof Activity) {
                 Activity activity = (Activity) context;
