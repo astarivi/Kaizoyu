@@ -8,6 +8,5 @@ Java API for the Kaizoyu! app.
 - Nibl search API
 - Kitsu search API
 - Common model shared between modules
-- Threadsafe
 - Android compatible
 - XDCC IPv6 Support
