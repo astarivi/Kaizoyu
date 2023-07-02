@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.gui.settings;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.astarivi.kaizoyu.R;
@@ -31,6 +33,7 @@ import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
+import java.io.File;
 import java.text.ParseException;
 
 
@@ -57,6 +60,7 @@ public class SettingsFragment extends Fragment {
     }
     // endregion
 
+    @SuppressLint("NewApi")
     @Override
     public void onViewCreated(@NonNull View root, Bundle savedState) {
         binding.updateSettingDescription.setText(
@@ -66,6 +70,26 @@ public class SettingsFragment extends Fragment {
         binding.discordServer.setOnClickListener(v ->
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/Yy6BphADFc")))
         );
+
+        binding.openLogs.setOnClickListener(v -> {
+
+            File logFile = new File (requireActivity().getFilesDir(), "log.txt");
+
+            if (!logFile.exists()) return;
+
+            startActivity(
+                    Intent.createChooser(
+                        new Intent(Intent.ACTION_SEND)
+                                .putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                                        requireContext(),
+                                        "com.astarivi.kaizoyu.fileprovider",
+                                        logFile
+                                ))
+                                .setType("text/plain"),
+                        "Share logs"
+                    )
+            );
+        });
 
         loadSettings();
 

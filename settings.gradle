@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':service'
 rootProject.name = "Kaizoyu!"

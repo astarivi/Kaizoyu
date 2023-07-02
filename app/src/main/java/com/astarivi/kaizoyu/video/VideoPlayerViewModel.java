@@ -21,6 +21,8 @@ import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 
+import org.tinylog.Logger;
+
 import java.io.File;
 import java.util.concurrent.Future;
 
@@ -51,7 +53,8 @@ public class VideoPlayerViewModel extends ViewModel {
 
     public void startDownload(Context context, Result result) {
         if (hasStartedDownload) return;
-
+        Logger.info("About to start download of following file:");
+        Logger.info(result);
         downloadFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
             ExtendedProperties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
 
@@ -64,26 +67,38 @@ public class VideoPlayerViewModel extends ViewModel {
                     "ircName"
             );
 
+            Logger.info("Download properties set.");
+
             IrcClient irc = new IrcClient(result.getXDCCCommand(), username, true, alwaysTls);
 
+            Logger.info("IrcClient created.");
             hasStartedDownload = true;
 
             DCC dcc;
             try {
+                Logger.info("Executing DCC.");
                 dcc = irc.execute();
             } catch (Exception e) {
                 IrcExceptionManager.FailureCode failureCode = IrcExceptionManager.getFailureCode(e);
                 AnalyticsClient.onError("handshake_error", failureCode.name(), e);
                 ircFailure.postValue(failureCode);
+
+                Logger.error("IRC Failure.");
+                Logger.error(e);
                 return;
             }
+
+            Logger.info("Executed DCC.");
 
             if (context instanceof Activity) {
                 Activity activity = (Activity) context;
                 if (activity.isFinishing() || activity.isDestroyed()) {
+                    Logger.error("Parent activity has died, falling back...");
                     return;
                 }
             }
+
+            Logger.info("Starting XDCC download.");
 
             XDCCDownloader xdccDownloader = new XDCCDownloader(
                     dcc,
@@ -114,6 +129,7 @@ public class VideoPlayerViewModel extends ViewModel {
                 }
             });
 
+            Logger.info("Starting download.");
             xdccDownloader.start();
         });
     }
@@ -125,6 +141,7 @@ public class VideoPlayerViewModel extends ViewModel {
     }
 
     public void destroy(){
+        Logger.info("Destroying ViewModel from player.");
         if (downloadFuture != null) {
             downloadFuture.cancel(true);
         }

@@ -28,6 +28,7 @@ import com.astarivi.kaizoyu.video.utils.AnimeEpisodeManager;
 import com.astarivi.kaizoyu.video.utils.BundleUtils;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.tinylog.Logger;
 import org.videolan.libvlc.MediaPlayer;
 
 import io.github.tonnyl.spark.Spark;
@@ -72,6 +73,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             }
         }
 
+        Logger.info("Bundle decoded");
         // Hide stuff
         binding.mainPlayer.setVisibility(View.INVISIBLE);
 
@@ -89,7 +91,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                 animeEpisodeManager != null ? animeEpisodeManager.getEpisodeTitle(this) : getString(R.string.advanced_mode_title),
                 this::finish
         );
-
+        Logger.info("Initialized main player");
         // Fullscreen setup
 
         // Draw behind screen cutout
@@ -114,6 +116,8 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         // Actually hide the goddamn bars.
         windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
 
+        Logger.info("System bars hidden.");
+
         spark = new Spark.Builder()
                 .setView(binding.getRoot())
                 .setDuration(4000)
@@ -122,6 +126,8 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
         // Handle errors
         viewModel.getIrcFailure().observe(this, failureCode -> {
+            if (failureCode == null) return;
+
             String message;
 
             switch (failureCode) {
@@ -140,6 +146,9 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                 case GenericHandshakeError:
                     message = "The server has declined your handshake. Is your connection private?";
                     break;
+                case BotNotFound:
+                    message = "The option you selected is currently offline. Please try another one.";
+                    break;
                 default:
                     message = "There was a general I/O exception. Check your internet connection, and/or app permissions.";
                     break;
@@ -157,6 +166,8 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         });
 
         viewModel.getXdccFailure().observe(this, xdccFailure -> {
+            if (xdccFailure == null) return;
+
             String message;
 
             switch (xdccFailure) {
@@ -171,6 +182,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                     message = "Couldn't find the remote host, please try another bot.";
                     delayedExit();
                     break;
+
                 default:
                     message = "There was a general I/O exception. Check your internet connection, and/or app permissions.";
                     delayedExit();
@@ -186,8 +198,12 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             ).show();
         });
 
+        Logger.info("XDCC failure observer set.");
+
         // Handle state
         viewModel.getProgress().observe(this, progressSpeedPair -> {
+            if (progressSpeedPair == null) return;
+
             if (isPlaying){
                 binding.mainPlayer.setCacheProgress(progressSpeedPair.first);
                 binding.mainPlayer.setDownloadSpeed(progressSpeedPair.second);
@@ -199,7 +215,14 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             binding.downloadStatus.setText(getResources().getString(R.string.downloading_buffer));
         });
 
+        Logger.info("Progress observer set.");
+
         viewModel.getDownloadFile().observe(this, file -> {
+            if (file == null) {
+                finish();
+                return;
+            }
+
             if (isDestroyed()) return;
 
             if (spark != null) spark.stopAnimation();
@@ -213,7 +236,12 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             isPlaying = true;
         });
 
+        Logger.info("Download file observer set.");
+
+        Logger.info("Observers set.");
+
         viewModel.startDownload(this, result);
+        Logger.info("Download started, now it's all up to the ViewModel.");
     }
 
     @Override
@@ -311,5 +339,12 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
             return super.onDoubleTap(event);
         }
+    }
+
+    @Override
+    public void finish() {
+        if (viewModel != null) viewModel.destroy();
+
+        super.finish();
     }
 }
