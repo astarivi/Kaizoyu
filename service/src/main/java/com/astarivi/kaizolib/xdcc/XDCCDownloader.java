@@ -73,6 +73,7 @@ public class XDCCDownloader {
             return;
         }
 
+        //noinspection IOStreamConstructor
         try(
                 Socket socket = new Socket(address, dcc.getPort());
                 DataInputStream inputStream = new DataInputStream(
@@ -88,7 +89,6 @@ public class XDCCDownloader {
             Logger.info("Automated Buffer size: " + socket.getReceiveBufferSize());
             Logger.info("Actual Buffer size: 8192 (Hardcoded)");
             socket.setTcpNoDelay(true);
-            socket.setReceiveBufferSize(8192);
 
             byte[] buffer = new byte[8192];
 
@@ -171,7 +171,7 @@ public class XDCCDownloader {
 
             if (!stop && downloadEventListener != null) downloadEventListener.onFinished(downloadFile);
         } catch (SocketException e) {
-            // Temporary fix for dumb old TCC behavior
+            // Temporary fix for dumb old DCC behavior
             if (progress == 99) {
                 progress = 100;
                 if (!stop && downloadEventListener != null) downloadEventListener.onFinished(downloadFile);

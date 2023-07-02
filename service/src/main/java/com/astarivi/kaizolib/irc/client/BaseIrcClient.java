@@ -11,6 +11,7 @@ import org.tinylog.Logger;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.TimeoutException;
 
@@ -68,13 +69,6 @@ public class BaseIrcClient {
                     return parseResponse(serverMessage);
                 }
 
-                if (retryRan) {
-                    final String message = "Retry has been attempted, but the bot doesn't support quick-retry";
-
-                    Logger.warn(message);
-                    throw new NoQuickRetryException(message);
-                }
-
                 // If the pack has already been requested from the bot, cancel and retry.
                 if (serverMessage.contains("You already requested that pack")
                         || serverMessage.contains("You have a DCC pending")){
@@ -87,6 +81,13 @@ public class BaseIrcClient {
                     write("PRIVMSG", packCommand);
                     retryRan = true;
                 }
+            }
+
+            if (retryRan) {
+                final String m = "Retry has been attempted, but the bot doesn't support quick-retry";
+
+                Logger.warn(m);
+                throw new NoQuickRetryException(m);
             }
 
             final String message = "The IRC connection didn't respond in time, or didn't respond at all to the request.";
@@ -185,11 +186,14 @@ public class BaseIrcClient {
         if (!isIPv6) {
             try {
                 long ip = Long.parseLong(msg[msg.length - 3]);
-                ipAddress = String.format("%d.%d.%d.%d",
+                ipAddress = String.format(
+                        Locale.UK,
+                        "%d.%d.%d.%d",
                         (ip >> 24 & 0xff),
                         (ip >> 16 & 0xff),
                         (ip >> 8 & 0xff),
-                        (ip & 0xff));
+                        (ip & 0xff)
+                );
             } catch(NumberFormatException e) {
                 ipAddress = msg[msg.length - 3];
             }
