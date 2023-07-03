@@ -56,16 +56,25 @@ public class AnimeInfoFragment extends Fragment {
         if (titles.en != null) {
             binding.titleUs.setVisibility(View.VISIBLE);
             binding.animeTitleUs.setText(titles.en);
+            binding.titleUs.setOnLongClickListener(v ->
+                    Utils.copyToClipboard(getActivity(), "Anime title", titles.en)
+            );
         }
 
         if (titles.en_jp != null) {
             binding.titleEnJp.setVisibility(View.VISIBLE);
             binding.animeTitleEnjp.setText(titles.en_jp);
+            binding.titleEnJp.setOnLongClickListener(v ->
+                    Utils.copyToClipboard(getActivity(), "Anime title", titles.en_jp)
+            );
         }
 
         if (titles.ja_jp != null) {
             binding.titleJp.setVisibility(View.VISIBLE);
             binding.animeTitleJp.setText(titles.ja_jp);
+            binding.titleJp.setOnLongClickListener(v ->
+                    Utils.copyToClipboard(getActivity(), "Anime title", titles.ja_jp)
+            );
         }
     }
 

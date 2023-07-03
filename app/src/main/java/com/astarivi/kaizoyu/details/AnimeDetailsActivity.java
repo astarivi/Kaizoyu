@@ -211,6 +211,9 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         configureTabAdapter(tabLayout);
 
         binding.animeTitle.setText(anime.getDisplayTitle());
+        binding.animeTitle.setOnLongClickListener(v ->
+                Utils.copyToClipboard(this, "Anime title", anime.getDisplayTitle())
+        );
 
         // Favorite Button
 

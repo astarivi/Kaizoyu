@@ -1,5 +1,8 @@
 package com.astarivi.kaizoyu.utils;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
@@ -29,6 +32,19 @@ import java.util.Random;
 
 
 public class Utils {
+
+    public static boolean copyToClipboard(Context context, String label, String content) {
+        try {
+            ClipData clip = ClipData.newPlainText(label, content);
+            ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
+        } catch(Exception ignored) {
+            // Shit happens ig
+            return false;
+        }
+
+        return true;
+    }
+
     // Only accepts ISO-8601 date strings ("2023-03-10")
     @NotNull
     public static String getDateAsQuarters(@NotNull String dateString) {
