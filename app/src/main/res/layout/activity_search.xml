@@ -15,7 +15,8 @@
         android:layout_gravity="center"
         android:orientation="vertical"
         android:visibility="visible"
-        tools:ignore="UseCompoundDrawables">
+        tools:ignore="UseCompoundDrawables"
+    >
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -84,7 +85,7 @@
         android:layout_height="match_parent"
         android:hint="@string/fragment_search_hint"
         app:layout_anchor="@id/search_bar"
-        >
+    >
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -94,7 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                />
+            />
         </ScrollView>
     </com.google.android.material.search.SearchView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

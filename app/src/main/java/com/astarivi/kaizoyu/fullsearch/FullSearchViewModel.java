@@ -22,7 +22,8 @@ import java.util.concurrent.Future;
 
 public class FullSearchViewModel extends ViewModel {
     private final MutableLiveData<ArrayList<Result>> results = new MutableLiveData<>();
-    private Future searchingFuture = null;
+    private Future<?> searchingFuture = null;
+    private boolean isSearchActive = false;
 
     public MutableLiveData<ArrayList<Result>> getResults() {
         return results;
@@ -30,6 +31,23 @@ public class FullSearchViewModel extends ViewModel {
 
     public boolean hasSearch() {
         return results.getValue() != null;
+    }
+
+    public boolean hasOptedOutOfSearch() {
+        return !isSearchActive;
+    }
+
+    public void optOutOfSearch() {
+        isSearchActive = false;
+    }
+
+    public boolean checkIfHasSearchAndCancel() {
+        if (searchingFuture != null && !searchingFuture.isDone()) {
+            searchingFuture.cancel(true);
+            return true;
+        }
+
+        return false;
     }
 
     public void searchAnime(
@@ -51,15 +69,16 @@ public class FullSearchViewModel extends ViewModel {
         binding.noResultsPrompt.setVisibility(View.GONE);
         binding.loadingBar.setVisibility(View.VISIBLE);
 
-        searchingFuture = Threading.submitTask(
-                Threading.TASK.INSTANT,
-                () -> results.postValue(
+        searchingFuture = Threading.submitTask(Threading.TASK.INSTANT,() -> {
+            isSearchActive = true;
+            results.postValue(
                     new IndependentResultSearcher(
                             Data.getUserHttpClient()
                     ).searchEpisode(
                             search
                     )
-                )
-        );
+            );
+
+        });
     }
 }

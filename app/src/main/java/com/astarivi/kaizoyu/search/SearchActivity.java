@@ -34,6 +34,7 @@ public class SearchActivity extends AppCompatActivityTheme {
     private ActivitySearchBinding binding;
     private SearchViewModel viewModel;
     private SearchRecyclerAdapter adapter;
+    private LinearLayoutManager recyclerLayoutManager;
     private boolean isInsideSearchView;
 
     @Override
@@ -53,7 +54,7 @@ public class SearchActivity extends AppCompatActivityTheme {
 
         // RecyclerView
         RecyclerView recyclerView = binding.searchResults;
-        LinearLayoutManager recyclerLayoutManager = new LinearLayoutManager(this);
+        recyclerLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerLayoutManager);
         recyclerView.setHasFixedSize(true);
 
@@ -254,6 +255,7 @@ public class SearchActivity extends AppCompatActivityTheme {
     }
 
     private void optOutOfSearch() {
+        binding.searchResults.smoothScrollToPosition(0);
         binding.loadingBar.setVisibility(View.GONE);
         binding.noResultsPrompt.setVisibility(View.GONE);
         binding.searchResults.setVisibility(View.GONE);

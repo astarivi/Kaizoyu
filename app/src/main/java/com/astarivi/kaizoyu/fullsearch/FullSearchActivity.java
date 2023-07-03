@@ -35,6 +35,7 @@ public class FullSearchActivity extends AppCompatActivityTheme {
     private ActivityFullsearchBinding binding;
     private FullSearchViewModel viewModel;
     private AdvancedRecyclerAdapter adapter;
+    private LinearLayoutManager recyclerLayoutManager;
     private boolean isInsideSearchView;
 
     @Override
@@ -43,14 +44,14 @@ public class FullSearchActivity extends AppCompatActivityTheme {
         binding = ActivityFullsearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.rootSearchLayout.getLayoutTransition().setAnimateParentHierarchy(false);
+        binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
 
         viewModel = new ViewModelProvider(this).get(FullSearchViewModel.class);
 
         binding.noResultsPrompt.setVisibility(View.GONE);
 
         RecyclerView recyclerView = binding.searchResults;
-        LinearLayoutManager recyclerLayoutManager = new LinearLayoutManager(this);
+        recyclerLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerLayoutManager);
         recyclerView.setHasFixedSize(true);
 
@@ -64,6 +65,11 @@ public class FullSearchActivity extends AppCompatActivityTheme {
         recyclerView.setAdapter(adapter);
 
         viewModel.getResults().observe(this, results -> {
+            if (viewModel.hasOptedOutOfSearch()) {
+                optOutOfSearch();
+                return;
+            }
+
             if (results == null) {
                 binding.noResultsPrompt.setVisibility(View.VISIBLE);
                 binding.loadingBar.setVisibility(View.GONE);
@@ -109,7 +115,7 @@ public class FullSearchActivity extends AppCompatActivityTheme {
                 String search = searchView.getText().toString();
 
                 if (search.equals("")) {
-                    binding.searchResults.setVisibility(View.INVISIBLE);
+                    optOutOfSearch();
                     return false;
                 }
 
@@ -239,15 +245,35 @@ public class FullSearchActivity extends AppCompatActivityTheme {
             return;
         }
 
-        if (binding.searchResults.getVisibility() == View.VISIBLE &&
-                viewModel != null && viewModel.hasSearch()) {
-            binding.searchResults.setVisibility(View.INVISIBLE);
-            binding.searchBar.setText("");
-            binding.searchView.setText("");
-
+        if (
+                (
+                        viewModel != null && viewModel.checkIfHasSearchAndCancel()
+                )
+                ||
+                (
+                        binding.searchResults.getVisibility() == View.VISIBLE &&
+                                viewModel != null && viewModel.hasSearch()
+                )
+                ||
+                (
+                        binding.noResultsPrompt.getVisibility() == View.VISIBLE
+                )
+        ) {
+            optOutOfSearch();
             return;
         }
 
         super.onBackPressed();
+    }
+
+    private void optOutOfSearch() {
+        binding.searchResults.smoothScrollToPosition(0);
+        binding.loadingBar.setVisibility(View.GONE);
+        binding.noResultsPrompt.setVisibility(View.GONE);
+        binding.searchResults.setVisibility(View.GONE);
+        binding.searchBar.setText("");
+        binding.searchView.setText("");
+        binding.searchAppBar.setExpanded(true);
+        if (viewModel != null) viewModel.optOutOfSearch();
     }
 }
