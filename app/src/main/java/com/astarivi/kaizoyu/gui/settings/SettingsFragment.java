@@ -71,9 +71,22 @@ public class SettingsFragment extends Fragment {
                 String.format(getString(R.string.updatecheck_description), UpdateManager.VERSION)
         );
 
-        binding.discordServer.setOnClickListener(v ->
+        binding.discordButton.setOnClickListener(v ->
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/Yy6BphADFc")))
         );
+
+        binding.githubButton.setOnClickListener(v ->
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/astarivi/Kaizoyu")))
+        );
+
+        binding.donateButton.setOnClickListener(v ->
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.buymeacoffee.com/astarivi")))
+        );
+
+        binding.homepageButton.setOnClickListener(v ->
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://kaizoyu.ovh/")))
+        );
+
 
         binding.openLogs.setOnClickListener(v -> {
             File logFile = new File (requireActivity().getFilesDir(), "log.txt");
