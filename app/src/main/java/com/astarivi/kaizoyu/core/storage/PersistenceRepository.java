@@ -15,6 +15,7 @@ import com.astarivi.kaizoyu.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.concurrent.FutureTask;
 
 
@@ -51,6 +52,12 @@ public class PersistenceRepository {
 
         repositoryDirectory = new RepositoryDirectory(database);
         AnalyticsClient.isEnabled = appConfiguration.getBooleanProperty("analytics", true);
+
+        try {
+            //noinspection ResultOfMethodCallIgnored
+            new File(context.getFilesDir(), "log.txt").delete();
+        } catch(Exception ignored) {
+        }
     }
 
     public static @NotNull PersistenceRepository getInstance() {

@@ -63,6 +63,10 @@ public class SettingsFragment extends Fragment {
     @SuppressLint("NewApi")
     @Override
     public void onViewCreated(@NonNull View root, Bundle savedState) {
+        binding.settingsMainContainer.getLayoutTransition().setAnimateParentHierarchy(false);
+
+        binding.developerSection.setVisibility(View.GONE);
+
         binding.updateSettingDescription.setText(
                 String.format(getString(R.string.updatecheck_description), UpdateManager.VERSION)
         );
@@ -72,10 +76,12 @@ public class SettingsFragment extends Fragment {
         );
 
         binding.openLogs.setOnClickListener(v -> {
-
             File logFile = new File (requireActivity().getFilesDir(), "log.txt");
 
-            if (!logFile.exists()) return;
+            if (!logFile.exists()) {
+                Toast.makeText(getContext(), getString(R.string.dev_logs_toast), Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             startActivity(
                     Intent.createChooser(
@@ -89,6 +95,23 @@ public class SettingsFragment extends Fragment {
                         "Share logs"
                     )
             );
+        });
+
+        binding.updateSectionTitle.setOnLongClickListener(v -> {
+            ExtendedProperties config = Data.getProperties(Data.CONFIGURATION.APP);
+            config.setBooleanProperty("developer_menu", true);
+            binding.developerSection.setVisibility(View.VISIBLE);
+            config.save();
+
+            Toast.makeText(getContext(), getString(R.string.dev_section_toast), Toast.LENGTH_SHORT).show();
+            return true;
+        });
+
+        binding.hideDevMenu.setOnClickListener(v -> {
+            ExtendedProperties config = Data.getProperties(Data.CONFIGURATION.APP);
+            config.setBooleanProperty("developer_menu", false);
+            binding.developerSection.setVisibility(View.GONE);
+            config.save();
         });
 
         loadSettings();
@@ -268,6 +291,11 @@ public class SettingsFragment extends Fragment {
 
     private void loadSettings() {
         ExtendedProperties config = Data.getProperties(Data.CONFIGURATION.APP);
+
+        // Hidden sections
+        if (config.getBooleanProperty("developer_menu", false)) {
+            binding.developerSection.setVisibility(View.VISIBLE);
+        }
 
         // Translated Values
         TextView nightThemeText = binding.nightThemeValue;

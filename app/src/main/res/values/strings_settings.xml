@@ -10,7 +10,7 @@
     <string name="newsfeed">News Feed</string>
     <string name="newsfeed_description">Show Anime news feed in the recent tab</string>
     <string name="ipv6_sources">Show IPv6 Sources</string>
-    <string name="ipv6_sources_description">Include IPv6 download sources. This won\'t affect your watch history</string>
+    <string name="ipv6_sources_description">Include IPv6 download sources. This will display IPv6 sources, but won\'t make them your default</string>
     <string name="clear_watch_history">Clear Watch History</string>
     <string name="clear_watch_history_description">Erase your stored watch history</string>
     <string name="clear_cache">Clear Cache</string>
@@ -55,4 +55,11 @@
     <string name="shameless_plug_description">Here you can request new features, report bugs and missing stuff, or you can tell us about your anime addiction</string>
     <string name="strict_mode_title">Strict Mode</string>
     <string name="strict_mode_description">When enabled, most of the download process MUST be encrypted. May cause handshake failure</string>
+    <string name="section_dev">Developer Menu</string>
+    <string name="dev_logs_title">Share Logs File</string>
+    <string name="dev_logs_description">Share current session of logs with another app. Be aware, logs could contain personal data, like your IP</string>
+    <string name="dev_logs_toast">No logs to share so far, please do some action first</string>
+    <string name="dev_hide_title">Hide Developer Menu</string>
+    <string name="dev_hide_description">Hides the developer section again</string>
+    <string name="dev_section_toast">Welcome to developer mode, fellow weeb</string>
 </resources>

@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        tools:context=".gui.settings.SettingsFragment"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".gui.settings.SettingsFragment"
+    android:clipToPadding="false"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
 >
     <LinearLayout
+        android:id="@+id/settingsMainContainer"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
     >
         <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -18,7 +23,6 @@
                 style="?attr/materialCardViewFilledStyle"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginTop="16dp"
                 app:cardBackgroundColor="?attr/colorSecondaryContainer"
         >
             <LinearLayout
@@ -365,41 +369,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:gravity="center_vertical"
-                    android:id="@+id/openLogs"
-                    android:layout_marginBottom="10dp"
-                    >
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="Share Logs File"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                    />
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="Share the logs file with any app"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                    />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:gravity="center_vertical"
                     android:id="@+id/clearCacheTrigger"
                     android:layout_marginBottom="10dp"
-                    >
+                >
 
                     <TextView
                         android:layout_marginStart="10dp"
@@ -607,7 +579,6 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
             app:cardBackgroundColor="?attr/colorSecondaryContainer"
         >
             <LinearLayout
@@ -619,12 +590,13 @@
                 >
                 <TextView
                     android:text="@string/section_updates"
+                    android:id="@+id/updateSectionTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
                     android:fontFamily="@font/lato_bold"
                     android:textSize="20sp"
-                    />
+                />
 
                 <LinearLayout
                     android:id="@+id/updateAppTrigger"
@@ -654,6 +626,104 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/lato_regular"
                         />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?attr/materialCardViewFilledStyle"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="?attr/colorSecondaryContainer"
+        android:id="@+id/developerSection"
+    >
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:padding="18dp"
+            >
+                <TextView
+                    android:text="@string/section_dev"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:fontFamily="@font/lato_bold"
+                    android:textSize="20sp"
+                />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:id="@+id/openLogs"
+                >
+
+                    <TextView
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="17sp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:text="@string/dev_logs_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_regular"
+                    />
+
+                    <TextView
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="13sp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:text="@string/dev_logs_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_regular"
+                    />
+                </LinearLayout>
+
+                <View
+                    style="@style/Divider"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:id="@+id/hideDevMenu"
+                >
+
+                    <TextView
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="17sp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:text="@string/dev_hide_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_regular"
+                    />
+
+                    <TextView
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="13sp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:text="@string/dev_hide_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_regular"
+                    />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
