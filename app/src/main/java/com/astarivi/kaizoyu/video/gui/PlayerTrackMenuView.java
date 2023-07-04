@@ -110,33 +110,35 @@ public class PlayerTrackMenuView extends LinearLayout {
             audioList.addView(itemBinding.rootLayout);
         }
 
-        for (IMedia.Track track : subtitleTracks) {
-            final PlayerTrackItemBinding itemBinding = PlayerTrackItemBinding.inflate(
-                    inflater,
-                    this,
-                    false
-            );
+        if (subtitleTracks != null) {
+            for (IMedia.Track track : subtitleTracks) {
+                final PlayerTrackItemBinding itemBinding = PlayerTrackItemBinding.inflate(
+                        inflater,
+                        this,
+                        false
+                );
 
-            itemBinding.itemText.setText(
-                    String.format(
-                            "%s %s",
-                            track.language,
-                            track.name
-                    ).trim(
-                    )
-            );
+                itemBinding.itemText.setText(
+                        String.format(
+                                "%s %s",
+                                track.language,
+                                track.name
+                        ).trim(
+                        )
+                );
 
-            itemBinding.rootLayout.setOnClickListener(v -> onSubtitlesItemClick(track.id, itemBinding));
+                itemBinding.rootLayout.setOnClickListener(v -> onSubtitlesItemClick(track.id, itemBinding));
 
-            if (currentSubtitleTrack != null && track.id.equals(currentSubtitleTrack.id)) {
-                itemBinding.itemCheck.setVisibility(VISIBLE);
-                selectedSubtitlesId = track.id;
-                selectedSubtitles = itemBinding;
-                subtitlesList.addView(itemBinding.rootLayout, 0);
-                continue;
+                if (currentSubtitleTrack != null && track.id.equals(currentSubtitleTrack.id)) {
+                    itemBinding.itemCheck.setVisibility(VISIBLE);
+                    selectedSubtitlesId = track.id;
+                    selectedSubtitles = itemBinding;
+                    subtitlesList.addView(itemBinding.rootLayout, 0);
+                    continue;
+                }
+
+                subtitlesList.addView(itemBinding.rootLayout);
             }
-
-            subtitlesList.addView(itemBinding.rootLayout);
         }
 
         // Create options to disable tracks
