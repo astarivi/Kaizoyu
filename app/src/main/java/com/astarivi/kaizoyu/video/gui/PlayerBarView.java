@@ -35,6 +35,7 @@ public class PlayerBarView extends LinearLayout {
     private boolean isInteractive = false;
     private View darkOverlay;
     private ScheduledFuture<?> showFuture;
+    private String totalDuration;
 
     // region Constructors
 
@@ -122,7 +123,12 @@ public class PlayerBarView extends LinearLayout {
         );
 
         binding.currentTime.setText(
-                verboseMillisecondsToDuration(time)
+                String.format(
+                        Locale.UK,
+                        "%s / %s",
+                        verboseMillisecondsToDuration(time),
+                        totalDuration
+                )
         );
     }
 
@@ -155,11 +161,11 @@ public class PlayerBarView extends LinearLayout {
         this.playerInfoView = playerInfoView;
 
         binding.currentTime.setText("00:00:00");
-        binding.totalTime.setText(
-                verboseMillisecondsToDuration(
-                        mediaPlayer.getLength()
-                )
+        totalDuration = verboseMillisecondsToDuration(
+                mediaPlayer.getLength()
         );
+
+        binding.currentTime.setText("00:00:00 / " + totalDuration);
 
         binding.videoProgressBar.setProgress(0);
         this.setCacheProgress(0);
@@ -184,10 +190,8 @@ public class PlayerBarView extends LinearLayout {
                     this.setProgressFromTime(event.getTimeChanged());
                     break;
                 case MediaPlayer.Event.LengthChanged:
-                    binding.totalTime.setText(
-                            verboseMillisecondsToDuration(
-                                    event.getLengthChanged()
-                            )
+                    totalDuration = verboseMillisecondsToDuration(
+                            event.getLengthChanged()
                     );
                     break;
             }
@@ -319,7 +323,13 @@ public class PlayerBarView extends LinearLayout {
     }
 
     public void show() {
-        if (showFuture != null && !showFuture.isDone()) return;
+        if (showFuture != null && !showFuture.isDone()) {
+            isInteractive = false;
+            showFuture.cancel(true);
+            showFuture = null;
+            this.hide();
+            return;
+        }
 
         this.setVisibility(VISIBLE);
         playerInfoView.setVisibility(VISIBLE);
