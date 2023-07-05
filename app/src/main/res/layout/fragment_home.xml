@@ -20,7 +20,6 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_item_upper_fade"
         android:id="@+id/search_app_bar"
         app:layout_scrollFlags="enterAlwaysCollapsed"
     >

@@ -16,6 +16,7 @@ import com.astarivi.kaizoyu.core.theme.Theme;
 import com.astarivi.kaizoyu.databinding.BottomSheetAppThemeBinding;
 import com.astarivi.kaizoyu.databinding.ItemThemeBinding;
 import com.astarivi.kaizoyu.utils.Threading;
+import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
@@ -93,13 +94,23 @@ public class ThemeSelectionModalBottomSheet extends BottomSheetDialogFragment {
                 }
             }
 
-            binding.getRoot().post(() -> {
-                binding.loadingBar.setVisibility(View.GONE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                binding.getRoot().post(() -> {
+                    binding.loadingBar.setVisibility(View.GONE);
 
-                for (View resultingView : resultingViews) {
-                    binding.themeList.addView(resultingView);
-                }
-            });
+                    for (View resultingView : resultingViews) {
+                        binding.themeList.addView(resultingView);
+                    }
+                });
+            } else {
+                Utils.runOnUiThread(() -> {
+                    binding.loadingBar.setVisibility(View.GONE);
+
+                    for (View resultingView : resultingViews) {
+                        binding.themeList.addView(resultingView);
+                    }
+                });
+            }
         });
     }
 

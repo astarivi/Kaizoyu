@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.details.gui;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.astarivi.kaizoyu.databinding.BottomSheetEpisodesBinding;
 import com.astarivi.kaizoyu.databinding.ComponentSuggestionChipBinding;
 import com.astarivi.kaizoyu.databinding.ItemEpisodeBinding;
 import com.astarivi.kaizoyu.utils.Threading;
+import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.chip.Chip;
 
@@ -32,7 +34,7 @@ public class AnimeEpisodesModalBottomSheet extends BottomSheetDialogFragment {
     private BottomSheetEpisodesBinding binding;
     private final TreeMap<VideoQuality, List<Result>> episodes;
     private final ResultListener resultListener;
-    private Future reOrderFuture = null;
+    private Future<?> reOrderFuture = null;
 
     public AnimeEpisodesModalBottomSheet() {
         resultListener = null;
@@ -141,13 +143,24 @@ public class AnimeEpisodesModalBottomSheet extends BottomSheetDialogFragment {
                 }
             }
 
-            binding.getRoot().post(() -> {
-                binding.loadingBar.setVisibility(View.GONE);
+            // Why is this needed? who knows
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                binding.getRoot().post(() -> {
+                    binding.loadingBar.setVisibility(View.GONE);
 
-                for (View resultingView : resultingViews) {
-                    binding.filteredEpisodesList.addView(resultingView);
-                }
-            });
+                    for (View resultingView : resultingViews) {
+                        binding.filteredEpisodesList.addView(resultingView);
+                    }
+                });
+            } else {
+                Utils.runOnUiThread(() -> {
+                    binding.loadingBar.setVisibility(View.GONE);
+
+                    for (View resultingView : resultingViews) {
+                        binding.filteredEpisodesList.addView(resultingView);
+                    }
+                });
+            }
         });
     }
 
