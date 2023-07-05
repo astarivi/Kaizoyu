@@ -8,6 +8,8 @@ import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
@@ -143,5 +145,10 @@ public class Utils {
         for(File file : files) {
             if (!file.delete()) file.deleteOnExit();
         }
+    }
+
+    // Use with legacy devices. How legacy? Android 6
+    public static void runOnUiThread(Runnable runnable) {
+        new Handler(Looper.getMainLooper()).post(runnable);
     }
 }

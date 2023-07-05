@@ -4,6 +4,7 @@ import com.astarivi.kaizolib.irc.client.BaseIrcClient;
 import com.astarivi.kaizolib.irc.exception.*;
 import com.astarivi.kaizolib.xdcc.model.DCC;
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -35,6 +36,15 @@ public class IrcClient extends BaseIrcClient {
 
                 useTls = false;
                 super.close();
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    throw new GenericHandshakeException(ex);
+                }
+
+                Logger.info("Falling back to unencrypted IRC due to:");
+                Logger.info(e);
             }
         }
 
