@@ -1,6 +1,10 @@
 package com.astarivi.kaizoyu.video;
 
+import android.app.PictureInPictureParams;
+import android.app.RemoteAction;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +34,9 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.tinylog.Logger;
 import org.videolan.libvlc.MediaPlayer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.github.tonnyl.spark.Spark;
 
@@ -198,8 +205,6 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             ).show();
         });
 
-        Logger.info("XDCC failure observer set.");
-
         // Handle state
         viewModel.getProgress().observe(this, progressSpeedPair -> {
             if (progressSpeedPair == null) return;
@@ -214,8 +219,6 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             binding.downloadSpeed.setText(progressSpeedPair.second);
             binding.downloadStatus.setText(getResources().getString(R.string.downloading_buffer));
         });
-
-        Logger.info("Progress observer set.");
 
         viewModel.getDownloadFile().observe(this, file -> {
             if (file == null) {
@@ -236,8 +239,6 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             isPlaying = true;
         });
 
-        Logger.info("Download file observer set.");
-
         Logger.info("Observers set.");
 
         viewModel.startDownload(this, result);
@@ -251,18 +252,31 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     }
 
     @Override
+    protected void onUserLeaveHint() {
+        MediaPlayer mMediaPlayer = binding.mainPlayer.getMediaPlayer();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+                && isPlaying
+                && mMediaPlayer != null
+                && mMediaPlayer.isPlaying()) {
+            enterPictureInPictureMode();
+        } else if (isPlaying && mMediaPlayer != null) {
+            mMediaPlayer.pause();
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        if (!isPlaying) spark.stopAnimation();
-
         MediaPlayer mMediaPlayer = binding.mainPlayer.getMediaPlayer();
-        if (mMediaPlayer != null) {
-            mMediaPlayer.pause();
-            if (isPlaying && animeEpisodeManager != null && mMediaPlayer.getTime() != -1) {
-                animeEpisodeManager.saveProgress(
-                        (int) mMediaPlayer.getTime(),
-                        (int) mMediaPlayer.getLength()
-                );
+        if (mMediaPlayer != null && isPlaying && animeEpisodeManager != null && mMediaPlayer.getTime() != -1) {
+            animeEpisodeManager.saveProgress(
+                    (int) mMediaPlayer.getTime(),
+                    (int) mMediaPlayer.getLength()
+            );
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInPictureInPictureMode()) {
+                mMediaPlayer.pause();
             }
         }
     }

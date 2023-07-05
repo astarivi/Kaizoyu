@@ -61,9 +61,12 @@
         />
         <activity
             android:name=".video.VideoPlayerActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:supportsPictureInPicture="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/title_activity_video_player"
             android:screenOrientation="sensorLandscape"
+            tools:targetApi="n"
         />
         <activity
             android:name=".MainActivity"
