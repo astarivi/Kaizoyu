@@ -60,15 +60,37 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (binding == null || !isPlaying) return;
+            if (binding == null || !isPlaying || intent.getExtras() == null) return;
 
             MediaPlayer mediaPlayer = binding.mainPlayer.getMediaPlayer();
             if (mediaPlayer == null) return;
 
-            if (mediaPlayer.isPlaying()) {
-                mediaPlayer.pause();
-            } else {
-                mediaPlayer.play();
+            BundleUtils.PictureInPictureAction action = BundleUtils.PictureInPictureAction.valueOf(
+                    intent.getExtras().getString("action")
+            );
+
+            switch(action) {
+                case PAUSE_OR_RESUME:
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+                    } else {
+                        mediaPlayer.play();
+                    }
+                    break;
+                case REWIND_TEN:
+                    PlayerSkipView skipView = binding.mainPlayer.getSkipManager();
+
+                    if (skipView == null) return;
+
+                    skipView.skipBack();
+                    break;
+                case FORWARD_TEN:
+                    PlayerSkipView skip = binding.mainPlayer.getSkipManager();
+
+                    if (skip == null) return;
+
+                    skip.skipAhead();
+                    break;
             }
         }
     };
@@ -311,21 +333,61 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private PictureInPictureParams makeParams(boolean isPlaying) {
-        RemoteAction pauseOrResumeAction = new RemoteAction(
+        List<RemoteAction> remoteActions = new ArrayList<>();
+
+        Intent rewindIntent = new Intent("PIP_PLAY_PAUSE_PLAYER");
+        rewindIntent.putExtra("action", BundleUtils.PictureInPictureAction.REWIND_TEN.name());
+
+        // Rewind
+        remoteActions.add(
+            new RemoteAction(
+                Icon.createWithResource(this, R.drawable.ic_pip_rewind),
+                "Fast Rewind",
+                "Rewind by 10s",
+                PendingIntent.getBroadcast(
+                        this,
+                        2,
+                        rewindIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                )
+            )
+        );
+
+        // Pause - Resume action
+        Intent repauseIntent = new Intent("PIP_PLAY_PAUSE_PLAYER");
+        repauseIntent.putExtra("action", BundleUtils.PictureInPictureAction.PAUSE_OR_RESUME.name());
+
+        remoteActions.add(
+            new RemoteAction(
                 isPlaying ? Icon.createWithResource(this, R.drawable.ic_pip_pause) : Icon.createWithResource(this, R.drawable.ic_pip_play),
                 "Pause / Resume",
                 "Pause, or resume playback",
                 PendingIntent.getBroadcast(
                         this,
                         isPlaying ? 0 : 1,
-                        new Intent("PIP_PLAY_PAUSE_PLAYER"),
+                        repauseIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
                 )
+            )
         );
 
-        List<RemoteAction> remoteActions = new ArrayList<>();
+        // Forward
+        Intent forwardIntent = new Intent("PIP_PLAY_PAUSE_PLAYER");
+        forwardIntent.putExtra("action", BundleUtils.PictureInPictureAction.FORWARD_TEN.name());
 
-        remoteActions.add(pauseOrResumeAction);
+        remoteActions.add(
+                new RemoteAction(
+                        Icon.createWithResource(this, R.drawable.ic_pip_forward),
+                        "Fast Forward",
+                        "Forward by 10s",
+                        PendingIntent.getBroadcast(
+                                this,
+                                2,
+                                forwardIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                        )
+                )
+        );
 
         return new PictureInPictureParams.Builder()
                 .setActions(remoteActions)

@@ -26,4 +26,10 @@ public class BundleUtils {
         }
         return bundle.getParcelable("episode");
     }
+
+    public enum PictureInPictureAction {
+        PAUSE_OR_RESUME,
+        REWIND_TEN,
+        FORWARD_TEN
+    }
 }
