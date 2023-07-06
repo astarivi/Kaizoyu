@@ -297,13 +297,15 @@ public class PlayerBarView extends LinearLayout {
             }
         });
 
-        binding.hideBar.setOnClickListener(v -> {
-            isInteractive = false;
-            if (showFuture != null && !showFuture.isDone()) showFuture.cancel(false);
-            this.hide();
-        });
+        binding.hideBar.setOnClickListener(v -> forceHide());
 
         mediaPlayer.play();
+    }
+
+    public void forceHide() {
+        isInteractive = false;
+        if (showFuture != null && !showFuture.isDone()) showFuture.cancel(false);
+        this.hide();
     }
 
     public void seekTime(long time, boolean fast) {

@@ -302,6 +302,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                 && mMediaPlayer.isPlaying()
                 && !isInPictureInPictureMode()
         ) {
+            binding.mainPlayer.forceHidePlayerBar();
             enterPictureInPictureMode(makeParams(true));
         } else {
             mMediaPlayer.pause();

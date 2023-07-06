@@ -132,6 +132,10 @@ public class PlayerView extends LinearLayout {
         binding.playerBar.show();
     }
 
+    public void forceHidePlayerBar() {
+        binding.playerBar.forceHide();
+    }
+
     public PlayerSkipView getSkipManager() {
         return binding.skipManager;
     }
