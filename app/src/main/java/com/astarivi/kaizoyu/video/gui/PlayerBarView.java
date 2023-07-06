@@ -36,6 +36,7 @@ public class PlayerBarView extends LinearLayout {
     private View darkOverlay;
     private ScheduledFuture<?> showFuture;
     private String totalDuration;
+    private PlayerView.PlayerEventListener playerEventListener;
 
     // region Constructors
 
@@ -177,12 +178,14 @@ public class PlayerBarView extends LinearLayout {
         mediaPlayer.setEventListener(event -> {
             switch(event.type) {
                 case MediaPlayer.Event.Playing:
+                    if (playerEventListener != null) playerEventListener.onPlayingStateChanged(true);
                     syncPlayButton(true);
                     break;
                 case MediaPlayer.Event.EndReached:
                     this.setProgressFromTime(mediaPlayer.getLength());
                 case MediaPlayer.Event.Paused:
                 case MediaPlayer.Event.Stopped:
+                    if (playerEventListener != null) playerEventListener.onPlayingStateChanged(false);
                     syncPlayButton(false);
                     break;
                 // TODO: Introduce some kind of message to go back, or show a button to replay
@@ -210,13 +213,14 @@ public class PlayerBarView extends LinearLayout {
         mediaPlayer.play();
     }
 
-    public void initialize(View darkOverlay) {
+    public void initialize(View darkOverlay, PlayerView.PlayerEventListener playerEventListener) {
         if (mediaPlayer == null) {
             Logger.error("Tried to play with a MediaPlayer that hasn't been set.");
             throw new RuntimeException("Tried to play with a MediaPlayer that doesn't exist. " +
                     "Please call setMediaPlayer(MediaPlayer mPlayer) first.");
         }
 
+        this.playerEventListener = playerEventListener;
         this.darkOverlay = darkOverlay;
 
         final ImageView skipIntro = binding.skipIntro;

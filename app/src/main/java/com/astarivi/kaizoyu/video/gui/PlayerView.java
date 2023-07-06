@@ -113,7 +113,7 @@ public class PlayerView extends LinearLayout {
         mediaPlayer.setVideoScale(MediaPlayer.ScaleType.SURFACE_BEST_FIT);
         media.release();
         binding.videoFrame.setVisibility(View.VISIBLE);
-        playerBar.initialize(binding.darkOverlay);
+        playerBar.initialize(binding.darkOverlay, listener);
         playerBar.show();
     }
 
@@ -138,5 +138,6 @@ public class PlayerView extends LinearLayout {
 
     public interface PlayerEventListener {
         void onBackPressed();
+        void onPlayingStateChanged(boolean isPlaying);
     }
 }

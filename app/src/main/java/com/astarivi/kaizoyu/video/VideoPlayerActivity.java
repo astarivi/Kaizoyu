@@ -1,7 +1,12 @@
 package com.astarivi.kaizoyu.video;
 
+import android.app.PendingIntent;
 import android.app.PictureInPictureParams;
 import android.app.RemoteAction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Icon;
@@ -16,10 +21,13 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.astarivi.kaizoyu.R;
@@ -28,6 +36,7 @@ import com.astarivi.kaizoyu.core.models.Result;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.databinding.ActivityVideoPlayerBinding;
 import com.astarivi.kaizoyu.video.gui.PlayerSkipView;
+import com.astarivi.kaizoyu.video.gui.PlayerView;
 import com.astarivi.kaizoyu.video.utils.AnimeEpisodeManager;
 import com.astarivi.kaizoyu.video.utils.BundleUtils;
 import com.google.android.material.snackbar.Snackbar;
@@ -48,6 +57,21 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     private Spark spark;
     private AnimeEpisodeManager animeEpisodeManager = null;
     private boolean isPlaying = false;
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (binding == null || !isPlaying) return;
+
+            MediaPlayer mediaPlayer = binding.mainPlayer.getMediaPlayer();
+            if (mediaPlayer == null) return;
+
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+            } else {
+                mediaPlayer.play();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,7 +120,19 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         binding.mainPlayer.initialize(
                 animeEpisodeManager != null ? animeEpisodeManager.getAnimeTitle() : result.getCleanedFilename(),
                 animeEpisodeManager != null ? animeEpisodeManager.getEpisodeTitle(this) : getString(R.string.advanced_mode_title),
-                this::finish
+                new PlayerView.PlayerEventListener() {
+                    @Override
+                    public void onBackPressed() {
+                        finish();
+                    }
+
+                    @Override
+                    public void onPlayingStateChanged(boolean isPlaying) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isInPictureInPictureMode()) {
+                            setPictureInPictureParams(makeParams(isPlaying));
+                        }
+                    }
+                }
         );
         Logger.info("Initialized main player");
         // Fullscreen setup
@@ -241,6 +277,11 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
         Logger.info("Observers set.");
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            IntentFilter filter = new IntentFilter("PIP_PLAY_PAUSE_PLAYER");
+            ContextCompat.registerReceiver(this, broadcastReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
+        }
+
         viewModel.startDownload(this, result);
         Logger.info("Download started, now it's all up to the ViewModel.");
     }
@@ -254,31 +295,78 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     @Override
     protected void onUserLeaveHint() {
         MediaPlayer mMediaPlayer = binding.mainPlayer.getMediaPlayer();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+        if (mMediaPlayer == null || !isPlaying) return;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 && getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
-                && isPlaying
-                && mMediaPlayer != null
-                && mMediaPlayer.isPlaying()) {
-            enterPictureInPictureMode();
-        } else if (isPlaying && mMediaPlayer != null) {
+                && mMediaPlayer.isPlaying()
+                && !isInPictureInPictureMode()
+        ) {
+            enterPictureInPictureMode(makeParams(true));
+        } else {
             mMediaPlayer.pause();
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private PictureInPictureParams makeParams(boolean isPlaying) {
+        RemoteAction pauseOrResumeAction = new RemoteAction(
+                isPlaying ? Icon.createWithResource(this, R.drawable.ic_pip_pause) : Icon.createWithResource(this, R.drawable.ic_pip_play),
+                "Pause / Resume",
+                "Pause, or resume playback",
+                PendingIntent.getBroadcast(
+                        this,
+                        isPlaying ? 0 : 1,
+                        new Intent("PIP_PLAY_PAUSE_PLAYER"),
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                )
+        );
+
+        List<RemoteAction> remoteActions = new ArrayList<>();
+
+        remoteActions.add(pauseOrResumeAction);
+
+        return new PictureInPictureParams.Builder()
+                .setActions(remoteActions)
+                .build();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         MediaPlayer mMediaPlayer = binding.mainPlayer.getMediaPlayer();
-        if (mMediaPlayer != null && isPlaying && animeEpisodeManager != null && mMediaPlayer.getTime() != -1) {
-            animeEpisodeManager.saveProgress(
-                    (int) mMediaPlayer.getTime(),
-                    (int) mMediaPlayer.getLength()
-            );
+        if (mMediaPlayer == null) return;
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInPictureInPictureMode()) {
-                mMediaPlayer.pause();
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInPictureInPictureMode()) {
+            mMediaPlayer.pause();
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            mMediaPlayer.pause();
         }
+
+        saveCurrentProgress();
+    }
+
+    private void saveCurrentProgress() {
+        MediaPlayer mMediaPlayer = binding.mainPlayer.getMediaPlayer();
+
+        if (mMediaPlayer == null || !isPlaying || animeEpisodeManager == null || mMediaPlayer.getTime() == -1) return;
+
+        Logger.debug("Saving episode progress");
+        animeEpisodeManager.saveProgress(
+                (int) mMediaPlayer.getTime(),
+                (int) mMediaPlayer.getLength()
+        );
+
+        Logger.debug("Episode progress saved");
+    }
+
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        if (getLifecycle().getCurrentState() == Lifecycle.State.CREATED) {
+            saveCurrentProgress();
+        }
+
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
     }
 
     @Override
@@ -295,6 +383,10 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         super.onDestroy();
         binding.mainPlayer.destroy();
         viewModel.destroy();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            unregisterReceiver(broadcastReceiver);
+        }
     }
 
     @Override
@@ -326,6 +418,9 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         @Override
         public boolean onSingleTapConfirmed(@NonNull MotionEvent event) {
             if (!isPlaying) return true;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode()) return true;
+
             binding.mainPlayer.showPlayerBar();
 
             return super.onSingleTapConfirmed(event);
@@ -334,6 +429,8 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         @Override
         public boolean onDoubleTap(@NonNull MotionEvent event) {
             if (!isPlaying) return true;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode()) return true;
 
             PlayerSkipView skipView = binding.mainPlayer.getSkipManager();
 
