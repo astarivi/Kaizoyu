@@ -24,12 +24,12 @@ import com.astarivi.kaizoyu.core.theme.Theme;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.FragmentSettingsBinding;
 import com.astarivi.kaizoyu.gui.UpdaterModalBottomSheet;
-import com.astarivi.kaizoyu.licenses.LicensesActivity;
 import com.astarivi.kaizoyu.updater.UpdaterActivity;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
@@ -148,7 +148,7 @@ public class SettingsFragment extends Fragment {
         binding.openLicensesActivity.setOnClickListener(view -> {
             if (getActivity() == null) return;
 
-            Intent intent = new Intent(requireActivity(), LicensesActivity.class);
+            Intent intent = new Intent(requireActivity(), OssLicensesMenuActivity.class);
             startActivity(intent);
         });
 

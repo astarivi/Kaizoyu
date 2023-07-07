@@ -27,12 +27,6 @@
                 android:resource="@xml/shared_paths"
             />
         </provider>
-
-        <activity
-            android:name=".licenses.LicensesActivity"
-            android:exported="true"
-            android:label="@string/title_activity_licenses"
-        />
         <activity
             android:name=".fullsearch.FullSearchActivity"
             android:exported="true"
