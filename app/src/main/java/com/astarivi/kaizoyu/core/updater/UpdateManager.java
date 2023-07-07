@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.core.adapters.WebAdapter;
 import com.astarivi.kaizoyu.core.annotations.ThreadedOnly;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -29,23 +30,34 @@ import okhttp3.HttpUrl;
 
 
 public class UpdateManager {
-    // TODO Change this for every release, doh.
-    public static String VERSION = "0.6";
+    public static String VERSION = BuildConfig.VERSION_NAME;
     public static String VERSION_NAME = "urania";
+
+    public static boolean isBeta() {
+        return VERSION.contains("-BETA");
+    }
 
     @ThreadedOnly
     public @Nullable LatestUpdate getLatestUpdate() throws ParseException {
+        // This version has no update capabilities.
+        if (VERSION.contains("-DEBUG")) return null;
+
+        final boolean isBeta = isBeta();
         final LatestCDNReleases latestReleaseCDN = getLatestReleases();
 
-        if (latestReleaseCDN == null || latestReleaseCDN.latest_release == null)
+        if (latestReleaseCDN == null || (!isBeta && latestReleaseCDN.latest_release == null) || (isBeta && latestReleaseCDN.latest_beta == null))
             return null;
 
         float latestVersion;
         float currentVersion;
 
         try {
-            latestVersion = Float.parseFloat(latestReleaseCDN.latest_release);
-            currentVersion = Float.parseFloat(VERSION);
+            latestVersion = Float.parseFloat(
+                    isBeta ? latestReleaseCDN.latest_beta : latestReleaseCDN.latest_release
+            );
+            currentVersion = Float.parseFloat(
+                    isBeta ? VERSION.replace("-BETA", "") : latestReleaseCDN.latest_release
+            );
         } catch (NumberFormatException e) {
             throw new ParseException("Couldn't parse latest version TAG", 0);
         }
@@ -54,12 +66,18 @@ public class UpdateManager {
             return null;
         }
 
-        GithubRelease latestRelease = getVersion(latestReleaseCDN.latest_release);
+        GithubRelease latestRelease = getVersion(
+                isBeta ? latestReleaseCDN.latest_beta : latestReleaseCDN.latest_release
+        );
 
         if (latestRelease == null || latestRelease.assets == null || latestRelease.assets.length == 0)
             return null;
 
-        final String desiredVersion = String.format("app-%s-release.apk", Build.SUPPORTED_ABIS[0]);
+        final String desiredVersion = String.format(
+                "app-%s-%s.apk",
+                Build.SUPPORTED_ABIS[0],
+                isBeta ? "beta" : "release"
+        );
 
         for (GithubReleaseAsset releaseAsset : latestRelease.assets) {
             if (releaseAsset.name.equals(desiredVersion)) {

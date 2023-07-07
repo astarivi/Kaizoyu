@@ -27,8 +27,8 @@ android {
         applicationId "com.astarivi.kaizoyu"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 7
-        versionName "0.6"
+        versionCode 8
+        versionName "0.7"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -45,7 +45,7 @@ android {
 
         beta {
             applicationIdSuffix '.beta'
-            versionNameSuffix '-BETA'
+            versionNameSuffix '01-BETA'
             resValue "string", "app_k_name", "Kaizoyu! Beta"
         }
 
