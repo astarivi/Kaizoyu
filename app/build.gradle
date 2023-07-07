@@ -37,10 +37,23 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-DEBUG'
+            resValue "string", "app_k_name", "Kaizoyu! Debug"
+        }
+
+        beta {
+            applicationIdSuffix '.beta'
+            versionNameSuffix '-BETA'
+            resValue "string", "app_k_name", "Kaizoyu! Beta"
+        }
+
         release {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue "string", "app_k_name", "Kaizoyu!"
         }
     }
 
