@@ -71,6 +71,7 @@ dependencies {
     implementation project(':service')
 
     // External libraries (third party)
+    implementation 'com.github.WrichikBasu:AudioFocusController:v2.1'
     implementation 'io.github.tonnyl:spark:0.1.0-alpha'
     implementation 'org.videolan.android:libvlc-all:4.0.0-eap11'
     implementation 'com.airbnb.android:lottie:6.0.0'

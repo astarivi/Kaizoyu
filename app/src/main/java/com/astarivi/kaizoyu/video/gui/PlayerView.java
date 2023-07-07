@@ -18,10 +18,13 @@ import org.videolan.libvlc.MediaPlayer;
 import java.io.File;
 import java.util.ArrayList;
 
+import in.basulabs.audiofocuscontroller.AudioFocusController;
+
 
 public class PlayerView extends LinearLayout {
     private PlayerBinding binding;
     private PlayerEventListener listener;
+    private AudioFocusController audioController;
     private MediaPlayer mediaPlayer;
 
     public PlayerView(Context context) {
@@ -61,9 +64,11 @@ public class PlayerView extends LinearLayout {
     public void initialize(
             String animeTitle,
             String episodeTitle,
-            PlayerEventListener eventListener
+            PlayerEventListener eventListener,
+            AudioFocusController audioController
     ) {
         listener = eventListener;
+        this.audioController = audioController;
 
         // Set strings
         binding.animeTitle.setText(animeTitle);
@@ -113,7 +118,7 @@ public class PlayerView extends LinearLayout {
         mediaPlayer.setVideoScale(MediaPlayer.ScaleType.SURFACE_BEST_FIT);
         media.release();
         binding.videoFrame.setVisibility(View.VISIBLE);
-        playerBar.initialize(binding.darkOverlay, listener);
+        playerBar.initialize(binding.darkOverlay, listener, audioController);
         playerBar.show();
     }
 

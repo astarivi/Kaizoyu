@@ -10,6 +10,8 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Icon;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,6 +49,7 @@ import org.videolan.libvlc.MediaPlayer;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.basulabs.audiofocuscontroller.AudioFocusController;
 import io.github.tonnyl.spark.Spark;
 
 
@@ -57,6 +60,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     private Spark spark;
     private AnimeEpisodeManager animeEpisodeManager = null;
     private boolean isPlaying = false;
+    private AudioFocusController audioFocusController = null;
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -72,8 +76,10 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             switch(action) {
                 case PAUSE_OR_RESUME:
                     if (mediaPlayer.isPlaying()) {
+                        audioFocusController.abandonFocus();
                         mediaPlayer.pause();
                     } else {
+                        audioFocusController.requestFocus();
                         mediaPlayer.play();
                     }
                     break;
@@ -127,6 +133,50 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         }
 
         Logger.info("Bundle decoded");
+
+        // Audio controller
+
+        audioFocusController = new AudioFocusController.Builder(this)
+                .setAcceptsDelayedFocus(true)
+                .setPauseWhenAudioIsNoisy(false)
+                .setPauseWhenDucked(false)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
+                .setDurationHint(AudioManager.AUDIOFOCUS_GAIN)
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setStream(AudioManager.STREAM_SYSTEM)
+                .setAudioFocusChangeListener(new AudioFocusController.OnAudioFocusChangeListener() {
+                    @Override
+                    public void decreaseVolume() {
+
+                    }
+
+                    @Override
+                    public void increaseVolume() {
+
+                    }
+
+                    @Override
+                    public void pause() {
+                        if (binding == null || !isPlaying) return;
+
+                        MediaPlayer mediaPlayer = binding.mainPlayer.getMediaPlayer();
+                        if (mediaPlayer == null) return;
+
+                        mediaPlayer.pause();
+                    }
+
+                    @Override
+                    public void resume() {
+                        if (binding == null || !isPlaying) return;
+
+                        MediaPlayer mediaPlayer = binding.mainPlayer.getMediaPlayer();
+                        if (mediaPlayer == null) return;
+
+                        mediaPlayer.play();
+                    }
+                })
+                .build();
+
         // Hide stuff
         binding.mainPlayer.setVisibility(View.INVISIBLE);
 
@@ -154,7 +204,8 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                             setPictureInPictureParams(makeParams(isPlaying));
                         }
                     }
-                }
+                },
+                audioFocusController
         );
         Logger.info("Initialized main player");
         // Fullscreen setup
@@ -292,6 +343,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             binding.downloadSpeed.setVisibility(View.GONE);
             binding.downloadStatus.setVisibility(View.GONE);
 
+            audioFocusController.requestFocus();
             binding.mainPlayer.play(file);
             binding.mainPlayer.setVisibility(View.VISIBLE);
             isPlaying = true;
@@ -401,8 +453,10 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         if (mMediaPlayer == null) return;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInPictureInPictureMode()) {
+            audioFocusController.abandonFocus();
             mMediaPlayer.pause();
         } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            audioFocusController.abandonFocus();
             mMediaPlayer.pause();
         }
 
@@ -437,6 +491,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         super.onStop();
         if (!isPlaying) spark.stopAnimation();
         if (binding.mainPlayer.getMediaPlayer() != null) {
+            audioFocusController.abandonFocus();
             binding.mainPlayer.getMediaPlayer().pause();
         }
     }

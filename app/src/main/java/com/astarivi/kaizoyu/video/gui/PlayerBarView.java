@@ -27,6 +27,8 @@ import java.util.Locale;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import in.basulabs.audiofocuscontroller.AudioFocusController;
+
 
 public class PlayerBarView extends LinearLayout {
     private MediaPlayer mediaPlayer;
@@ -37,6 +39,7 @@ public class PlayerBarView extends LinearLayout {
     private ScheduledFuture<?> showFuture;
     private String totalDuration;
     private PlayerView.PlayerEventListener playerEventListener;
+    private AudioFocusController audioController;
 
     // region Constructors
 
@@ -213,7 +216,12 @@ public class PlayerBarView extends LinearLayout {
         mediaPlayer.play();
     }
 
-    public void initialize(View darkOverlay, PlayerView.PlayerEventListener playerEventListener) {
+    public void initialize(
+            View darkOverlay,
+            PlayerView.PlayerEventListener playerEventListener,
+            AudioFocusController ac
+    ) {
+        audioController = ac;
         if (mediaPlayer == null) {
             Logger.error("Tried to play with a MediaPlayer that hasn't been set.");
             throw new RuntimeException("Tried to play with a MediaPlayer that doesn't exist. " +
@@ -244,8 +252,10 @@ public class PlayerBarView extends LinearLayout {
             isInteractive = true;
 
             if (mediaPlayer.isPlaying()) {
+                audioController.abandonFocus();
                 mediaPlayer.pause();
             } else {
+                audioController.requestFocus();
                 mediaPlayer.play();
             }
         });
