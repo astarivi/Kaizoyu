@@ -9,12 +9,17 @@ import androidx.lifecycle.ViewModel;
 
 import com.astarivi.kaizolib.kitsu.Kitsu;
 import com.astarivi.kaizolib.kitsu.KitsuSearchParams;
+import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
+import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
+import com.astarivi.kaizolib.kitsu.exception.NoResultsException;
+import com.astarivi.kaizolib.kitsu.exception.ParsingException;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.databinding.ActivitySearchBinding;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
+import com.astarivi.kaizoyu.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +30,7 @@ import java.util.concurrent.Future;
 
 public class SearchViewModel extends ViewModel {
     private final MutableLiveData<ArrayList<Anime>> results = new MutableLiveData<>();
-    private Future searchingFuture = null;
+    private Future<?> searchingFuture = null;
     private boolean isSearchActive = false;
 
     public MutableLiveData<ArrayList<Anime>> getResults() {
@@ -77,21 +82,36 @@ public class SearchViewModel extends ViewModel {
                     Data.getUserHttpClient()
             );
 
-            List<KitsuAnime> searchResults = kitsu.searchAnime(
-                    new KitsuSearchParams(
-                    ).setTitle(
-                            search
-                    ).setLimit(
-                            20
-                    )
-            );
-
-            isSearchActive = true;
-
-            if (searchResults == null || searchResults.isEmpty()) {
+            List<KitsuAnime> searchResults;
+            try {
+                searchResults = kitsu.searchAnime(
+                        new KitsuSearchParams(
+                        ).setTitle(
+                                search
+                        ).setLimit(
+                                20
+                        )
+                );
+            } catch (NoResultsException e) {
                 results.postValue(null);
                 return;
+            } catch (NetworkConnectionException e) {
+                Utils.makeToastRegardless(
+                        context,
+                        R.string.network_connection_error,
+                        Toast.LENGTH_SHORT
+                );
+                return;
+            } catch (ParsingException | NoResponseException e) {
+                Utils.makeToastRegardless(
+                        context,
+                        R.string.parsing_error,
+                        Toast.LENGTH_SHORT
+                );
+                return;
             }
+
+            isSearchActive = true;
 
             results.postValue(
                     new Anime.BulkAnimeBuilder(searchResults).build()

@@ -10,10 +10,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 import com.astarivi.kaizoyu.KaizoyuApplication;
+import com.astarivi.kaizoyu.core.annotations.ThreadedOnly;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.models.base.AnimeBase;
@@ -34,6 +37,17 @@ import java.util.Random;
 
 
 public class Utils {
+    @ThreadedOnly
+    public static void makeToastRegardless(Context context, @StringRes int resId, int duration) {
+        try {
+            runOnUiThread(() -> Toast.makeText(
+                    context,
+                    resId,
+                    duration
+            ).show());
+        } catch(Exception ignored) {
+        }
+    }
 
     public static boolean copyToClipboard(Context context, String label, String content) {
         try {

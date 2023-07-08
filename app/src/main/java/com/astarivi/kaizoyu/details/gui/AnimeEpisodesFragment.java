@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.astarivi.kaizolib.kitsu.Kitsu;
+import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
+import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
+import com.astarivi.kaizolib.kitsu.exception.ParsingException;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.Episode;
 import com.astarivi.kaizoyu.core.models.Result;
@@ -120,12 +125,41 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
             adapter.notifyDataSetChanged();
         });
 
+        viewModel.getExceptionHandler().observe(getViewLifecycleOwner(), error -> {
+            switch(error) {
+                case NoResultsException:
+                    Toast.makeText(
+                            getContext(),
+                            R.string.no_results_error,
+                            Toast.LENGTH_SHORT
+                    ).show();
+                    break;
+                case NetworkConnectionException:
+                case NoResponseException:
+                    Toast.makeText(
+                            getContext(),
+                            R.string.network_connection_error,
+                            Toast.LENGTH_SHORT
+                    ).show();
+                    break;
+                case ParsingException:
+                case Generic:
+                    Toast.makeText(
+                            getContext(),
+                            R.string.parsing_error,
+                            Toast.LENGTH_SHORT
+                    ).show();
+                    break;
+            }
+        });
+
         Threading.submitTask(Threading.TASK.INSTANT, () -> {
             KitsuAnime kitsuAnime = anime.getKitsuAnime();
             int kitsuId = Integer.parseInt(kitsuAnime.id);
 
-            int animeLength;
+            final int animeLength;
 
+            // Get anime length
             if (anime instanceof SeasonalAnime && ((SeasonalAnime) anime).getCurrentEpisode() > 0) {
                 animeLength = ((SeasonalAnime) anime).getCurrentEpisode();
             } else {
@@ -133,9 +167,30 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
                         Data.getUserHttpClient()
                 );
 
-                animeLength = kitsu.getAnimeEpisodesLength(
-                        kitsuId
-                );
+                // Dumb workaround lol
+                int fetchResult;
+
+                try {
+                    fetchResult = kitsu.getAnimeEpisodesLength(
+                            kitsuId
+                    );
+                } catch (NetworkConnectionException e) {
+                    Utils.makeToastRegardless(
+                            getContext(),
+                            R.string.network_connection_error,
+                            Toast.LENGTH_SHORT
+                    );
+                    fetchResult = 0;
+                } catch (ParsingException | NoResponseException e) {
+                    Utils.makeToastRegardless(
+                            getContext(),
+                            R.string.parsing_error,
+                            Toast.LENGTH_SHORT
+                    );
+                    fetchResult = 0;
+                }
+
+                animeLength = fetchResult;
             }
 
             binding.getRoot().post(() -> {

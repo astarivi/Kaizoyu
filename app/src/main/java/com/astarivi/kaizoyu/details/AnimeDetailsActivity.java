@@ -9,8 +9,13 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.astarivi.kaizolib.kitsu.Kitsu;
+import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
+import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
+import com.astarivi.kaizolib.kitsu.exception.NoResultsException;
+import com.astarivi.kaizolib.kitsu.exception.ParsingException;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.models.base.ImageSize;
@@ -34,6 +39,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 
 public class AnimeDetailsActivity extends AppCompatActivityTheme {
@@ -143,14 +149,25 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                         Data.getUserHttpClient()
                 );
 
-                KitsuAnime ktAnime = kitsu.getAnimeById(
-                        Integer.parseInt(localAnime.getKitsuAnime().id)
-                );
-
-                if (ktAnime != null) {
-                    anime = new Anime(ktAnime);
-                    animeType = ModelType.Anime.BASE;
+                KitsuAnime ktAnime;
+                try {
+                    ktAnime = kitsu.getAnimeById(
+                            Integer.parseInt(localAnime.getKitsuAnime().id)
+                    );
+                } catch (NetworkConnectionException | NoResultsException e) {
+                    binding.getRoot().post(this::initializeFavorite);
+                    return;
+                } catch (NoResponseException | ParsingException e) {
+                    Logger.error("Weird exception after trying to initialize a locally saved anime.");
+                    Logger.error(e);
+                    Logger.error("This incident has been reported to analytics.");
+                    AnalyticsClient.onError("offline_anime_fetch", "Offline anime weird error", e);
+                    binding.getRoot().post(this::initializeFavorite);
+                    return;
                 }
+
+                anime = new Anime(ktAnime);
+                animeType = ModelType.Anime.BASE;
 
                 binding.getRoot().post(this::initializeFavorite);
             });

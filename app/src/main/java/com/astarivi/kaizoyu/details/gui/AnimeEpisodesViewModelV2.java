@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.astarivi.kaizolib.kitsu.Kitsu;
+import com.astarivi.kaizolib.kitsu.exception.KitsuExceptionManager;
 import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
@@ -30,14 +31,19 @@ import java.util.concurrent.Future;
 
 public class AnimeEpisodesViewModelV2 extends ViewModel {
     private final MutableLiveData<TreeSet<Episode>> episodes = new MutableLiveData<>(null);
+    private final MutableLiveData<KitsuExceptionManager.FailureCode> exceptionHandler = new MutableLiveData<>();
     private int currentPage = -1;
-    private Future fetchingFuture = null;
+    private Future<?> fetchingFuture = null;
     private int animeId = -1;
     private int episodeCount = -1;
     private boolean isSearching = false;
 
     public MutableLiveData<TreeSet<Episode>> getEpisodes() {
         return episodes;
+    }
+
+    public MutableLiveData<KitsuExceptionManager.FailureCode> getExceptionHandler() {
+        return exceptionHandler;
     }
 
     public int getCurrentPage() {
@@ -75,14 +81,16 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
 
             int[] pagination = Utils.paginateNumber(page, episodeCount, 20);
 
-            List<KitsuEpisode> kitsuEpisodes = kitsu.getEpisodesRange(
-                    this.animeId,
-                    pagination[0],
-                    pagination[1],
-                    episodeCount
-            );
-
-            if (kitsuEpisodes == null) {
+            List<KitsuEpisode> kitsuEpisodes;
+            try {
+                kitsuEpisodes = kitsu.getEpisodesRange(
+                        this.animeId,
+                        pagination[0],
+                        pagination[1],
+                        episodeCount
+                );
+            } catch (Exception e) {
+                exceptionHandler.postValue(KitsuExceptionManager.getFailureCode(e));
                 episodes.postValue(null);
                 return;
             }

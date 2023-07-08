@@ -1,9 +1,18 @@
 package com.astarivi.kaizolib;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.astarivi.kaizolib.common.network.UserHttpClient;
 import com.astarivi.kaizolib.kitsu.Kitsu;
 import com.astarivi.kaizolib.kitsu.KitsuSearchParams;
 import com.astarivi.kaizolib.kitsu.KitsuUtils;
+import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
+import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
+import com.astarivi.kaizolib.kitsu.exception.NoResultsException;
+import com.astarivi.kaizolib.kitsu.exception.ParsingException;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
 
@@ -14,8 +23,6 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 public class KitsuTest {
@@ -30,7 +37,7 @@ public class KitsuTest {
 
     @Test
     @DisplayName("Kitsu get by Anime ID")
-    void testKitsuById() {
+    void testKitsuById() throws NetworkConnectionException, ParsingException, NoResponseException, NoResultsException {
         KitsuAnime anime = kitsu.getAnimeById(43806);
         assertNotNull(anime);
         assertNotNull(anime.attributes);
@@ -44,7 +51,7 @@ public class KitsuTest {
 
     @Test
     @DisplayName("Kitsu JP character decoding (Anime ID 43806)")
-    void testKitsuJPDecoding() {
+    void testKitsuJPDecoding() throws NetworkConnectionException, ParsingException, NoResponseException, NoResultsException {
         KitsuAnime anime = kitsu.getAnimeById(43806);
         assertNotNull(anime);
         assertNotNull(anime.attributes);
@@ -62,7 +69,7 @@ public class KitsuTest {
 
     @Test
     @DisplayName("Kitsu single search convenience method")
-    void testKitsuConvenienceSearch() {
+    void testKitsuConvenienceSearch() throws NoResultsException, NetworkConnectionException, ParsingException, NoResponseException {
         KitsuAnime anime = kitsu.getAnime(
                 new KitsuSearchParams()
                         .setTitle("Attack on Titan")
@@ -77,7 +84,7 @@ public class KitsuTest {
 
     @Test
     @DisplayName("Kitsu search (20 results limit)")
-    void testKitsuSearch() {
+    void testKitsuSearch() throws NoResultsException, NetworkConnectionException, ParsingException, NoResponseException {
         List<KitsuAnime> anime = kitsu.searchAnime(
                 new KitsuSearchParams()
                         .setTitle("Attack on Titan")
@@ -96,7 +103,7 @@ public class KitsuTest {
 
     @Test
     @DisplayName("Kitsu trending (10 results limit)")
-    void testKitsuTrending() {
+    void testKitsuTrending() throws NoResultsException, NetworkConnectionException, ParsingException, NoResponseException {
         List<KitsuAnime> anime = kitsu.getTrendingAnime();
 
         assertNotNull(anime);
@@ -106,7 +113,7 @@ public class KitsuTest {
 
     @Test
     @DisplayName("Kitsu long-running series detection")
-    void testKitsuEpisodesLength() {
+    void testKitsuEpisodesLength() throws NetworkConnectionException, ParsingException, NoResponseException {
         // One Piece
         assertTrue(
                 kitsu.isAnimeLongRunning(
@@ -142,7 +149,10 @@ public class KitsuTest {
 
     @Test
     @DisplayName("Kitsu get all episodes of a series")
-    void testKitsuEpisodes() {
+    void testKitsuEpisodes() throws NoResultsException, NetworkConnectionException, ParsingException, NoResponseException {
+        // Single episode search
+        KitsuEpisode aotEpisode = kitsu.getEpisode(7442, 10);
+        assertNotNull(aotEpisode);
 
         // Attack on Titan
         List<KitsuEpisode> aotEpisodes = kitsu.getAllEpisodes(7442, kitsu.getAnimeEpisodesLength(7442));
@@ -159,7 +169,7 @@ public class KitsuTest {
 
     @Test
     @DisplayName("Kitsu get range of episodes of a series")
-    void testKitsuEpisodesRange() {
+    void testKitsuEpisodesRange() throws NoResultsException, NetworkConnectionException, ParsingException, NoResponseException {
         int totalLength = kitsu.getAnimeEpisodesLength(6448);
 
         // Hunter x Hunter

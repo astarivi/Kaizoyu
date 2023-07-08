@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.astarivi.kaizolib'
-version '1.7'
+version '1.8'
 
 java {
     sourceCompatibility 1.8

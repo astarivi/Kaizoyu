@@ -37,6 +37,16 @@ public class KitsuUtils {
                 .build();
     }
 
+    public static @NotNull HttpUrl buildEpisodeUri(int animeId, int episode) {
+        return new HttpUrl.Builder()
+                .scheme("https")
+                .host("kitsu.io")
+                .addPathSegments("api/edge/episodes")
+                .addQueryParameter("filter[media_id]", Integer.toString(animeId))
+                .addQueryParameter("filter[number]", Integer.toString(episode))
+                .build();
+    }
+
     public static @NotNull HttpUrl buildSearchUri(int limit, int offset, String animeTitle, int seasonYear, Seasons season,
                                                   Status status, List<StringPair> customParameters) {
         HttpUrl.Builder queryUrl = new HttpUrl.Builder();

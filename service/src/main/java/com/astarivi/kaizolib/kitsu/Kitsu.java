@@ -1,22 +1,28 @@
 package com.astarivi.kaizolib.kitsu;
 
-import com.astarivi.kaizolib.kitsu.model.*;
-import com.astarivi.kaizolib.kitsu.parser.ParseJson;
+import com.astarivi.kaizolib.common.network.CommonHeaders;
+import com.astarivi.kaizolib.common.network.HttpMethods;
 import com.astarivi.kaizolib.common.network.UserHttpClient;
-import com.astarivi.kaizolib.common.util.ResponseToString;
+import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
+import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
+import com.astarivi.kaizolib.kitsu.exception.NoResultsException;
+import com.astarivi.kaizolib.kitsu.exception.ParsingException;
+import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
+import com.astarivi.kaizolib.kitsu.model.KitsuEpisodeResults;
+import com.astarivi.kaizolib.kitsu.model.KitsuResourceResult;
+import com.astarivi.kaizolib.kitsu.model.KitsuSearchResults;
+import com.astarivi.kaizolib.kitsu.parser.ParseJson;
 
-import okhttp3.HttpUrl;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.HttpUrl;
 
 
 public class Kitsu {
@@ -30,51 +36,64 @@ public class Kitsu {
         client = new UserHttpClient();
     }
 
-    public @Nullable List<KitsuAnime> searchAnime(@NotNull KitsuSearchParams params) {
+    public @NotNull List<KitsuAnime> searchAnime(@NotNull KitsuSearchParams params) throws NoResultsException, NetworkConnectionException, ParsingException, NoResponseException {
         return fetchAnime(params.buildURI());
     }
 
     // Convenience method.
-    public @Nullable KitsuAnime getAnime(@NotNull KitsuSearchParams params) {
-        List<KitsuAnime> result = fetchAnime(params.setLimit(1).buildURI());
-        if (result == null) return null;
-        return result.get(0);
+    public @NotNull KitsuAnime getAnime(@NotNull KitsuSearchParams params) throws
+            NoResultsException,
+            NetworkConnectionException,
+            ParsingException,
+            NoResponseException {
+        return fetchAnime(params.setLimit(1).buildURI()).get(0);
     }
 
-    public @Nullable KitsuAnime getAnimeById(int id) {
-        String response = this.fetch(KitsuUtils.buildIdUri(id));
+    public @NotNull KitsuAnime getAnimeById(int id) throws NetworkConnectionException, NoResponseException, ParsingException, NoResultsException {
+        String responseContent = HttpMethods.get(client, KitsuUtils.buildIdUri(id), CommonHeaders.KITSU_HEADERS);
 
-        if (response == null) return null;
+        KitsuResourceResult animeResult = ParseJson.parseAnimeResource(responseContent);
 
-        KitsuResourceResult result = ParseJson.parseAnimeResource(response);
+        if (animeResult.data == null) {
+            Logger.debug("Kitsu URL {} yielded no results. (Anime search)");
+            throw new NoResultsException("No results found for this URL");
+        }
 
-        if (result == null) return null;
-
-        return result.data;
+        return animeResult.data;
     }
 
-    public @Nullable List<KitsuAnime> getTrendingAnime() {
+    public @NotNull List<KitsuAnime> getTrendingAnime() throws NoResultsException, NetworkConnectionException, ParsingException, NoResponseException {
         return this.fetchAnime(KitsuUtils.buildTrendingAnimeUri());
     }
 
-    public int getAnimeEpisodesLength(int id) {
-        String responseContent = this.fetch(
-                KitsuUtils.buildEpisodesUri(id, 1, 0)
+    public int getAnimeEpisodesLength(int id) throws NetworkConnectionException, NoResponseException, ParsingException {
+        String responseContent = HttpMethods.get(
+                client,
+                KitsuUtils.buildEpisodesUri(id, 1, 0),
+                CommonHeaders.KITSU_HEADERS
         );
-
-        if (responseContent == null) return 0;
 
         return ParseJson.parseEpisodesLength(responseContent);
     }
 
-    public boolean isAnimeLongRunning(int animeId, int episodesLength) {
+    public boolean isAnimeLongRunning(int animeId, int episodesLength) throws
+            NetworkConnectionException,
+            ParsingException
+    {
         if (episodesLength <= 24) return false;
         // We definitely want to treat this as long-running
         if (episodesLength > 100) return true;
 
-        List<KitsuEpisode> result = this.fetchEpisodes(KitsuUtils.buildEpisodesUri(animeId, 1, episodesLength - 1));
+        List<KitsuEpisode> result;
 
-        if (result == null || result.isEmpty()) return true;
+        // Kitsu is weird, innit
+        try {
+            result = this.fetchEpisodes(KitsuUtils.buildEpisodesUri(animeId, 1, episodesLength - 1));
+        } catch (NoResponseException | NoResultsException e) {
+            return true;
+        }
+
+        if (result.isEmpty()) return true;
         if (result.get(0).attributes == null) return true;
 
         String lastEpisodeAirdate = result.get(0).attributes.airdate;
@@ -90,8 +109,24 @@ public class Kitsu {
         return !currentDate.isAfter(emissionDate);
     }
 
+    public @NotNull KitsuEpisode getEpisode(int animeId, int episode) throws
+            NoResultsException,
+            NetworkConnectionException,
+            ParsingException,
+            NoResponseException
+    {
+
+        return this.fetchEpisodes(KitsuUtils.buildEpisodeUri(animeId, episode)).get(0);
+
+    }
+
     // Not recommended for long-running anime.
-    public @Nullable List<KitsuEpisode> getAllEpisodes(int animeId, int length) {
+    public @NotNull List<KitsuEpisode> getAllEpisodes(int animeId, int length) throws
+            NoResultsException,
+            NetworkConnectionException,
+            ParsingException,
+            NoResponseException
+    {
         if (length <= 20) return this.fetchEpisodes(KitsuUtils.buildEpisodesUri(animeId, 20, 0));
 
         List<KitsuEpisode> result = new ArrayList<>();
@@ -103,24 +138,36 @@ public class Kitsu {
             HttpUrl url = KitsuUtils.buildEpisodesUri(animeId, 20, currentPage * 20);
             List<KitsuEpisode> fetchedEpisodes = this.fetchEpisodes(url);
 
-            if (fetchedEpisodes != null) {
-                result.addAll(fetchedEpisodes);
-                fetchedEpisodes.clear();
-            }
+            result.addAll(fetchedEpisodes);
+            fetchedEpisodes.clear();
 
             currentPage++;
         }
 
-        if (result.isEmpty()) return null;
+        if (result.isEmpty()) throw new NoResultsException("No results for this range");
 
         return result;
     }
 
-    public @Nullable List<KitsuEpisode> getEpisodesRange(int animeId, int from, int to, int totalLength) {
+    public @NotNull List<KitsuEpisode> getEpisodesRange(int animeId, int from, int to, int totalLength) throws
+            NoResultsException,
+            NetworkConnectionException,
+            ParsingException,
+            NoResponseException
+    {
         if (totalLength <= 20) return this.fetchEpisodes(KitsuUtils.buildEpisodesUri(animeId, 20, 0));
 
         if (to > totalLength) to = totalLength;
-        if (from > totalLength || from > to || to - from > 20) return null;
+        if (from > totalLength || from > to || to - from > 20) {
+            Logger.error(
+                    "Tried to fetch episode range with bad parameters. {} {} {} {}",
+                    animeId,
+                    from,
+                    to,
+                    totalLength
+            );
+            throw new IllegalArgumentException("This set of positions (from - to, totalLength) is not possible.");
+        }
 
         from -= 1;
         int limit = to - from;
@@ -130,60 +177,39 @@ public class Kitsu {
         );
     }
 
-    private @Nullable List<KitsuEpisode> fetchEpisodes(HttpUrl url) {
-        String responseContent = this.fetch(url);
-
-        if (responseContent == null) return null;
+    private @NotNull List<KitsuEpisode> fetchEpisodes(HttpUrl url) throws
+            NetworkConnectionException,
+            NoResponseException,
+            ParsingException,
+            NoResultsException
+    {
+        String responseContent = HttpMethods.get(client, url, CommonHeaders.KITSU_HEADERS);
 
         KitsuEpisodeResults episodeResult = ParseJson.parseEpisodes(responseContent);
 
-        if (episodeResult == null || episodeResult.data == null || episodeResult.data.isEmpty()) return null;
+        if (episodeResult.data == null || episodeResult.data.isEmpty()) {
+            Logger.debug("Kitsu URL {} yielded no results. (Episode search)");
+            throw new NoResultsException("No results found for this URL");
+        }
 
         return episodeResult.data;
     }
 
-    private @Nullable List<KitsuAnime> fetchAnime(HttpUrl url) {
-        String responseContent = this.fetch(url);
-
-        if (responseContent == null) return null;
+    private @NotNull List<KitsuAnime> fetchAnime(HttpUrl url) throws
+            NetworkConnectionException,
+            NoResponseException,
+            ParsingException,
+            NoResultsException
+    {
+        String responseContent = HttpMethods.get(client, url, CommonHeaders.KITSU_HEADERS);
 
         KitsuSearchResults animeResult = ParseJson.parseAnime(responseContent);
 
-        if (animeResult == null || animeResult.data == null || animeResult.data.isEmpty()) return null;
+        if (animeResult.data == null || animeResult.data.isEmpty()) {
+            Logger.debug("Kitsu URL {} yielded no results. (Anime search)");
+            throw new NoResultsException("No results found for this URL");
+        }
 
         return animeResult.data;
-    }
-
-    private @Nullable String fetch(HttpUrl url) {
-        Request.Builder getRequestBuilder = new Request.Builder();
-        getRequestBuilder.url(url);
-        getRequestBuilder.addHeader("Accept","application/vnd.api+json");
-        getRequestBuilder.addHeader("Content-Type","application/vnd.api+json");
-        Response response;
-
-        try {
-            response = client.executeRequest(
-                    getRequestBuilder.build()
-            );
-        } catch (IOException e) {
-            return null;
-        }
-
-        int responseCode = response.code();
-        final String responseContent = ResponseToString.read(response);
-        if (responseContent == null) {
-            return null;
-        }
-
-        switch(responseCode) {
-            case 304:
-            case 200:
-                return responseContent;
-            default:
-                Logger.error("Couldn't connect to Kitsu, or the request was denied when fetching.");
-                break;
-        }
-
-        return null;
     }
 }

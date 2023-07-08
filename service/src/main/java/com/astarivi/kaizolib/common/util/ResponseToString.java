@@ -26,6 +26,5 @@ public class ResponseToString {
                         +"but it couldn't be read correctly, or didn't close. ", e);
             return null;
         }
-
     }
 }

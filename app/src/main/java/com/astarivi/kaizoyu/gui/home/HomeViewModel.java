@@ -214,9 +214,13 @@ public class HomeViewModel extends ViewModel {
     }
 
     private void fetchCategory(Kitsu kitsu, @StringRes int titleResourceId, KitsuSearchParams params) {
-        List<KitsuAnime> anime = kitsu.searchAnime(params);
-
-        if (anime == null || anime.isEmpty()) return;
+        List<KitsuAnime> anime;
+        try {
+            anime = kitsu.searchAnime(params);
+        } catch (Exception ignored) {
+            // TODO: Tell user that there was an issue.
+            return;
+        }
 
         List<Anime> fetchedAnime = new Anime.BulkAnimeBuilder(anime).build();
         anime.clear();
