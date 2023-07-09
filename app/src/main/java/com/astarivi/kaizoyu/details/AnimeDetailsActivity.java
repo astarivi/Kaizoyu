@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -18,15 +17,15 @@ import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
+import com.astarivi.kaizoyu.core.models.base.AnimeBase;
 import com.astarivi.kaizoyu.core.models.base.ImageSize;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
-import com.astarivi.kaizoyu.core.models.base.AnimeBase;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
 import com.astarivi.kaizoyu.core.schedule.AnimeScheduleChecker;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnime;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnimeDao;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
-import com.astarivi.kaizoyu.databinding.ActivityAnimeDetailsBinding;
+import com.astarivi.kaizoyu.databinding.ActivityAnimeDetails2Binding;
 import com.astarivi.kaizoyu.details.gui.AnimeEpisodesFragment;
 import com.astarivi.kaizoyu.details.gui.AnimeInfoFragment;
 import com.astarivi.kaizoyu.details.gui.adapters.DetailsTabAdapter;
@@ -43,7 +42,7 @@ import org.tinylog.Logger;
 
 
 public class AnimeDetailsActivity extends AppCompatActivityTheme {
-    private ActivityAnimeDetailsBinding binding;
+    private ActivityAnimeDetails2Binding binding;
     private AnimeBase anime;
     private ModelType.Anime animeType;
     private SeenAnime seenAnime;
@@ -55,7 +54,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityAnimeDetailsBinding.inflate(getLayoutInflater());
+        binding = ActivityAnimeDetails2Binding.inflate(getLayoutInflater());
         binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
         setContentView(binding.getRoot());
 
@@ -98,7 +97,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             }
         }
 
-        binding.cancelButton.setOnClickListener(v -> finish());
+//        binding.cancelButton.setOnClickListener(v -> finish());
 
         setLoadingScreen();
 
@@ -203,14 +202,14 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     }
 
     private void continueInitialization() {
-        binding.loadingScreen.setVisibility(View.GONE);
+//        binding.loadingScreen.setVisibility(View.GONE);
         binding.posterImage.setVisibility(View.VISIBLE);
 
         TabLayout tabLayout = binding.informationTabLayout;
 
-        binding.backButton.setOnClickListener(v -> finish());
+//        binding.backButton.setOnClickListener(v -> finish());
 
-        String coverUrl = anime.getImageUrlFromSize(ImageSize.TINY, true);
+        String coverUrl = anime.getImageUrlFromSize(ImageSize.SMALL, true);
         String posterUrl = anime.getImageUrlFromSize(ImageSize.TINY, false);
 
         if (coverUrl != null)
@@ -231,6 +230,12 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         binding.animeTitle.setOnLongClickListener(v ->
                 Utils.copyToClipboard(this, "Anime title", anime.getDisplayTitle())
         );
+
+        binding.collapsingBarChild.setTitle(
+                anime.getDisplayTitle()
+        );
+
+        binding.internalToolbar.setNavigationOnClickListener(v -> finish());
 
         // Favorite Button
 
@@ -275,7 +280,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
     private void setLoadingScreen() {
         binding.posterImage.setVisibility(View.INVISIBLE);
-        binding.loadingScreen.setVisibility(View.VISIBLE);
+//        binding.loadingScreen.setVisibility(View.VISIBLE);
     }
 
     private void configureTabAdapter(TabLayout tabLayout){
@@ -297,30 +302,6 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                int tapPosition = tab.getPosition();
-
-                if (tapPosition == 0) {
-                    binding.backButton.setVisibility(View.VISIBLE);
-                    binding.favoriteButton.setVisibility(View.VISIBLE);
-                    binding.coverImage.setVisibility(View.VISIBLE);
-                    binding.posterImage.setVisibility(View.VISIBLE);
-                    binding.upperFade.setVisibility(View.VISIBLE);
-
-                    ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) binding.spacerView.getLayoutParams();
-                    layoutParams.topMargin = -12;
-                    binding.spacerView.setLayoutParams(layoutParams);
-                    return;
-                }
-
-                binding.backButton.setVisibility(View.GONE);
-                binding.favoriteButton.setVisibility(View.GONE);
-                binding.coverImage.setVisibility(View.GONE);
-                binding.posterImage.setVisibility(View.GONE);
-                binding.upperFade.setVisibility(View.GONE);
-
-                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) binding.spacerView.getLayoutParams();
-                layoutParams.topMargin = 0;
-                binding.spacerView.setLayoutParams(layoutParams);
             }
 
             @Override
