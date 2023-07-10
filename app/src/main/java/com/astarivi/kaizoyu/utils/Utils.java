@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.utils;
 
+import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.core.app.ActivityManagerCompat;
 
 import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.core.annotations.ThreadedOnly;
@@ -164,5 +166,13 @@ public class Utils {
     // Use with legacy devices. How legacy? Android 6
     public static void runOnUiThread(Runnable runnable) {
         new Handler(Looper.getMainLooper()).post(runnable);
+    }
+
+    public static boolean isDeviceLowSpec(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+        activityManager.getMemoryInfo(memInfo);
+
+        return ActivityManagerCompat.isLowRamDevice(activityManager) || memInfo.totalMem < 1000000000L;
     }
 }

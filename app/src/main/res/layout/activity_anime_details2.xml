@@ -8,11 +8,13 @@
     android:layout_height="match_parent"
     tools:context=".details.AnimeDetailsActivity"
     android:animateLayoutChanges="true"
+    android:fitsSystemWindows="true"
 >
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/collapsingBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
      >
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingBarChild"
@@ -28,7 +30,7 @@
                 android:layout_height="wrap_content"
                 app:layout_collapseMode="parallax"
                 android:layout_marginBottom="48dp"
-                android:animateLayoutChanges="true"
+                android:fitsSystemWindows="true"
             >
                 <LinearLayout
                     android:id="@+id/linearLayout"
@@ -48,7 +50,8 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_general_placeholder" />
+                        app:srcCompat="@drawable/ic_general_placeholder"
+                    />
 
                     <View
                         android:id="@+id/spacer_view"
@@ -193,6 +196,7 @@
                     />
 
                     <TextView
+                        android:id="@+id/anime_rating"
                         android:layout_marginTop="3dp"
                         android:gravity="center"
                         android:layout_width="wrap_content"
@@ -205,6 +209,7 @@
                         android:text="72.01"
                     />
                     <TextView
+                        android:id="@+id/anime_subtype"
                         android:layout_marginTop="3dp"
                         android:gravity="center"
                         android:layout_width="wrap_content"
@@ -226,7 +231,7 @@
                 android:layout_marginBottom="48dp"
                 app:layout_collapseMode="pin"
                 app:navigationIcon="@drawable/ic_back_new_small"
-                android:background="@drawable/bg_item_upper_fade"
+                android:background="@drawable/bg_details_upper_fade"
                 app:title="logs"
             />
             <com.google.android.material.tabs.TabLayout

@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.details;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
@@ -32,6 +33,7 @@ import com.astarivi.kaizoyu.details.gui.adapters.DetailsTabAdapter;
 import com.astarivi.kaizoyu.gui.adapters.BackInterceptAdapter;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
+import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
@@ -96,6 +98,8 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                 tab.select();
             }
         }
+
+        getWindow().setStatusBarColor(Color.parseColor("#99131313"));
 
 //        binding.cancelButton.setOnClickListener(v -> finish());
 
@@ -202,15 +206,21 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     }
 
     private void continueInitialization() {
-//        binding.loadingScreen.setVisibility(View.GONE);
         binding.posterImage.setVisibility(View.VISIBLE);
 
         TabLayout tabLayout = binding.informationTabLayout;
 
-//        binding.backButton.setOnClickListener(v -> finish());
+        String coverUrl;
+        String posterUrl;
 
-        String coverUrl = anime.getImageUrlFromSize(ImageSize.SMALL, true);
-        String posterUrl = anime.getImageUrlFromSize(ImageSize.TINY, false);
+        if (Utils.isDeviceLowSpec(this)) {
+            coverUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.SMALL, true);
+            posterUrl = anime.getImageUrlFromSize(ImageSize.TINY, false);
+        } else {
+            coverUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.ORIGINAL, true);
+            posterUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.MEDIUM, false);
+        }
+
 
         if (coverUrl != null)
             Glide.with(this)
@@ -234,6 +244,27 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         binding.collapsingBarChild.setTitle(
                 anime.getDisplayTitle()
         );
+
+        final String rating = anime.getKitsuAnime().attributes.averageRating;
+
+        if (rating != null) {
+            binding.animeRating.setText(rating);
+        } else {
+            binding.animeRating.setVisibility(View.GONE);
+        }
+
+        final String subType = anime.getKitsuAnime().attributes.subtype;
+
+        if (subType != null) {
+            binding.animeSubtype.setText(
+                    Translation.getSubTypeTranslation(
+                            anime.getKitsuAnime().attributes.subtype,
+                            this
+                    )
+            );
+        } else {
+            binding.animeSubtype.setVisibility(View.GONE);
+        }
 
         binding.internalToolbar.setNavigationOnClickListener(v -> finish());
 
@@ -276,6 +307,8 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                 );
             });
         });
+
+//        binding.loadingScreen.setVisibility(View.GONE);
     }
 
     private void setLoadingScreen() {
