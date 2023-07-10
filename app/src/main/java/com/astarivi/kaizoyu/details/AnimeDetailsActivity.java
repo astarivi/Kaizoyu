@@ -26,7 +26,7 @@ import com.astarivi.kaizoyu.core.schedule.AnimeScheduleChecker;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnime;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnimeDao;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
-import com.astarivi.kaizoyu.databinding.ActivityAnimeDetails2Binding;
+import com.astarivi.kaizoyu.databinding.ActivityAnimeDetailsBinding;
 import com.astarivi.kaizoyu.details.gui.AnimeEpisodesFragment;
 import com.astarivi.kaizoyu.details.gui.AnimeInfoFragment;
 import com.astarivi.kaizoyu.details.gui.adapters.DetailsTabAdapter;
@@ -44,7 +44,7 @@ import org.tinylog.Logger;
 
 
 public class AnimeDetailsActivity extends AppCompatActivityTheme {
-    private ActivityAnimeDetails2Binding binding;
+    private ActivityAnimeDetailsBinding binding;
     private AnimeBase anime;
     private ModelType.Anime animeType;
     private SeenAnime seenAnime;
@@ -56,7 +56,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityAnimeDetails2Binding.inflate(getLayoutInflater());
+        binding = ActivityAnimeDetailsBinding.inflate(getLayoutInflater());
         binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
         setContentView(binding.getRoot());
 
@@ -101,8 +101,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
         getWindow().setStatusBarColor(Color.parseColor("#99131313"));
 
-//        binding.cancelButton.setOnClickListener(v -> finish());
-
+        binding.cancelButton.setOnClickListener(v -> finish());
         setLoadingScreen();
 
         Threading.submitTask(Threading.TASK.INSTANT, () -> {
@@ -222,11 +221,20 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         }
 
 
-        if (coverUrl != null)
+        if (coverUrl != null) {
             Glide.with(this)
                     .load(coverUrl)
                     .centerCrop()
                     .into(binding.coverImage);
+        } else {
+            // TODO: Fix this
+//            binding.coverAnimation.setVisibility(View.VISIBLE);
+//            new Spark.Builder()
+//                    .setView(binding.coverAnimation)
+//                    .setDuration(4000)
+//                    .setAnimList(Spark.ANIM_BLUE_PURPLE)
+//                    .build().startAnimation();
+        }
 
         if (posterUrl != null)
             Glide.with(this)
@@ -308,12 +316,12 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             });
         });
 
-//        binding.loadingScreen.setVisibility(View.GONE);
+        binding.loadingScreen.setVisibility(View.GONE);
     }
 
     private void setLoadingScreen() {
         binding.posterImage.setVisibility(View.INVISIBLE);
-//        binding.loadingScreen.setVisibility(View.VISIBLE);
+        binding.loadingScreen.setVisibility(View.VISIBLE);
     }
 
     private void configureTabAdapter(TabLayout tabLayout){
