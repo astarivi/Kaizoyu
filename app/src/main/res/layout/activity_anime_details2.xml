@@ -84,8 +84,8 @@
 
                             <ImageView
                                 android:id="@+id/favorite_button"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
                                 android:contentDescription="@string/favorite_button_desc"
                                 app:layout_constraintStart_toEndOf="@+id/back_button"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -109,8 +109,8 @@
                             android:orientation="vertical">
 
                             <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
                                 android:contentDescription="@string/favorite_button_desc"
                                 app:layout_constraintStart_toEndOf="@+id/back_button"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -134,8 +134,8 @@
                             android:orientation="vertical">
 
                             <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
                                 android:contentDescription="@string/favorite_button_desc"
                                 app:layout_constraintStart_toEndOf="@+id/back_button"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -157,7 +157,6 @@
                         android:layout_marginStart="25dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="10dp"
                     />
                 </LinearLayout>
 
@@ -166,7 +165,7 @@
                     android:layout_width="0dp"
                     android:layout_height="160dp"
                     android:layout_marginStart="25dp"
-                    android:layout_marginBottom="90dp"
+                    android:layout_marginBottom="95dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintDimensionRatio="w,0.71:1"
                     app:layout_constraintStart_toStartOf="parent"
@@ -179,7 +178,7 @@
                     android:layout_height="160dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="90dp"
+                    android:layout_marginBottom="95dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/poster_image"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -232,13 +231,13 @@
                 app:layout_collapseMode="pin"
                 app:navigationIcon="@drawable/ic_back_new_small"
                 android:background="@drawable/bg_details_upper_fade"
-                app:title="logs"
             />
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/informationTabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_gravity="bottom"
+                app:tabMode="fixed"
             >
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
