@@ -41,6 +41,7 @@ import com.astarivi.kaizoyu.video.gui.PlayerSkipView;
 import com.astarivi.kaizoyu.video.gui.PlayerView;
 import com.astarivi.kaizoyu.video.utils.AnimeEpisodeManager;
 import com.astarivi.kaizoyu.video.utils.BundleUtils;
+import com.astarivi.zparc.Zparc;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.tinylog.Logger;
@@ -50,14 +51,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.basulabs.audiofocuscontroller.AudioFocusController;
-import io.github.tonnyl.spark.Spark;
 
 
 public class VideoPlayerActivity extends AppCompatActivityTheme {
     private ActivityVideoPlayerBinding binding;
     private VideoPlayerViewModel viewModel;
     private GestureDetectorCompat gestureDetector;
-    private Spark spark;
+    private Zparc spark;
     private AnimeEpisodeManager animeEpisodeManager = null;
     private boolean isPlaying = false;
     private AudioFocusController audioFocusController = null;
@@ -234,10 +234,10 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
         Logger.info("System bars hidden.");
 
-        spark = new Spark.Builder()
+        spark = new Zparc.Builder(this)
                 .setView(binding.getRoot())
                 .setDuration(4000)
-                .setAnimList(Spark.ANIM_BLUE_PURPLE)
+                .setAnimList(Zparc.ANIM_BLUE_PURPLE)
                 .build();
 
         // Handle errors

@@ -1,11 +1,16 @@
 package com.astarivi.kaizoyu.details;
 
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.palette.graphics.Palette;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.astarivi.kaizolib.kitsu.Kitsu;
@@ -35,7 +40,12 @@ import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
+import com.astarivi.zparc.Zparc;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -48,6 +58,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     private AnimeBase anime;
     private ModelType.Anime animeType;
     private SeenAnime seenAnime;
+    private Zparc zparc;
 
     // The bundle must contain the following keys to create this Details Activity:
     // "type" as ModelType.Anime Enum value String representation
@@ -129,6 +140,20 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (zparc != null) zparc.stopAnimation();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (zparc != null) zparc.startAnimation();
     }
 
     public void triggerFavoriteRefresh() {
@@ -221,25 +246,57 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         }
 
 
-        if (coverUrl != null) {
+        if (coverUrl != null)
             Glide.with(this)
                     .load(coverUrl)
                     .centerCrop()
                     .into(binding.coverImage);
-        } else {
-            // TODO: Fix this
-//            binding.coverAnimation.setVisibility(View.VISIBLE);
-//            new Spark.Builder()
-//                    .setView(binding.coverAnimation)
-//                    .setDuration(4000)
-//                    .setAnimList(Spark.ANIM_BLUE_PURPLE)
-//                    .build().startAnimation();
-        }
+
 
         if (posterUrl != null)
             Glide.with(this)
                     .load(posterUrl)
                     .placeholder(R.drawable.ic_general_placeholder)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            if (coverUrl != null || !(resource instanceof BitmapDrawable)) return false;
+
+                            Palette.from(
+                                // Welcome to casting hell
+                                ((BitmapDrawable) resource).getBitmap()
+                            ).generate(palette -> {
+                                if (isFinishing() || isDestroyed() || palette == null) return;
+
+                                binding.coverAnimation.post(() -> binding.coverAnimation.setVisibility(View.VISIBLE));
+
+                                zparc = new Zparc.Builder(AnimeDetailsActivity.this)
+                                        .setView(binding.coverAnimation)
+                                        .setDuration(4000)
+                                        .setAnimColors(
+                                                palette.getDominantColor(
+                                                        Color.parseColor("#363d80")
+                                                ),
+                                                palette.getMutedColor(
+                                                        Color.parseColor("#9240aa")
+                                                )
+                                        )
+                                        .build();
+
+                                // Activity visible, start the animation
+                                if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                                    zparc.startAnimation();
+                                }
+                            });
+
+                            return false;
+                        }
+                    })
                     .into(binding.posterImage);
 
         configureTabAdapter(tabLayout);

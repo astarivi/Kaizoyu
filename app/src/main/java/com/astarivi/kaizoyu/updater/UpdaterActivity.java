@@ -17,6 +17,7 @@ import com.astarivi.kaizoyu.core.updater.UpdateDownloader;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.ActivityUpdaterBinding;
 import com.astarivi.kaizoyu.utils.Threading;
+import com.astarivi.zparc.Zparc;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,13 +25,11 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.concurrent.Future;
 
-import io.github.tonnyl.spark.Spark;
-
 
 public class UpdaterActivity extends AppCompatActivityTheme {
     private ActivityUpdaterBinding binding;
     private UpdateDownloader updateDownloader;
-    private Future downloadingFuture;
+    private Future<?> downloadingFuture;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,10 +38,10 @@ public class UpdaterActivity extends AppCompatActivityTheme {
         binding = ActivityUpdaterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        Spark spark = new Spark.Builder()
+        Zparc spark = new Zparc.Builder(this)
                 .setView(binding.getRoot())
                 .setDuration(4000)
-                .setAnimList(Spark.ANIM_BLUE_PURPLE)
+                .setAnimList(Zparc.ANIM_BLUE_PURPLE)
                 .build();
 
         spark.startAnimation();
