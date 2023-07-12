@@ -14,6 +14,7 @@ import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import java.io.File;
 import java.util.concurrent.FutureTask;
@@ -58,6 +59,13 @@ public class PersistenceRepository {
             new File(context.getFilesDir(), "log.txt").delete();
         } catch(Exception ignored) {
         }
+
+        System.setProperty(
+                "tinylog.directory",
+                KaizoyuApplication.getApplication().getApplicationContext().getFilesDir().getAbsolutePath()
+        );
+
+        Logger.info("Starting logging session");
     }
 
     public static @NotNull PersistenceRepository getInstance() {

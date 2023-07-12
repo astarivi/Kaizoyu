@@ -87,7 +87,7 @@ public class UpdaterActivity extends AppCompatActivityTheme {
                         .setData(
                                 FileProvider.getUriForFile(
                                         this,
-                                        "com.astarivi.kaizoyu.fileprovider",
+                                        getString(R.string.provider_authority),
                                         updateFile
                                 )
                         )

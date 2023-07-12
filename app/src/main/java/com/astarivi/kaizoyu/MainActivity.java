@@ -34,8 +34,6 @@ public class MainActivity extends AppCompatActivityTheme {
 
         Utils.clearCache();
 
-        System.setProperty("tinylog.directory", getFilesDir().getAbsolutePath());
-
         binding = ActivityMainBinding.inflate(this.getLayoutInflater());
 
         setContentView(binding.getRoot());

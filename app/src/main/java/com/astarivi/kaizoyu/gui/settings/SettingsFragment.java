@@ -101,7 +101,7 @@ public class SettingsFragment extends Fragment {
                         new Intent(Intent.ACTION_SEND)
                                 .putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
                                         requireContext(),
-                                        "com.astarivi.kaizoyu.fileprovider",
+                                        getString(R.string.provider_authority),
                                         logFile
                                 ))
                                 .setType("text/plain"),
