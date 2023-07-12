@@ -8,11 +8,13 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ShareCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.palette.graphics.Palette;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.astarivi.kaizolib.common.util.StringPair;
 import com.astarivi.kaizolib.kitsu.Kitsu;
 import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
 import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
@@ -20,13 +22,13 @@ import com.astarivi.kaizolib.kitsu.exception.NoResultsException;
 import com.astarivi.kaizolib.kitsu.exception.ParsingException;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.adapters.GenericModalBottomSheet;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.models.base.AnimeBase;
 import com.astarivi.kaizoyu.core.models.base.ImageSize;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
-import com.astarivi.kaizoyu.core.models.local.LocalAnime;
 import com.astarivi.kaizoyu.core.schedule.AnimeScheduleChecker;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnime;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnimeDao;
@@ -52,6 +54,8 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
+import java.util.Objects;
+
 
 public class AnimeDetailsActivity extends AppCompatActivityTheme {
     private ActivityAnimeDetailsBinding binding;
@@ -72,32 +76,56 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         setContentView(binding.getRoot());
 
         Bundle bundle = getIntent().getExtras();
+        String action = getIntent().getAction();
+        Integer kitsuId = null;
 
-        // Can't create stuff without a bundle
-        if (bundle == null) return;
+        // Deep link
+        if (action != null && action.equals("android.intent.action.VIEW")) {
+            try {
+                kitsuId = Integer.parseInt(
+                        Objects.requireNonNull(
+                                Objects.requireNonNull(
+                                        getIntent().getData()
+                                ).getLastPathSegment()
+                        )
+                );
+            } catch(NullPointerException | NumberFormatException e) {
+                Logger.error("Deep link was invalid {}", getIntent().getData());
+                finish();
+                return;
+            }
+        // Bundle
+        } else if (bundle != null) {
+            String type = bundle.getString("type");
 
-        String type = bundle.getString("type");
+            if (type == null || type.equals("")) {
+                finish();
+                return;
+            }
 
-        if (type == null || type.equals("")) {
+            try {
+                animeType = ModelType.Anime.valueOf(type);
+            } catch(IllegalArgumentException e) {
+                Logger.error("Invalid anime type {} for this bundle", type);
+                finish();
+                return;
+            }
+
+            anime = Utils.getAnimeFromBundle(bundle, animeType);
+
+            if (anime == null) {
+                Logger.error("Anime type {} couldn't be decoded from bundle", animeType);
+                finish();
+                return;
+            }
+        // Not valid
+        } else {
+            Logger.error("No valid build data was passed to this activity");
             finish();
             return;
         }
 
-        try {
-            animeType = ModelType.Anime.valueOf(type);
-        } catch(IllegalArgumentException e) {
-            finish();
-            return;
-        }
-
-        anime = Utils.getAnimeFromBundle(bundle, animeType);
-
-        if (anime == null) {
-            finish();
-            return;
-        }
-
-        // Bundle is valid, continue
+        // Data is valid, continue
 
         TabLayout tabLayout = binding.informationTabLayout;
 
@@ -115,18 +143,60 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         binding.cancelButton.setOnClickListener(v -> finish());
         setLoadingScreen();
 
+        // If this var isn't null, we are dealing with a deep link
+        Integer finalKitsuId = kitsuId;
         Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            SeasonalAnime seasonalAnime = AnimeScheduleChecker.getSeasonalAnime((Anime) anime);
+            final int currentShowId = finalKitsuId != null ? finalKitsuId : Integer.parseInt(anime.getKitsuAnime().id);
 
-            if (seasonalAnime == null) {
-                binding.getRoot().post(this::initializeLocal);
+            SeasonalAnime seasonalAnime = AnimeScheduleChecker.getSeasonalAnime(
+                    currentShowId
+            );
+
+            // Seasonal anime
+            if (seasonalAnime != null) {
+                anime = seasonalAnime;
+                animeType = ModelType.Anime.SEASONAL;
+                binding.getRoot().post(this::initializeFavorite);
                 return;
             }
 
-            anime = seasonalAnime;
-            animeType = ModelType.Anime.SEASONAL;
+            // Local anime or deep link
+            if (animeType == ModelType.Anime.LOCAL || finalKitsuId != -1) {
+                Kitsu kitsu = new Kitsu(
+                        Data.getUserHttpClient()
+                );
 
-            binding.getRoot().post(this::initializeLocal);
+                KitsuAnime ktAnime = null;
+                try {
+                    ktAnime = kitsu.getAnimeById(
+                            currentShowId
+                    );
+                } catch (NetworkConnectionException | NoResultsException e) {
+                    if (finalKitsuId != null) {
+                        Logger.error("No internet connection to initialize this deep link");
+                        binding.getRoot().post(this::finish);
+                        return;
+                    }
+                } catch (NoResponseException | ParsingException e) {
+                    if (finalKitsuId != null) {
+                        Logger.error("Failed to initialize this deep link, response couldn't be decoded");
+                        Logger.error(e);
+                        binding.getRoot().post(this::finish);
+                        return;
+                    }
+                    Logger.error("Weird exception after trying to initialize a locally saved anime.");
+                    Logger.error(e);
+                    Logger.error("This incident has been reported to analytics.");
+                    AnalyticsClient.onError("offline_anime_fetch", "Offline anime weird error", e);
+                }
+
+                if (ktAnime != null) {
+                    anime = new Anime(ktAnime);
+                    animeType = ModelType.Anime.BASE;
+                }
+            }
+
+            binding.getRoot().post(this::initializeFavorite);
         });
     }
 
@@ -165,44 +235,6 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             if (seenAnime != null && seenAnime.isFavorite())
                 binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active);
         });
-    }
-
-    private void initializeLocal() {
-        if (animeType == ModelType.Anime.LOCAL) {
-            LocalAnime localAnime = (LocalAnime) anime;
-
-            Threading.submitTask(Threading.TASK.INSTANT, () -> {
-                Kitsu kitsu = new Kitsu(
-                        Data.getUserHttpClient()
-                );
-
-                KitsuAnime ktAnime;
-                try {
-                    ktAnime = kitsu.getAnimeById(
-                            Integer.parseInt(localAnime.getKitsuAnime().id)
-                    );
-                } catch (NetworkConnectionException | NoResultsException e) {
-                    binding.getRoot().post(this::initializeFavorite);
-                    return;
-                } catch (NoResponseException | ParsingException e) {
-                    Logger.error("Weird exception after trying to initialize a locally saved anime.");
-                    Logger.error(e);
-                    Logger.error("This incident has been reported to analytics.");
-                    AnalyticsClient.onError("offline_anime_fetch", "Offline anime weird error", e);
-                    binding.getRoot().post(this::initializeFavorite);
-                    return;
-                }
-
-                anime = new Anime(ktAnime);
-                animeType = ModelType.Anime.BASE;
-
-                binding.getRoot().post(this::initializeFavorite);
-            });
-
-            return;
-        }
-
-        initializeFavorite();
     }
 
     private void initializeFavorite() {
@@ -303,12 +335,45 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
         binding.animeTitle.setText(anime.getDisplayTitle());
         binding.animeTitle.setOnLongClickListener(v ->
-                Utils.copyToClipboard(this, "Anime title", anime.getDisplayTitle())
+            Utils.copyToClipboard(this, "Anime title", anime.getDisplayTitle())
         );
 
         binding.collapsingBarChild.setTitle(
-                anime.getDisplayTitle()
+            anime.getDisplayTitle()
         );
+
+        binding.shareTouchArea.setOnClickListener(v -> {
+            GenericModalBottomSheet modalDialog = new GenericModalBottomSheet(
+                    getString(R.string.d_share_title),
+                    new StringPair[]{
+                            new StringPair(
+                                    getString(R.string.d_share_kitsu),
+                                    getString(R.string.d_share_kitsu_desc)
+                            ),
+                            new StringPair(
+                                    getString(R.string.d_share_app),
+                                    getString(R.string.d_share_app_desc)
+                            )
+                    },
+                    index -> {
+                        if (index == 0) {
+                            new ShareCompat.IntentBuilder(this)
+                                    .setType("text/plain")
+                                    .setChooserTitle(R.string.d_share_kitsu)
+                                    .setText(String.format("https://kitsu.io/anime/%s", anime.getKitsuAnime().id))
+                                    .startChooser();
+                        } else {
+                            new ShareCompat.IntentBuilder(this)
+                                    .setType("text/plain")
+                                    .setChooserTitle(R.string.d_share_app)
+                                    .setText(String.format("https://kaizoyu.ovh/app/show/%s", anime.getKitsuAnime().id))
+                                    .startChooser();
+                        }
+                    }
+            );
+
+            modalDialog.show(getSupportFragmentManager(), GenericModalBottomSheet.TAG);
+        });
 
         final String rating = anime.getKitsuAnime().attributes.averageRating;
 
@@ -335,8 +400,8 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
         // Favorite Button
 
-        binding.favoriteButton.setOnClickListener(v -> {
-            binding.favoriteButton.setEnabled(false);
+        binding.favoriteTouchArea.setOnClickListener(v -> {
+            binding.favoriteTouchArea.setEnabled(false);
             Threading.submitTask(Threading.TASK.DATABASE, () -> {
                 SeenAnimeDao seenAnimeDao = Data.getRepositories().getSeenAnimeRepository().getAnimeDao();
                 seenAnime = seenAnimeDao.getFromKitsuId(
@@ -368,7 +433,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                             binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active));
                 }
                 binding.getRoot().post(() ->
-                        binding.favoriteButton.setEnabled(true)
+                        binding.favoriteTouchArea.setEnabled(true)
                 );
             });
         });

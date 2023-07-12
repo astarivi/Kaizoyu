@@ -2,7 +2,6 @@ package com.astarivi.kaizoyu.core.schedule;
 
 import com.astarivi.kaizoyu.core.adapters.WebAdapter;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
-import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,13 +17,13 @@ import okhttp3.HttpUrl;
 
 
 public class AnimeScheduleChecker {
-    public static @Nullable SeasonalAnime getSeasonalAnime(Anime anime) {
+    public static @Nullable SeasonalAnime getSeasonalAnime(int animeId) {
         // Check if the anime is included in the schedule before fetching the schedule itself
         List<Integer> idsList = fetchIds();
 
         if (idsList == null) return null;
 
-        if (!idsList.contains((Integer) Integer.parseInt(anime.getKitsuAnime().id))) return null;
+        if (!idsList.contains((Integer) animeId)) return null;
 
         // It is in the schedule, get the schedule and search it.
         AssistedScheduleFetcher.ScheduledAnime[] scheduledAnimeList = AssistedScheduleFetcher.getScheduledAnime();
@@ -32,7 +31,7 @@ public class AnimeScheduleChecker {
         if (scheduledAnimeList == null) return null;
 
         for (AssistedScheduleFetcher.ScheduledAnime scheduledAnime :  scheduledAnimeList) {
-            if (!scheduledAnime.kitsu.id.equals(anime.getKitsuAnime().id)) continue;
+            if (!scheduledAnime.kitsu.id.equals(String.valueOf(animeId))) continue;
 
             return scheduledAnime.toSeasonalAnime();
         }

@@ -89,6 +89,7 @@
                     >
 
                         <LinearLayout
+                            android:id="@+id/favorite_touch_area"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -116,20 +117,23 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/issue_touch_area"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:orientation="vertical"
-                            tools:ignore="UseCompoundDrawables">
+                            tools:ignore="UseCompoundDrawables"
+                        >
 
                             <ImageView
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
-                                android:contentDescription="@string/favorite_button_desc"
+                                android:contentDescription="@string/d_favorite_description"
                                 app:layout_constraintStart_toEndOf="@+id/back_button"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_details_feedback" />
+                                app:srcCompat="@drawable/ic_details_feedback"
+                            />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -138,24 +142,28 @@
                                 android:fontFamily="@font/lato_regular"
                                 android:text="@string/d_issue"
                                 android:textColor="?attr/colorOutline"
-                                android:textSize="11sp" />
+                                android:textSize="11sp"
+                            />
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/share_touch_area"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:orientation="vertical"
-                            tools:ignore="UseCompoundDrawables">
+                            tools:ignore="UseCompoundDrawables"
+                        >
 
                             <ImageView
                                 android:layout_width="28dp"
                                 android:layout_height="28dp"
-                                android:contentDescription="@string/favorite_button_desc"
+                                android:contentDescription="@string/d_share_description"
                                 app:layout_constraintStart_toEndOf="@+id/back_button"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_details_share" />
+                                app:srcCompat="@drawable/ic_details_share"
+                            />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -164,7 +172,8 @@
                                 android:fontFamily="@font/lato_regular"
                                 android:text="@string/d_share"
                                 android:textColor="?attr/colorOutline"
-                                android:textSize="11sp" />
+                                android:textSize="11sp"
+                            />
                         </LinearLayout>
                     </LinearLayout>
 

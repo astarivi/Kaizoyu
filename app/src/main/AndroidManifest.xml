@@ -38,9 +38,18 @@
             android:name=".details.AnimeDetailsActivity"
             android:exported="true"
             android:label="@string/title_activity_anime_details"
-            android:screenOrientation="userPortrait"
-            tools:ignore="LockedOrientationActivity"
-        />
+        >
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="kaizoyu.ovh" />
+                <data android:pathPrefix="/app/show" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".search.SearchActivity"
             android:exported="true"
