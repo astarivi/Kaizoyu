@@ -128,7 +128,12 @@ public class UpdaterActivity extends AppCompatActivityTheme {
         ).show(
         );
         final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(this::finish, 3000);
+        handler.postDelayed(() -> {
+            try {
+                this.finish();
+            } catch (Exception ignored) {
+            }
+        }, 5000);
     }
 
     @Override
