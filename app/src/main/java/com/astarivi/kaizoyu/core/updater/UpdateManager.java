@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.core.adapters.WebAdapter;
-import com.astarivi.kaizoyu.core.annotations.ThreadedOnly;
+import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.core.annotations;
+package com.astarivi.kaizoyu.core.common;
 
 import java.lang.annotation.*;
 

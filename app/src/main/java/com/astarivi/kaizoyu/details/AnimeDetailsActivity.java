@@ -1,14 +1,17 @@
 package com.astarivi.kaizoyu.details;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ShareCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.palette.graphics.Palette;
@@ -54,6 +57,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
+import java.io.File;
 import java.util.Objects;
 
 
@@ -277,7 +281,6 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             posterUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.MEDIUM, false);
         }
 
-
         if (coverUrl != null)
             Glide.with(this)
                     .load(coverUrl)
@@ -338,8 +341,76 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             Utils.copyToClipboard(this, "Anime title", anime.getDisplayTitle())
         );
 
+        binding.posterImage.setOnClickListener(v ->
+            Threading.submitTask(Threading.TASK.INSTANT, () -> {
+
+                File downloadedFile;
+                try {
+                    downloadedFile = DetailsUtils.downloadImage(this, (Anime) anime, false);
+                } catch (Exception ignored) {
+                    return;
+                }
+
+                binding.getRoot().post(() -> {
+                    try {
+                        startActivity(
+                                new Intent(Intent.ACTION_VIEW)
+                                        .putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+                                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                        .setDataAndType(
+                                                FileProvider.getUriForFile(
+                                                        AnimeDetailsActivity.this,
+                                                        getString(R.string.provider_authority),
+                                                        downloadedFile
+                                                ),
+                                                "image/*"
+                                        )
+                        );
+                    } catch (Exception ignored) {
+                    }
+                });
+            })
+        );
+
+        binding.coverImage.setOnClickListener(v ->
+                Threading.submitTask(Threading.TASK.INSTANT, () -> {
+
+                    File downloadedFile;
+                    try {
+                        downloadedFile = DetailsUtils.downloadImage(this, (Anime) anime, true);
+                    } catch (Exception ignored) {
+                        return;
+                    }
+
+                    binding.getRoot().post(() -> {
+                        try {
+                            startActivity(
+                                    new Intent(Intent.ACTION_VIEW)
+                                            .putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+                                            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                            .setDataAndType(
+                                                    FileProvider.getUriForFile(
+                                                            AnimeDetailsActivity.this,
+                                                            getString(R.string.provider_authority),
+                                                            downloadedFile
+                                                    ),
+                                                    "image/*"
+                                            )
+                            );
+                        } catch (Exception ignored) {
+                        }
+                    });
+                })
+        );
+
         binding.collapsingBarChild.setTitle(
             anime.getDisplayTitle()
+        );
+
+        binding.issueTouchArea.setOnClickListener(v ->
+            Toast.makeText(this, R.string.d_issue_unavailable, Toast.LENGTH_SHORT).show()
         );
 
         binding.shareTouchArea.setOnClickListener(v -> {

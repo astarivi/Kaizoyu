@@ -3,7 +3,7 @@ package com.astarivi.kaizoyu.core.schedule;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.core.adapters.WebAdapter;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
-import com.astarivi.kaizoyu.core.annotations.ThreadedOnly;
+import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;

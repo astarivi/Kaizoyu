@@ -61,6 +61,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="300dp"
                             android:visibility="gone"
+                            android:clickable="true"
+                            android:focusable="true"
                         />
                     </FrameLayout>
 
@@ -196,6 +198,8 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:shapeAppearanceOverlay="@style/roundedImageView"
                     app:srcCompat="@drawable/ic_general_placeholder"
+                    android:clickable="true"
+                    android:focusable="true"
                 />
 
                 <LinearLayout

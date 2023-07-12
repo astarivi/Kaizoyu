@@ -5,7 +5,7 @@ import android.view.View;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.astarivi.kaizoyu.core.annotations.ThreadedOnly;
+import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.schedule.AssistedScheduleFetcher;
 import com.astarivi.kaizoyu.databinding.FragmentScheduleBinding;
@@ -26,7 +26,7 @@ public class ScheduleViewModel extends ViewModel {
     private final MutableLiveData<ArrayList<DayOfWeek>> availableDaysOfWeek = new MutableLiveData<>();
     private final MutableLiveData<ArrayList<SeasonalAnime>> animeFromSchedule = new MutableLiveData<>();
     private final MutableLiveData<TreeMap<DayOfWeek, ArrayList<SeasonalAnime>>> schedule = new MutableLiveData<>(null);
-    private Future reloadFuture = null;
+    private Future<?> reloadFuture = null;
 
     public MutableLiveData<ArrayList<DayOfWeek>> getAvailableDaysOfWeek() {
         return availableDaysOfWeek;

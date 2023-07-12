@@ -10,10 +10,11 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
+import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.adapters.HttpFileDownloader;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
-import com.astarivi.kaizoyu.core.updater.UpdateDownloader;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.ActivityUpdaterBinding;
 import com.astarivi.kaizoyu.utils.Threading;
@@ -21,14 +22,16 @@ import com.astarivi.zparc.Zparc;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Future;
 
 
 public class UpdaterActivity extends AppCompatActivityTheme {
     private ActivityUpdaterBinding binding;
-    private UpdateDownloader updateDownloader;
+    private HttpFileDownloader updateDownloader;
     private Future<?> downloadingFuture;
 
     @Override
@@ -52,29 +55,43 @@ public class UpdaterActivity extends AppCompatActivityTheme {
 
         UpdateManager.LatestUpdate latestUpdate = getUpdateFromBundle(getIntent().getExtras());
 
-        updateDownloader = new UpdateDownloader(
-                latestUpdate,
-                new File(getCacheDir(), "update.apk"),
-                new UpdateDownloader.DownloadStatusListener() {
-                    @Override
-                    public void onProgress(int percentage) {
-                        binding.getRoot().post(() -> binding.downloadProgress.setProgress(percentage));
-                    }
+        if (latestUpdate == null) return;
 
-                    // TODO Handle this better
-                    @Override
-                    public void onError(UpdateDownloader.DownloadErrorCodes code) {
-                        binding.getRoot().post(() -> cancelUpdate());
-                    }
-
-                    @Override
-                    public void onFinish(File file) {
-                        binding.getRoot().post(() -> installUpdate(file));
-                    }
-                }
+        updateDownloader = new HttpFileDownloader(
+                latestUpdate.downloadUrl,
+                new File(getCacheDir(), "update.apk")
         );
 
-        downloadingFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> updateDownloader.download());
+        updateDownloader.setListener(progressPercentage ->
+                binding.getRoot().post(() -> binding.downloadProgress.setProgress(progressPercentage))
+        );
+
+        downloadingFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
+            File updateFile;
+            try {
+                updateFile = updateDownloader.download();
+            } catch (IOException e) {
+                Logger.error("Error downloading update");
+                Logger.error(e);
+                binding.getRoot().post(() -> {
+                    Toast.makeText(this, R.string.parsing_error, Toast.LENGTH_SHORT).show();
+                    cancelUpdate();
+                });
+                return;
+            } catch (NetworkConnectionException e) {
+                Logger.error("Error downloading update");
+                Logger.error(e);
+                binding.getRoot().post(() -> {
+                    Toast.makeText(this, R.string.network_connection_error, Toast.LENGTH_SHORT).show();
+                    cancelUpdate();
+                });
+                return;
+            }
+
+            binding.getRoot().post(() ->
+                installUpdate(updateFile)
+            );
+        });
     }
 
     private void installUpdate(File updateFile) {

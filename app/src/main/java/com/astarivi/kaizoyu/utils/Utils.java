@@ -18,7 +18,7 @@ import androidx.annotation.StringRes;
 import androidx.core.app.ActivityManagerCompat;
 
 import com.astarivi.kaizoyu.KaizoyuApplication;
-import com.astarivi.kaizoyu.core.annotations.ThreadedOnly;
+import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.models.base.AnimeBase;
