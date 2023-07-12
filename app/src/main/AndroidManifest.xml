@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme">
 
         <provider
-            android:authorities="com.astarivi.kaizoyu.fileprovider"
+            android:authorities="@string/provider_authority"
             android:name="androidx.core.content.FileProvider"
             android:exported="false"
             android:enabled="true"

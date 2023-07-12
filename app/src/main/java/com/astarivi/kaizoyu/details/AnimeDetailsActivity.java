@@ -161,7 +161,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             }
 
             // Local anime or deep link
-            if (animeType == ModelType.Anime.LOCAL || finalKitsuId != -1) {
+            if (animeType == ModelType.Anime.LOCAL || finalKitsuId != null) {
                 Kitsu kitsu = new Kitsu(
                         Data.getUserHttpClient()
                 );

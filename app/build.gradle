@@ -38,12 +38,14 @@ android {
             applicationIdSuffix '.debug'
             versionNameSuffix '-DEBUG'
             resValue "string", "app_k_name", "Kaizoyu! Debug"
+            resValue "string", "provider_authority", "com.astarivi.kaizoyu.debug.fileprovider"
         }
 
         beta {
             applicationIdSuffix '.beta'
             versionNameSuffix '01-BETA'
             resValue "string", "app_k_name", "Kaizoyu! Beta"
+            resValue "string", "provider_authority", "com.astarivi.kaizoyu.beta.fileprovider"
         }
 
         release {
@@ -51,6 +53,7 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "app_k_name", "Kaizoyu!"
+            resValue "string", "provider_authority", "com.astarivi.kaizoyu.fileprovider"
         }
     }
 
