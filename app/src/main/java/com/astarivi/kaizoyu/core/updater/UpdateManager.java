@@ -56,7 +56,7 @@ public class UpdateManager {
                     isBeta ? latestReleaseCDN.latest_beta : latestReleaseCDN.latest_release
             );
             currentVersion = Float.parseFloat(
-                    isBeta ? VERSION.replace("-BETA", "") : latestReleaseCDN.latest_release
+                    isBeta ? VERSION.replace("-BETA", "") : VERSION
             );
         } catch (NumberFormatException e) {
             throw new ParseException("Couldn't parse latest version TAG", 0);
