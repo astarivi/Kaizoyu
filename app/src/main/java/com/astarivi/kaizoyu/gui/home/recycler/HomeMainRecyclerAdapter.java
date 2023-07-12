@@ -1,16 +1,15 @@
 package com.astarivi.kaizoyu.gui.home.recycler;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.astarivi.kaizoyu.databinding.FragmentHomeItemBinding;
+import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.carousel.CarouselLayoutManager;
 
 import java.util.ArrayList;
@@ -25,11 +24,7 @@ public class HomeMainRecyclerAdapter extends RecyclerView.Adapter<HomeMainRecycl
     public HomeMainRecyclerAdapter(Context context, HomeRecyclerAdapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
 
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
-        activityManager.getMemoryInfo(memInfo);
-
-        isLowRam = ActivityManagerCompat.isLowRamDevice(activityManager) || memInfo.totalMem < 1200000000L;
+        isLowRam = Utils.isDeviceLowSpec(context);
     }
 
     @NonNull

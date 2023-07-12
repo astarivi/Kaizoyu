@@ -1,11 +1,16 @@
 package com.astarivi.kaizoyu.details;
 
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.palette.graphics.Palette;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.astarivi.kaizolib.kitsu.Kitsu;
@@ -18,9 +23,9 @@ import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
+import com.astarivi.kaizoyu.core.models.base.AnimeBase;
 import com.astarivi.kaizoyu.core.models.base.ImageSize;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
-import com.astarivi.kaizoyu.core.models.base.AnimeBase;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
 import com.astarivi.kaizoyu.core.schedule.AnimeScheduleChecker;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnime;
@@ -33,8 +38,14 @@ import com.astarivi.kaizoyu.details.gui.adapters.DetailsTabAdapter;
 import com.astarivi.kaizoyu.gui.adapters.BackInterceptAdapter;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
+import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
+import com.astarivi.zparc.Zparc;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -47,6 +58,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     private AnimeBase anime;
     private ModelType.Anime animeType;
     private SeenAnime seenAnime;
+    private Zparc zparc;
 
     // The bundle must contain the following keys to create this Details Activity:
     // "type" as ModelType.Anime Enum value String representation
@@ -98,8 +110,9 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             }
         }
 
-        binding.cancelButton.setOnClickListener(v -> finish());
+        getWindow().setStatusBarColor(Color.parseColor("#99131313"));
 
+        binding.cancelButton.setOnClickListener(v -> finish());
         setLoadingScreen();
 
         Threading.submitTask(Threading.TASK.INSTANT, () -> {
@@ -127,6 +140,20 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (zparc != null) zparc.stopAnimation();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (zparc != null) zparc.startAnimation();
     }
 
     public void triggerFavoriteRefresh() {
@@ -203,15 +230,21 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     }
 
     private void continueInitialization() {
-        binding.loadingScreen.setVisibility(View.GONE);
         binding.posterImage.setVisibility(View.VISIBLE);
 
         TabLayout tabLayout = binding.informationTabLayout;
 
-        binding.backButton.setOnClickListener(v -> finish());
+        String coverUrl;
+        String posterUrl;
 
-        String coverUrl = anime.getImageUrlFromSize(ImageSize.TINY, true);
-        String posterUrl = anime.getImageUrlFromSize(ImageSize.TINY, false);
+        if (Utils.isDeviceLowSpec(this)) {
+            coverUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.SMALL, true);
+            posterUrl = anime.getImageUrlFromSize(ImageSize.TINY, false);
+        } else {
+            coverUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.ORIGINAL, true);
+            posterUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.MEDIUM, false);
+        }
+
 
         if (coverUrl != null)
             Glide.with(this)
@@ -219,10 +252,51 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                     .centerCrop()
                     .into(binding.coverImage);
 
+
         if (posterUrl != null)
             Glide.with(this)
                     .load(posterUrl)
                     .placeholder(R.drawable.ic_general_placeholder)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            if (coverUrl != null || !(resource instanceof BitmapDrawable)) return false;
+
+                            Palette.from(
+                                // Welcome to casting hell
+                                ((BitmapDrawable) resource).getBitmap()
+                            ).generate(palette -> {
+                                if (isFinishing() || isDestroyed() || palette == null) return;
+
+                                binding.coverAnimation.post(() -> binding.coverAnimation.setVisibility(View.VISIBLE));
+
+                                zparc = new Zparc.Builder(AnimeDetailsActivity.this)
+                                        .setView(binding.coverAnimation)
+                                        .setDuration(4000)
+                                        .setAnimColors(
+                                                palette.getDominantColor(
+                                                        Color.parseColor("#363d80")
+                                                ),
+                                                palette.getMutedColor(
+                                                        Color.parseColor("#9240aa")
+                                                )
+                                        )
+                                        .build();
+
+                                // Activity visible, start the animation
+                                if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                                    zparc.startAnimation();
+                                }
+                            });
+
+                            return false;
+                        }
+                    })
                     .into(binding.posterImage);
 
         configureTabAdapter(tabLayout);
@@ -231,6 +305,33 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         binding.animeTitle.setOnLongClickListener(v ->
                 Utils.copyToClipboard(this, "Anime title", anime.getDisplayTitle())
         );
+
+        binding.collapsingBarChild.setTitle(
+                anime.getDisplayTitle()
+        );
+
+        final String rating = anime.getKitsuAnime().attributes.averageRating;
+
+        if (rating != null) {
+            binding.animeRating.setText(rating);
+        } else {
+            binding.animeRating.setVisibility(View.GONE);
+        }
+
+        final String subType = anime.getKitsuAnime().attributes.subtype;
+
+        if (subType != null) {
+            binding.animeSubtype.setText(
+                    Translation.getSubTypeTranslation(
+                            anime.getKitsuAnime().attributes.subtype,
+                            this
+                    )
+            );
+        } else {
+            binding.animeSubtype.setVisibility(View.GONE);
+        }
+
+        binding.internalToolbar.setNavigationOnClickListener(v -> finish());
 
         // Favorite Button
 
@@ -271,6 +372,8 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                 );
             });
         });
+
+        binding.loadingScreen.setVisibility(View.GONE);
     }
 
     private void setLoadingScreen() {
@@ -297,30 +400,6 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                int tapPosition = tab.getPosition();
-
-                if (tapPosition == 0) {
-                    binding.backButton.setVisibility(View.VISIBLE);
-                    binding.favoriteButton.setVisibility(View.VISIBLE);
-                    binding.coverImage.setVisibility(View.VISIBLE);
-                    binding.posterImage.setVisibility(View.VISIBLE);
-                    binding.upperFade.setVisibility(View.VISIBLE);
-
-                    ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) binding.spacerView.getLayoutParams();
-                    layoutParams.topMargin = -12;
-                    binding.spacerView.setLayoutParams(layoutParams);
-                    return;
-                }
-
-                binding.backButton.setVisibility(View.GONE);
-                binding.favoriteButton.setVisibility(View.GONE);
-                binding.coverImage.setVisibility(View.GONE);
-                binding.posterImage.setVisibility(View.GONE);
-                binding.upperFade.setVisibility(View.GONE);
-
-                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) binding.spacerView.getLayoutParams();
-                layoutParams.topMargin = 0;
-                binding.spacerView.setLayoutParams(layoutParams);
             }
 
             @Override

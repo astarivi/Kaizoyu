@@ -8,9 +8,6 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
-    maven {
-        url 'https://gitlab.com/api/v4/projects/42572321/packages/maven'
-    }
 }
 
 android {
@@ -87,7 +84,7 @@ dependencies {
     // External libraries (third party)
     implementation 'com.github.WrichikBasu:AudioFocusController:v2.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
-    implementation 'io.github.tonnyl:spark:0.1.0-alpha'
+    implementation 'com.github.astarivi:Zparc:d0b7473283'
     implementation 'org.videolan.android:libvlc-all:4.0.0-eap11'
     implementation 'com.airbnb.android:lottie:6.0.0'
     implementation 'com.github.bumptech.glide:glide:4.15.1'
