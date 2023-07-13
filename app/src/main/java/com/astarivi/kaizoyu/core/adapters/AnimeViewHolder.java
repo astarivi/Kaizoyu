@@ -1,9 +1,13 @@
 package com.astarivi.kaizoyu.core.adapters;
 
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.astarivi.kaizoyu.R;
@@ -14,6 +18,10 @@ import com.astarivi.kaizoyu.databinding.ItemAnimeBinding;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.material.color.MaterialColors;
 
 import org.tinylog.Logger;
@@ -130,6 +138,35 @@ public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder im
 
         Glide.with(binding.getRoot().getContext())
                 .load(posterUrl)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        if (coverUrl != null || !(resource instanceof BitmapDrawable)) return false;
+
+                        Palette.from(
+                                // Welcome to casting hell, again
+                                ((BitmapDrawable) resource).getBitmap()
+                        ).generate(palette -> {
+                            if (palette == null) return;
+
+                            binding.getRoot().post(() -> {
+                                try {
+                                    binding.imageCover.setImageDrawable(null);
+                                    binding.imageCover.setBackgroundColor(palette.getMutedColor(
+                                            Color.parseColor("#9240aa")
+                                    ));
+                                } catch(Exception ignored) {
+                                }
+                            });
+                        });
+                        return false;
+                    }
+                })
                 .placeholder(R.drawable.ic_general_placeholder)
                 .into(binding.imagePoster);
 
