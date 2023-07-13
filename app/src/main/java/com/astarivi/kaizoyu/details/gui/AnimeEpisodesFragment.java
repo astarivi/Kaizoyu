@@ -51,6 +51,9 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
     public void scrollTop() {
         if (binding == null) return;
         binding.animeEpisodesRecycler.smoothScrollToPosition(0);
+
+        if (viewModel == null) return;
+        viewModel.reload();
     }
 
     @Override
@@ -151,6 +154,15 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
                     ).show();
                     break;
             }
+
+            binding.getRoot().postDelayed(() -> {
+                    try {
+                        binding.loadingBar.setVisibility(View.GONE);
+                    } catch(Exception ignored) {
+                    }
+                },
+                2000
+            );
         });
 
         Threading.submitTask(Threading.TASK.INSTANT, () -> {

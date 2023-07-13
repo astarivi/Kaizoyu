@@ -13,4 +13,5 @@
     <string name="d_share_app">Share Kaizoyu! URL</string>
     <string name="d_share_app_desc">Share the URL for this show in Kaizoyu!. Only Kaizoyu! users can open it.</string>
     <string name="d_issue_unavailable">Not available yet, please report issues at our Discord server for now.</string>
+    <string name="d_trailer_title">PV</string>
 </resources>

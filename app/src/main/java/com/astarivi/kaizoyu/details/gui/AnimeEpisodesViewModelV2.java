@@ -58,6 +58,16 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
         fetchPage(1);
     }
 
+    public void reload() {
+        if (episodeCount == -1 || animeId == -1 || isFetching()) {
+            return;
+        }
+
+        episodes.postValue(null);
+
+        fetchPage(currentPage);
+    }
+
     public void setPage(int page) {
         // Already there, or not initialized yet.
         if (currentPage == page || episodeCount == -1 || animeId == -1) {

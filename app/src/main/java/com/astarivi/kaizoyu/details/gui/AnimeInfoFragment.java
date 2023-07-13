@@ -14,6 +14,9 @@ import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeInfoBinding;
 import com.astarivi.kaizoyu.utils.Utils;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -76,6 +79,33 @@ public class AnimeInfoFragment extends Fragment {
                     Utils.copyToClipboard(getActivity(), "Anime title", titles.ja_jp)
             );
         }
+
+        if (kitsuAnime.attributes.youtubeVideoId != null) {
+            YouTubePlayerView youTubePlayerView = binding.youtubePlayer;
+            getLifecycle().addObserver(youTubePlayerView);
+
+            youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+                @Override
+                public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                    youTubePlayer.cueVideo(kitsuAnime.attributes.youtubeVideoId, 0);
+                }
+            });
+        } else {
+            binding.trailerCard.setVisibility(View.GONE);
+        }
+
+        // TODO Add extra metadata here
+//        if (!(anime instanceof LocalAnime)) {
+//
+//        } else {
+//            binding.infoCard.setVisibility(View.GONE);
+//        }
+    }
+
+    @Override
+    public void onDestroy() {
+        binding.youtubePlayer.release();
+        super.onDestroy();
     }
 
     @Override

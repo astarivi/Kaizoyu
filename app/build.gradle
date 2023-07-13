@@ -94,6 +94,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:recyclerview-integration:4.15.1'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.15.1'
     implementation 'org.jetbrains:annotations:24.0.1'
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.0.0'
 
     // Analytics
     implementation 'com.flurry.android:analytics:14.2.0'
