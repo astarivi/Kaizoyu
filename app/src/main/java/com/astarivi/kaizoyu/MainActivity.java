@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivityTheme {
     private void configureTabAdapter(){
         tabLayout = binding.bottomTabs;
         TabAdapter tabAdapter = new TabAdapter(this);
-        ViewPager2 viewPager = binding.paginadorPrincipal;
+        ViewPager2 viewPager = binding.mainPager;
         viewPager.setUserInputEnabled(false);
         viewPager.setAdapter(tabAdapter);
 
