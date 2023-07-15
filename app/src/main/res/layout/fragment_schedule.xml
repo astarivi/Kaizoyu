@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<com.astarivi.kaizoyu.core.adapters.NestedCoordinatorLayout
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,70 +7,41 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:animateLayoutChanges="true"
 >
-    <HorizontalScrollView
-        android:id="@+id/dow_selector_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="8dp"
-        android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/episode_card_button"
-    >
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/dow_selector_chips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
-            app:singleSelection="true"
-        >
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/loading_bar"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:indeterminate="true"
+        app:indicatorSize="150dp"
+        app:trackThickness="15dp"
+        app:trackCornerRadius="10dp"
+        app:indicatorColor="@color/branding_accent"
+        android:layout_gravity="center"
+    />
 
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/empty_schedule_popup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+    >
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:text="@string/fragment_schedule_empty"
+            android:textSize="16sp"
+            />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/schedule_anime_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-    >
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/loading_bar"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:indeterminate="true"
-            app:indicatorSize="150dp"
-            app:trackThickness="15dp"
-            app:trackCornerRadius="10dp"
-            app:indicatorColor="@color/branding_accent"
-            android:layout_gravity="center"
-        />
-        <LinearLayout
-            android:id="@+id/empty_schedule_popup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone"
-        >
-            <TextView
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/lato_regular"
-                android:text="@string/fragment_schedule_empty"
-                android:textSize="16sp"
-                />
-        </LinearLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/schedule_anime_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dow_selector_scroll"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        />
-    </FrameLayout>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    />
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -81,8 +52,8 @@
         app:cardBackgroundColor="?attr/colorTertiaryContainer"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        >
+        android:layout_marginBottom="68dp"
+    >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -129,12 +100,35 @@
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/schedule_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        app:layout_scrollFlags="enterAlwaysCollapsed"
+    >
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-        />
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:contentInsetStart="0dp"
+        >
+            <HorizontalScrollView
+                android:id="@+id/dow_selector_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:scrollbars="none"
+            >
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/dow_selector_chips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    app:singleSelection="true"
+                >
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+        </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</com.astarivi.kaizoyu.core.adapters.NestedCoordinatorLayout>
