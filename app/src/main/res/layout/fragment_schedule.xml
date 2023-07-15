@@ -105,30 +105,24 @@
         android:layout_height="wrap_content"
         app:layout_scrollFlags="enterAlwaysCollapsed"
     >
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             app:layout_scrollFlags="scroll|enterAlways"
             app:contentInsetStart="0dp"
         >
-            <HorizontalScrollView
-                android:id="@+id/dow_selector_scroll"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/dow_tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:scrollbars="none"
-            >
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/dow_selector_chips"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true"
-                    app:singleSelection="true"
-                >
-                </com.google.android.material.chip.ChipGroup>
-            </HorizontalScrollView>
-        </androidx.appcompat.widget.Toolbar>
+                android:layout_height="48dp"
+                app:tabMode="scrollable"
+                android:animateLayoutChanges="true"
+                android:background="?attr/colorSurfaceVariant"
+                app:tabContentStart="20dp"
+                app:tabIconTint="@color/main_tab_layout_selector"
+                app:tabIndicatorColor="@color/main_tab_layout_selector"
+                app:tabTextColor="@color/main_tab_layout_selector"
+            />
+        </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 </com.astarivi.kaizoyu.core.adapters.NestedCoordinatorLayout>

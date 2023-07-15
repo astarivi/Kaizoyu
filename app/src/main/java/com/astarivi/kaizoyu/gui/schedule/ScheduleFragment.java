@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.gui.schedule;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,15 +14,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
-import com.astarivi.kaizoyu.databinding.ComponentSuggestionChipBinding;
 import com.astarivi.kaizoyu.databinding.FragmentScheduleBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
 import com.astarivi.kaizoyu.gui.schedule.recycler.ScheduleRecyclerAdapter;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Translation;
-import com.google.android.material.chip.Chip;
+import com.google.android.material.color.MaterialColors;
+import com.google.android.material.tabs.TabLayout;
+
+import org.tinylog.Logger;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
@@ -32,6 +36,7 @@ public class ScheduleFragment extends Fragment {
     private FragmentScheduleBinding binding;
     private ScheduleRecyclerAdapter adapter;
     private LinearLayoutManager manager;
+    private ArrayList<DayOfWeek> dowValues;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -41,12 +46,37 @@ public class ScheduleFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View root, Bundle savedState) {
         viewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
 
         binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
-        binding.dowSelectorChips.getLayoutTransition().setAnimateParentHierarchy(false);
+        binding.dowTabs.getLayoutTransition().setAnimateParentHierarchy(false);
+
+        binding.dowTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                shouldTabsBeInteractive(false);
+
+                try {
+                    displayDaySchedule(dowValues.get(tab.getPosition()));
+                } catch(IndexOutOfBoundsException e) {
+                    Logger.error("Schedule day tab index out of bounds");
+                }
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                binding.scheduleAnimeRecycler.smoothScrollToPosition(0);
+            }
+        });
 
         // RecyclerView
         RecyclerView recyclerView = binding.scheduleAnimeRecycler;
@@ -78,7 +108,7 @@ public class ScheduleFragment extends Fragment {
         });
 
         viewModel.getAnimeFromSchedule().observe(getViewLifecycleOwner(), seasonalAnimeList -> {
-            enableChips();
+            shouldTabsBeInteractive(true);
             binding.loadingBar.setVisibility(View.GONE);
 
             if (seasonalAnimeList == null) {
@@ -102,7 +132,7 @@ public class ScheduleFragment extends Fragment {
             }
 
             displaySchedule(daysOfWeek);
-            binding.dowSelectorScroll.setVisibility(View.VISIBLE);
+            binding.dowTabs.setVisibility(View.VISIBLE);
         });
 
         viewModel.reloadSchedule(binding);
@@ -115,49 +145,28 @@ public class ScheduleFragment extends Fragment {
     }
 
     private void displaySchedule(ArrayList<DayOfWeek> daysOfWeek) {
-        binding.dowSelectorChips.removeAllViews();
+        dowValues = daysOfWeek;
+        binding.dowTabs.removeAllTabs();
         viewModel.showDaySchedule(daysOfWeek.get(0));
 
-        boolean firstDone = false;
+        TabLayout tabs = binding.dowTabs;
 
         for (DayOfWeek dow : daysOfWeek) {
-            ComponentSuggestionChipBinding chipBinding = ComponentSuggestionChipBinding.inflate(
-                    getLayoutInflater(),
-                    binding.dowSelectorChips,
-                    true
-            );
+            TabLayout.Tab tab = tabs.newTab();
 
-            if (!firstDone) {
-                chipBinding.getRoot().setChecked(true);
-                chipBinding.getRoot().setEnabled(false);
-                firstDone = true;
-            }
-
-            chipBinding.getRoot().setText(
+            tab.setText(
                     Translation.getLocalizedDow(dow, getContext())
             );
 
-            chipBinding.getRoot().setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    disableChips();
-                    displayDaySchedule(dow);
-                }
-            });
+            tabs.addTab(tab);
         }
     }
 
-    private void disableChips() {
-        for (int i = 0; i < binding.dowSelectorChips.getChildCount(); i++) {
-            final Chip child = (Chip) binding.dowSelectorChips.getChildAt(i);
-            child.setEnabled(false);
-        }
-    }
-
-    private void enableChips() {
-        for (int i = 0; i < binding.dowSelectorChips.getChildCount(); i++) {
-            final Chip child = (Chip) binding.dowSelectorChips.getChildAt(i);
-            if (child.isChecked()) continue;
-            child.setEnabled(true);
+    private void shouldTabsBeInteractive(boolean value) {
+        for (int i = 0; i < binding.dowTabs.getTabCount(); i++) {
+            final TabLayout.Tab tab = binding.dowTabs.getTabAt(i);
+            if (tab == null) continue;
+            tab.view.setEnabled(value);
         }
     }
 
@@ -165,5 +174,19 @@ public class ScheduleFragment extends Fragment {
         if (viewModel == null) return;
 
         viewModel.showDaySchedule(day);
+    }
+
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        if (getActivity() != null) {
+            getActivity().getWindow().setStatusBarColor(
+                    MaterialColors.getColor(
+                            binding.getRoot(),
+                            menuVisible ? R.attr.colorSurfaceVariant : R.attr.colorSurface
+                    )
+            );
+        }
+
+        super.setMenuVisibility(menuVisible);
     }
 }

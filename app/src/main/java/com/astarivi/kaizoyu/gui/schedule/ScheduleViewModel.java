@@ -42,7 +42,7 @@ public class ScheduleViewModel extends ViewModel {
         binding.emptySchedulePopup.setVisibility(View.GONE);
         binding.loadingBar.setVisibility(View.VISIBLE);
         binding.scheduleAnimeRecycler.setVisibility(View.INVISIBLE);
-        binding.dowSelectorScroll.setVisibility(View.GONE);
+        binding.dowTabs.setVisibility(View.GONE);
 
         reloadFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
             TreeMap<DayOfWeek, ArrayList<SeasonalAnime>> fetchedSchedule = new AssistedScheduleFetcher().getSchedule();
