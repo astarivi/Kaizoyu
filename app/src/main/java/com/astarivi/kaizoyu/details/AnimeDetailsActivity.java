@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ import com.astarivi.kaizoyu.core.schedule.AnimeScheduleChecker;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnime;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnimeDao;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
+import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.ActivityAnimeDetailsBinding;
 import com.astarivi.kaizoyu.details.gui.AnimeEpisodesFragment;
 import com.astarivi.kaizoyu.details.gui.AnimeInfoFragment;
@@ -142,7 +144,20 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             }
         }
 
-        getWindow().setStatusBarColor(Color.parseColor("#99131313"));
+        getWindow().setStatusBarColor(
+                Colors.getSemiTransparentStatusBar(
+                        binding.getRoot(),
+                        R.attr.colorSurface
+                )
+        );
+
+        binding.internalToolbar.setBackground(
+                Colors.fadeSurfaceFromStatusBar(
+                        binding.getRoot(),
+                        R.attr.colorSurface,
+                        GradientDrawable.Orientation.TOP_BOTTOM
+                )
+        );
 
         binding.cancelButton.setOnClickListener(v -> finish());
         setLoadingScreen();

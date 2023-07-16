@@ -9,6 +9,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.astarivi.kaizoyu.core.storage.PersistenceRepository;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
+import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.ActivityMainBinding;
 import com.astarivi.kaizoyu.gui.UpdaterModalBottomSheet;
@@ -37,6 +38,15 @@ public class MainActivity extends AppCompatActivityTheme {
         binding = ActivityMainBinding.inflate(this.getLayoutInflater());
 
         setContentView(binding.getRoot());
+
+        // Status Bar
+        getWindow().setStatusBarColor(
+                Colors.getSemiTransparentStatusBar(
+                        binding.getRoot(),
+                        R.attr.colorSurfaceVariant
+                )
+        );
+
         // Tabs
         configureTabAdapter();
 

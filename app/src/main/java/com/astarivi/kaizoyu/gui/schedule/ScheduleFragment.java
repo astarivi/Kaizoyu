@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.databinding.FragmentScheduleBinding;
@@ -22,7 +21,6 @@ import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
 import com.astarivi.kaizoyu.gui.schedule.recycler.ScheduleRecyclerAdapter;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Translation;
-import com.google.android.material.color.MaterialColors;
 import com.google.android.material.tabs.TabLayout;
 
 import org.tinylog.Logger;
@@ -174,19 +172,5 @@ public class ScheduleFragment extends Fragment {
         if (viewModel == null) return;
 
         viewModel.showDaySchedule(day);
-    }
-
-    @Override
-    public void setMenuVisibility(boolean menuVisible) {
-        if (getActivity() != null) {
-            getActivity().getWindow().setStatusBarColor(
-                    MaterialColors.getColor(
-                            binding.getRoot(),
-                            menuVisible ? R.attr.colorSurfaceVariant : R.attr.colorSurface
-                    )
-            );
-        }
-
-        super.setMenuVisibility(menuVisible);
     }
 }
