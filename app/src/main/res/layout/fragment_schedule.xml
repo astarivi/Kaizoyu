@@ -40,6 +40,7 @@
         android:id="@+id/schedule_anime_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
     />
 
@@ -103,26 +104,22 @@
         android:id="@+id/schedule_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_scrollFlags="enterAlwaysCollapsed"
+        android:background="?attr/colorSurfaceVariant"
+        android:fitsSystemWindows="false"
     >
-        <com.google.android.material.appbar.MaterialToolbar
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
+        <com.google.android.material.tabs.TabLayout
             app:layout_scrollFlags="scroll|enterAlways"
-            app:contentInsetStart="0dp"
-        >
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/dow_tabs"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                app:tabMode="scrollable"
-                android:animateLayoutChanges="true"
-                android:background="?attr/colorSurfaceVariant"
-                app:tabContentStart="20dp"
-                app:tabIconTint="@color/main_tab_layout_selector"
-                app:tabIndicatorColor="@color/main_tab_layout_selector"
-                app:tabTextColor="@color/main_tab_layout_selector"
-            />
-        </com.google.android.material.appbar.MaterialToolbar>
+            android:fitsSystemWindows="false"
+            android:layout_gravity="bottom"
+            android:id="@+id/dow_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="scrollable"
+            android:animateLayoutChanges="true"
+            android:background="?attr/colorSurfaceVariant"
+            app:tabIconTint="@color/main_tab_layout_selector"
+            app:tabIndicatorColor="@color/main_tab_layout_selector"
+            app:tabTextColor="@color/main_tab_layout_selector"
+        />
     </com.google.android.material.appbar.AppBarLayout>
 </com.astarivi.kaizoyu.core.adapters.NestedCoordinatorLayout>

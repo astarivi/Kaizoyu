@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
+    android:fitsSystemWindows="false"
 >
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/main_pager"
@@ -15,12 +16,20 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
     />
 
+    <View
+        android:id="@+id/status_bar_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/black"
+    />
+
     <com.google.android.material.tabs.TabLayout
         android:fitsSystemWindows="false"
         android:layout_gravity="bottom"
         android:id="@+id/bottom_tabs"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:background="?attr/colorSurfaceVariant"
         android:elevation="10dp"
         app:tabIconTint="@color/main_tab_layout_selector"

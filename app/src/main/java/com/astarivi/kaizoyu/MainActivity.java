@@ -1,9 +1,17 @@
 package com.astarivi.kaizoyu;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.astarivi.kaizoyu.core.storage.PersistenceRepository;
@@ -28,7 +36,6 @@ public class MainActivity extends AppCompatActivityTheme {
     private ActivityMainBinding binding;
     private TabLayout tabLayout;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,11 +47,44 @@ public class MainActivity extends AppCompatActivityTheme {
         setContentView(binding.getRoot());
 
         // Status Bar
-        getWindow().setStatusBarColor(
+        final Window window = getWindow();
+        WindowCompat.setDecorFitsSystemWindows(window, false);
+        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.setStatusBarColor(
+                Color.TRANSPARENT
+        );
+        window.setNavigationBarColor(
+                Color.TRANSPARENT
+        );
+
+        binding.statusBarScrim.setBackgroundColor(
                 Colors.getSemiTransparentStatusBar(
                         binding.getRoot(),
                         R.attr.colorSurfaceVariant
                 )
+        );
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.statusBarScrim,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+
+                    ViewGroup.LayoutParams params = v.getLayoutParams();
+                    params.height = insets.top;
+                    v.setLayoutParams(params);
+
+                    return windowInsets;
+                }
+        );
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.bottomTabs,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+
+                    v.setPadding(0, 0, 0, insets.bottom);
+                    return windowInsets;
+                }
         );
 
         // Tabs

@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,6 +24,7 @@ import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
 import com.astarivi.kaizoyu.gui.schedule.recycler.ScheduleRecyclerAdapter;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Translation;
+import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.tabs.TabLayout;
 
 import org.tinylog.Logger;
@@ -51,6 +55,35 @@ public class ScheduleFragment extends Fragment {
 
         binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
         binding.dowTabs.getLayoutTransition().setAnimateParentHierarchy(false);
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.scheduleAnimeRecycler,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+
+                    if (getContext() == null) return windowInsets;
+
+                    v.setPadding(
+                            0,
+                            (int) Utils.convertDpToPixel(4, requireContext()),
+                            0,
+                            insets.bottom + (int) Utils.convertDpToPixel(4, requireContext())
+                    );
+
+                    return windowInsets;
+                }
+        );
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.dowTabs,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+
+                    v.setPadding(0, insets.top, 0, 0);
+
+                    return windowInsets;
+                }
+        );
 
         binding.dowTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

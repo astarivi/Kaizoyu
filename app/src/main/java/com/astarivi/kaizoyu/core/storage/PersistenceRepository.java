@@ -66,6 +66,8 @@ public class PersistenceRepository {
         );
 
         Logger.info("Starting logging session");
+
+        applyConfigurationChanges();
     }
 
     public static @NotNull PersistenceRepository getInstance() {
@@ -78,6 +80,7 @@ public class PersistenceRepository {
     }
 
     public void applyConfigurationChanges() {
+        Logger.info("Applying configuration changes");
         switch (appConfiguration.getIntProperty("night_theme", 0)) {
             case 0:
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);

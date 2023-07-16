@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.TypedValue;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -174,5 +175,9 @@ public class Utils {
         activityManager.getMemoryInfo(memInfo);
 
         return ActivityManagerCompat.isLowRamDevice(activityManager) || memInfo.totalMem < 1000000000L;
+    }
+
+    public static float convertDpToPixel(float dp, Context context){
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 }
