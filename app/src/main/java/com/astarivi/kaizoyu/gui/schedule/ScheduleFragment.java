@@ -1,8 +1,8 @@
 package com.astarivi.kaizoyu.gui.schedule;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.databinding.FragmentScheduleBinding;
@@ -33,7 +33,7 @@ import java.time.DayOfWeek;
 import java.util.ArrayList;
 
 
-public class ScheduleFragment extends Fragment {
+public class ScheduleFragment extends TabFragment {
     private ScheduleViewModel viewModel;
     private FragmentScheduleBinding binding;
     private ScheduleRecyclerAdapter adapter;
@@ -48,7 +48,6 @@ public class ScheduleFragment extends Fragment {
         return binding.getRoot();
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View root, Bundle savedState) {
         viewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
@@ -84,6 +83,17 @@ public class ScheduleFragment extends Fragment {
                     return windowInsets;
                 }
         );
+
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            binding.swipeRefresh.setRefreshing(false);
+            viewModel.reloadSchedule(binding);
+        });
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int screenHalfHeightDp = (int) (displayMetrics.heightPixels / displayMetrics.density);
+
+        // Make swipe refresh half of the screen height
+        binding.swipeRefresh.setDistanceToTriggerSync(screenHalfHeightDp);
 
         binding.dowTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -205,5 +215,10 @@ public class ScheduleFragment extends Fragment {
         if (viewModel == null) return;
 
         viewModel.showDaySchedule(day);
+    }
+
+    @Override
+    public void onTabReselected() {
+        binding.scheduleAnimeRecycler.smoothScrollToPosition(0);
     }
 }

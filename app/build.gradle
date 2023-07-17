@@ -100,6 +100,7 @@ dependencies {
     implementation 'com.flurry.android:analytics:14.2.0'
 
     // Android X
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.work:work-runtime:2.8.0"

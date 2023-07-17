@@ -12,8 +12,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
 import com.astarivi.kaizoyu.core.storage.PersistenceRepository;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
@@ -195,5 +197,34 @@ public class MainActivity extends AppCompatActivityTheme {
             tab.setText(tabTitles[position]);
             tab.setIcon(tabIcons[position]);
         }).attach();
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                int currentTabPosition = viewPager.getCurrentItem();
+                int reselectedTabPosition = tab.getPosition();
+
+                if (currentTabPosition != reselectedTabPosition) return;
+
+                try {
+                    Fragment fragment = getSupportFragmentManager().findFragmentByTag("f" + reselectedTabPosition);
+
+                    if (fragment instanceof TabFragment) {
+                        ((TabFragment) fragment).onTabReselected();
+                    }
+                } catch(Exception ignored) {
+                }
+            }
+        });
     }
 }

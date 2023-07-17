@@ -36,13 +36,19 @@
             />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/schedule_anime_recycler"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    />
+    >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/schedule_anime_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+        />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
