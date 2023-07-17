@@ -7,8 +7,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.astarivi.kaizoyu.gui.home.HomeFragment;
 import com.astarivi.kaizoyu.gui.library.LibraryFragment;
+import com.astarivi.kaizoyu.gui.more.MoreFragment;
 import com.astarivi.kaizoyu.gui.schedule.ScheduleFragment;
-import com.astarivi.kaizoyu.gui.settings.SettingsFragment;
 
 
 public class TabAdapter extends FragmentStateAdapter {
@@ -27,7 +27,7 @@ public class TabAdapter extends FragmentStateAdapter {
             case 2:
                 return new LibraryFragment();
             default:
-                return new SettingsFragment();
+                return new MoreFragment();
         }
     }
 

@@ -1,122 +1,77 @@
-package com.astarivi.kaizoyu.gui.settings;
+package com.astarivi.kaizoyu.gui.more.settings;
 
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
+import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Theme;
-import com.astarivi.kaizoyu.core.updater.UpdateManager;
-import com.astarivi.kaizoyu.databinding.FragmentSettingsBinding;
-import com.astarivi.kaizoyu.gui.UpdaterModalBottomSheet;
-import com.astarivi.kaizoyu.updater.UpdaterActivity;
+import com.astarivi.kaizoyu.databinding.ActivitySettingsBinding;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.io.File;
-import java.text.ParseException;
 
 
-public class SettingsFragment extends Fragment {
-    private FragmentSettingsBinding binding;
+public class SettingsActivity extends AppCompatActivityTheme {
+    private ActivitySettingsBinding binding;
     private int nightTheme;
 
-    // region Initialization
-    public SettingsFragment() {
-
-    }
-
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentSettingsBinding.inflate(inflater, container, false);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        return binding.getRoot();
-    }
+        binding = ActivitySettingsBinding.inflate(getLayoutInflater());
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-    // endregion
+        setContentView(binding.getRoot());
 
-    @SuppressLint("NewApi")
-    @Override
-    public void onViewCreated(@NonNull View root, Bundle savedState) {
         binding.settingsMainContainer.getLayoutTransition().setAnimateParentHierarchy(false);
-
         binding.developerSection.setVisibility(View.GONE);
 
-        binding.updateSettingDescription.setText(
-                String.format(getString(R.string.updatecheck_description), UpdateManager.VERSION)
-        );
-
-        binding.discordButton.setOnClickListener(v ->
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/Yy6BphADFc")))
-        );
-
-        binding.githubButton.setOnClickListener(v ->
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/astarivi/Kaizoyu")))
-        );
-
-        binding.donateButton.setOnClickListener(v ->
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.buymeacoffee.com/astarivi")))
-        );
-
-        binding.homepageButton.setOnClickListener(v ->
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://kaizoyu.ovh/")))
-        );
-
-
         binding.openLogs.setOnClickListener(v -> {
-            File logFile = new File (requireActivity().getFilesDir(), "log.txt");
+            File logFile = new File (getFilesDir(), "log.txt");
 
             if (!logFile.exists()) {
-                Toast.makeText(getContext(), getString(R.string.dev_logs_toast), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.dev_logs_toast), Toast.LENGTH_SHORT).show();
                 return;
             }
 
             startActivity(
                     Intent.createChooser(
-                        new Intent(Intent.ACTION_SEND)
-                                .putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
-                                        requireContext(),
-                                        getString(R.string.provider_authority),
-                                        logFile
-                                ))
-                                .setType("text/plain"),
-                        "Share logs"
+                            new Intent(Intent.ACTION_SEND)
+                                    .putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                                            this,
+                                            getString(R.string.provider_authority),
+                                            logFile
+                                    ))
+                                    .setType("text/plain"),
+                            "Share logs"
                     )
             );
         });
 
-        binding.updateSectionTitle.setOnLongClickListener(v -> {
+        binding.miscTitle.setOnLongClickListener(v -> {
             ExtendedProperties config = Data.getProperties(Data.CONFIGURATION.APP);
             config.setBooleanProperty("developer_menu", true);
             binding.developerSection.setVisibility(View.VISIBLE);
             config.save();
 
-            Toast.makeText(getContext(), getString(R.string.dev_section_toast), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.dev_section_toast), Toast.LENGTH_SHORT).show();
             return true;
         });
 
@@ -145,30 +100,23 @@ public class SettingsFragment extends Fragment {
         binding.advancedSearch.setOnCheckedChangeListener(this::triggerSave);
         binding.strictModeValue.setOnCheckedChangeListener(this::triggerSave);
 
-        binding.openLicensesActivity.setOnClickListener(view -> {
-            if (getActivity() == null) return;
-
-            Intent intent = new Intent(requireActivity(), OssLicensesMenuActivity.class);
-            startActivity(intent);
-        });
-
         binding.clearCacheTrigger.setOnClickListener(view -> {
             Utils.clearCache();
-            Toast.makeText(getContext(), getString(R.string.cache_toast), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.cache_toast), Toast.LENGTH_SHORT).show();
         });
 
         binding.clearSearchTrigger.setOnClickListener(v -> {
             Data.getRepositories().getSearchHistoryRepository().deleteAllAsync();
-            Toast.makeText(getContext(), getString(R.string.history_toast), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.history_toast), Toast.LENGTH_SHORT).show();
         });
 
         binding.themeTrigger.setOnClickListener(v -> {
             ThemeSelectionModalBottomSheet modalBottomSheet = new ThemeSelectionModalBottomSheet(theme -> {
-                AnalyticsClient.logEvent("theme_changed", theme.getTitle(requireContext()));
+                AnalyticsClient.logEvent("theme_changed", theme.getTitle(this));
 
-                Theme.setTheme(theme, requireContext());
+                Theme.setTheme(theme, this);
 
-                Context ctx = requireActivity().getApplicationContext();
+                Context ctx = getApplicationContext();
                 PackageManager pm = ctx.getPackageManager();
                 Intent intent = pm.getLaunchIntentForPackage(ctx.getPackageName());
                 if (intent == null) return;
@@ -178,57 +126,9 @@ public class SettingsFragment extends Fragment {
                 ctx.startActivity(mainIntent);
                 Runtime.getRuntime().exit(0);
             });
-            modalBottomSheet.show(requireActivity().getSupportFragmentManager(), ThemeSelectionModalBottomSheet.TAG);
+            modalBottomSheet.show(getSupportFragmentManager(), ThemeSelectionModalBottomSheet.TAG);
         });
-
-        binding.updateAppTrigger.setOnClickListener(v ->
-            Threading.submitTask(Threading.TASK.INSTANT, () -> {
-                UpdateManager updateManager = new UpdateManager();
-
-                UpdateManager.LatestUpdate latestUpdate;
-                try {
-                    latestUpdate = updateManager.getLatestUpdate();
-                } catch (ParseException e) {
-                    AnalyticsClient.onError(
-                            "update_parse",
-                            "Couldn't parse update from KaizoDelivery",
-                            e
-                    );
-                    return;
-                }
-
-                if (latestUpdate == null) {
-                    binding.getRoot().post(() -> Toast.makeText(getContext(), getString(R.string.update_already_latest), Toast.LENGTH_SHORT).show());
-                    return;
-                }
-
-                binding.getRoot().post(() -> {
-                    UpdaterModalBottomSheet modalBottomSheet = new UpdaterModalBottomSheet(latestUpdate, (result, update) -> {
-                        if (result == UpdaterModalBottomSheet.Result.SKIP) return;
-
-                        ExtendedProperties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
-
-                        if (result == UpdaterModalBottomSheet.Result.UPDATE_NOW) {
-                            appProperties.setBooleanProperty("skip_version", false);
-                            Intent intent = new Intent(getContext(), UpdaterActivity.class);
-                            intent.putExtra("latestUpdate", update);
-                            startActivity(intent);
-                        }
-
-                        if (result == UpdaterModalBottomSheet.Result.NEVER) {
-                            appProperties.setProperty("skip_version", update.version);
-                        }
-
-                        appProperties.save();
-                    });
-
-                    modalBottomSheet.show(getParentFragmentManager(), UpdaterModalBottomSheet.TAG);
-                });
-            })
-        );
     }
-
-    // region Event listeners
 
     private void showNightThemePopup(View v) {
         final String night_theme_default = getString(R.string.night_theme_default);
@@ -243,7 +143,7 @@ public class SettingsFragment extends Fragment {
 
         TextView theme = binding.nightThemeValue;
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(getString(R.string.night_theme_context));
         builder.setItems(themes, (dialog, index) -> {
             nightTheme = index;
@@ -256,9 +156,7 @@ public class SettingsFragment extends Fragment {
     private void triggerSave(View v, boolean value) {
         saveSettings();
     }
-    // endregion
 
-    // region Configuration save and load
     private void saveSettings(){
         ExtendedProperties config = Data.getProperties(Data.CONFIGURATION.APP);
 
@@ -317,7 +215,7 @@ public class SettingsFragment extends Fragment {
         nightThemeText.setText(
                 Translation.getNightThemeTranslation(
                         nightTheme,
-                        getContext()
+                        this
                 )
         );
 
@@ -339,7 +237,7 @@ public class SettingsFragment extends Fragment {
         );
 
         binding.themeValue.setText(
-                Theme.getCurrentTheme().getTitle(requireContext())
+                Theme.getCurrentTheme().getTitle(this)
         );
 
         binding.advancedSearch.setChecked(
@@ -373,7 +271,7 @@ public class SettingsFragment extends Fragment {
 
             try {
                 binding.textView5.setOnClickListener(
-                        v -> Toast.makeText(getContext(), getString(R.string.ipv6_toast), Toast.LENGTH_SHORT).show()
+                        v -> Toast.makeText(this, getString(R.string.ipv6_toast), Toast.LENGTH_SHORT).show()
                 );
             } catch (NullPointerException ignored) {
                 // This view doesn't exist anymore or is not in focus
@@ -388,5 +286,4 @@ public class SettingsFragment extends Fragment {
             // This view doesn't exist anymore or is not in focus
         }
     }
-    // endregion
 }

@@ -64,8 +64,8 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:icon="@drawable/ic_main_settings_alt"
-            android:text="@string/settings_button"
+            android:icon="@drawable/ic_main_more_alt"
+            android:text="@string/more_button"
         />
     </com.google.android.material.tabs.TabLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

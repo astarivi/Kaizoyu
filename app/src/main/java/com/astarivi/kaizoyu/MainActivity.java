@@ -183,14 +183,14 @@ public class MainActivity extends AppCompatActivityTheme {
                 getString(R.string.home_button),
                 getString(R.string.schedule_button),
                 getString(R.string.history_button),
-                getString(R.string.settings_button)
+                getString(R.string.more_button)
         };
 
         final int[] tabIcons = new int[]{
                 R.drawable.ic_main_home_alt,
                 R.drawable.ic_main_emission_alt,
                 R.drawable.ic_main_history_alt,
-                R.drawable.ic_main_settings_alt
+                R.drawable.ic_main_more_alt
         };
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {

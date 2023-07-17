@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="settings_button">Settings</string>
+    <string name="settings_subtitle">Change Kaizoyu! related settings, like appearance or quality of life functionalities</string>
     <string name="theme">Theme</string>
     <string name="theme_context">Select a theme</string>
     <string name="theme_default">Default</string>

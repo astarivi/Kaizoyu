@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.gui.settings;
+package com.astarivi.kaizoyu.gui.more.settings;
 
 import android.content.Context;
 import android.os.Build;
@@ -20,6 +20,7 @@ import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
+
 
 public class ThemeSelectionModalBottomSheet extends BottomSheetDialogFragment {
     public static String TAG = "ThemeModalBottomSheet";

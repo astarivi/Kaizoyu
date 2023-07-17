@@ -56,6 +56,10 @@
             android:label="AnimeSearch"
         />
         <activity
+            android:name=".gui.more.settings.SettingsActivity"
+            android:label="Settings"
+        />
+        <activity
             android:name=".updater.UpdaterActivity"
             android:exported="true"
             android:label="UpdaterActivity"

@@ -5,7 +5,7 @@
     <string name="home_button">Home</string>
     <string name="schedule_button">Schedule</string>
     <string name="history_button">Favorites</string>
-    <string name="settings_button">Settings</string>
+    <string name="more_button">More</string>
     <string name="title_activity_anime_details">AnimeDetails</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
