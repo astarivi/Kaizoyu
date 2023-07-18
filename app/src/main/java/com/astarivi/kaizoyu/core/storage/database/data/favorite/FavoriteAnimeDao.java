@@ -35,6 +35,9 @@ public interface FavoriteAnimeDao {
     @Query("SELECT * FROM favorite_anime ORDER BY date DESC")
     List<FavoriteAnimeWithSeenAnime> getRelation();
     @Transaction
+    @Query("SELECT * FROM favorite_anime WHERE id=:id")
+    FavoriteAnimeWithSeenAnime getRelation(int id);
+    @Transaction
     @Query("SELECT * FROM favorite_anime ORDER BY date DESC LIMIT :limit")
     List<FavoriteAnimeWithSeenAnime> getRelationPartial(int limit);
 }

@@ -49,16 +49,16 @@ public class SeenAnime {
         this.date = creationTimestamp;
     }
 
-    public LocalAnime toLocalAnime() {
+    public LocalAnime toLocalAnime(ModelType.LocalAnime type) {
         return new LocalAnime(
                 anime.toKitsuAnime(),
                 id,
                 new Date(date),
-                ModelType.LocalAnime.SEEN
+                type
         );
     }
 
-    public boolean isFavorite() {
+    public boolean isRelated() {
         return favoriteId != null;
     }
 }

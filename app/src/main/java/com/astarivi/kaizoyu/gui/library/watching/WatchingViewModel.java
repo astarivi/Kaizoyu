@@ -32,8 +32,8 @@ public class WatchingViewModel extends ViewModel {
 
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
             FavoriteAnimeDao favDao = Data.getRepositories()
-                    .getFavoriteAnimeRepository()
-                    .getAnimeDao();
+                    .getAnimeStorageRepository()
+                    .getFavoriteAnimeDao();
 
             List<FavoriteAnimeWithSeenAnime> favAnimeList = favDao.getRelation();
 

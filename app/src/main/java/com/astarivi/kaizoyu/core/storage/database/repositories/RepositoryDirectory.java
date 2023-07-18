@@ -4,18 +4,18 @@ import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
 
 
 public class RepositoryDirectory {
-    private final FavoriteAnimeRepository favoriteAnimeRepository;
+    private final AnimeStorageRepository animeStorageRepository;
     private final SearchHistoryRepository searchHistoryRepository;
     private final SeenAnimeRepository seenAnimeRepository;
 
     public RepositoryDirectory(AppDatabase database) {
-        favoriteAnimeRepository = new FavoriteAnimeRepository(database);
+        animeStorageRepository = new AnimeStorageRepository(database);
         searchHistoryRepository = new SearchHistoryRepository(database);
         seenAnimeRepository = new SeenAnimeRepository(database);
     }
 
-    public FavoriteAnimeRepository getFavoriteAnimeRepository() {
-        return favoriteAnimeRepository;
+    public AnimeStorageRepository getAnimeStorageRepository() {
+        return animeStorageRepository;
     }
 
     public SearchHistoryRepository getSearchHistoryRepository() {

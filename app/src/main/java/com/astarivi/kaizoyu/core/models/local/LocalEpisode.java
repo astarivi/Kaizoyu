@@ -33,26 +33,16 @@ public class LocalEpisode extends Episode {
         return currentPosition;
     }
 
-    public EmbeddedEpisode toEmbeddedDatabaseObject() {
-        KitsuEpisode kitsuEpisode = getKitsuEpisode();
-
-        return new EmbeddedEpisode(
-                Integer.parseInt(kitsuEpisode.id),
-                this.animeId,
-                kitsuEpisode.attributes.number,
-                kitsuEpisode.attributes.seasonNumber != null ? kitsuEpisode.attributes.seasonNumber: 0,
-                kitsuEpisode.attributes.relativeNumber != null ? kitsuEpisode.attributes.relativeNumber : 0,
-                kitsuEpisode.attributes.length != null ? kitsuEpisode.attributes.length : 0,
-                currentPosition
-        );
-    }
-
     // region Parcelable implementation
 
     protected LocalEpisode(@NonNull Parcel parcel) {
         super(parcel);
         watchDate = new Date(parcel.readLong());
         currentPosition = parcel.readInt();
+    }
+
+    public EmbeddedEpisode toEmbeddedDatabaseObject() {
+        return super.toEmbeddedDatabaseObject(currentPosition);
     }
 
     public static final Parcelable.Creator<LocalEpisode> CREATOR = new Parcelable.Creator<LocalEpisode>() {

@@ -1,10 +1,11 @@
 package com.astarivi.kaizoyu.core.storage.database.repositories;
 
-import com.astarivi.kaizoyu.KaizoyuApplication;
+import androidx.annotation.Nullable;
+
+import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.Episode;
-import com.astarivi.kaizoyu.core.models.base.AnimeBase;
-import com.astarivi.kaizoyu.core.models.local.LocalEpisode;
+import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnime;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnimeDao;
@@ -15,8 +16,7 @@ import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Date;
+import org.tinylog.Logger;
 
 
 public class SeenAnimeRepository {
@@ -36,105 +36,70 @@ public class SeenAnimeRepository {
         return seenEpisodeDao;
     }
 
-    public void saveSeenEpisodeAsync(AnimeBase anime, Episode episode, int currentPlayerTime) {
-        this.saveSeenEpisodeAsync(currentPlayerTime, anime, episode, null);
+    public void saveSeenEpisodeAsync(Anime anime, Episode episode, int currentPlayerTime) {
+        Threading.submitTask(Threading.TASK.DATABASE, () ->
+                this.saveSeenEpisode(currentPlayerTime, anime, episode)
+        );
     }
 
     // Callback runs inside an "INSTANT" thread.
-    public void saveSeenEpisodeAsync(AnimeBase anime, Episode episode, int currentPlayerTime, Runnable callback) {
-        this.saveSeenEpisodeAsync(currentPlayerTime, anime, episode, callback);
-    }
-
-    private void saveSeenEpisodeAsync(int currentPlayerTime, AnimeBase anime, Episode episode, Runnable callback) {
+    public void saveSeenEpisodeAsync(Anime anime, Episode episode, int currentPlayerTime, Runnable callback) {
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            if (KaizoyuApplication.application == null) return;
-
-            long timestamp = System.currentTimeMillis();
-            final int animeId = Integer.parseInt(anime.getKitsuAnime().id);
-            boolean shouldCheckExisting = true;
-
-            final SeenAnimeRepository seenAnimeRepository = Data.getRepositories().getSeenAnimeRepository();
-
-            SeenAnimeDao seenAnimeDao = seenAnimeRepository.getAnimeDao();
-            SeenEpisodeDao seenEpisodeDao = seenAnimeRepository.getEpisodeDao();
-
-            SeenAnime parentAnime = seenAnimeDao.getFromKitsuId(
-                    animeId
-            );
-
-            if (parentAnime == null) {
-                parentAnime = new SeenAnime(
-                        anime.toEmbeddedDatabaseObject(),
-                        timestamp
-                );
-
-                parentAnime.id = (int) seenAnimeDao.insert(
-                        parentAnime
-                );
-
-                shouldCheckExisting = false;
+            try {
+                this.saveSeenEpisode(currentPlayerTime, anime, episode);
+            } catch(Exception e) {
+                Logger.error("Error while saving seen episode async");
+                Logger.error(e);
             }
-
-            final boolean isAutoFavorite = Data.getProperties(Data.CONFIGURATION.APP)
-                    .getBooleanProperty("auto_favorite", false);
-
-
-            // Auto-Favorite
-            if (isAutoFavorite && !parentAnime.isFavorite()) {
-                Data.getRepositories()
-                        .getFavoriteAnimeRepository()
-                        .createFromRelated(parentAnime, timestamp);
-            }
-
-            // If the episode already exists, lets update it instead.
-            if (shouldCheckExisting) {
-                SeenAnimeWithEpisodes seenAnimeWithEpisodes = seenAnimeDao.getRelationFromKitsuId(
-                        animeId
-                );
-
-                for (SeenEpisode seenEpisode : seenAnimeWithEpisodes.episodes) {
-                    if (seenEpisode.episode.episodeNumber == episode.getKitsuEpisode().attributes.number) {
-                        // Only store times that are after the original stored time:
-                        // If user wants to re-watch some part of the episode
-                        // CURRENTLY DISABLED
-//                        if (currentPlayerTime < seenEpisode.episode.currentPosition) {
-//                            return;
-//                        }
-
-                        seenEpisode.episode.currentPosition = currentPlayerTime;
-                        seenEpisodeDao.update(seenEpisode);
-
-                        Data.getTemporarySwitches().setPendingSeenEpisodeStateRefresh(true);
-
-                        if (callback != null) Threading.submitTask(Threading.TASK.INSTANT, callback);
-                        return;
-                    }
-                }
-            }
-
-            // Episode doesn't exist, lets create it
-            LocalEpisode localEpisode = new LocalEpisode(
-                    episode.getKitsuEpisode(),
-                    animeId,
-                    currentPlayerTime,
-                    new Date()
-            );
-
-            SeenEpisode seenEpisode = new SeenEpisode(
-                    localEpisode.toEmbeddedDatabaseObject(),
-                    System.currentTimeMillis()
-            );
-
-            seenAnimeRepository.createRelation(parentAnime, seenEpisode);
-
-            Data.getTemporarySwitches().setPendingSeenEpisodeStateRefresh(true);
-
             if (callback != null) Threading.submitTask(Threading.TASK.INSTANT, callback);
         });
     }
 
-    public void deleteSeenEpisodeAsync(Anime anime, Episode episode) {
-        deleteSeenEpisodeAsync(null, anime, episode);
+    @ThreadedOnly
+    private void saveSeenEpisode(int currentPlayerTime, Anime anime, Episode episode) {
+        final boolean isAutoFavorite = Data.getProperties(Data.CONFIGURATION.APP)
+                .getBooleanProperty("auto_favorite", false);
+
+        SeenAnime parentAnime;
+        if (isAutoFavorite) {
+            parentAnime = getOrCreate(anime);
+        } else {
+            parentAnime = get(anime);
+        }
+
+        if (parentAnime == null) {
+            return;
+        }
+
+
+        // Auto-Favorite
+        if (isAutoFavorite && !parentAnime.isRelated()) {
+            Data.getRepositories()
+                    .getAnimeStorageRepository()
+                    .createOrUpdate(anime, ModelType.LocalAnime.FAVORITE);
+        }
+
+        // If the episode already exists, lets update it instead.
+        SeenAnimeWithEpisodes seenAnimeWithEpisodes = seenAnimeDao.getRelation(parentAnime.id);
+
+        for (SeenEpisode seenEpisode : seenAnimeWithEpisodes.episodes) {
+            if (seenEpisode.episode.episodeNumber == episode.getKitsuEpisode().attributes.number) {
+                seenEpisode.episode.currentPosition = currentPlayerTime;
+                seenEpisodeDao.update(seenEpisode);
+
+                Data.getTemporarySwitches().setPendingSeenEpisodeStateRefresh(true);
+                return;
+            }
+        }
+
+        SeenEpisode seenEpisode = new SeenEpisode(
+                episode.toEmbeddedDatabaseObject(currentPlayerTime),
+                System.currentTimeMillis()
+        );
+
+        createRelation(parentAnime, seenEpisode);
+
+        Data.getTemporarySwitches().setPendingSeenEpisodeStateRefresh(true);
     }
 
     public void deleteSeenEpisodeAsync(Anime anime, Episode episode, Runnable callback) {
@@ -143,8 +108,6 @@ public class SeenAnimeRepository {
 
     private void deleteSeenEpisodeAsync(Runnable runnable, Anime anime, Episode episode) {
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            if (KaizoyuApplication.application == null) return;
-
             final int animeId = Integer.parseInt(anime.getKitsuAnime().id);
 
             SeenAnimeWithEpisodes seenAnimeWithEpisodes = seenAnimeDao.getRelationFromKitsuId(
@@ -172,5 +135,59 @@ public class SeenAnimeRepository {
         seenEpisodeDao.insert(
                 children
         );
+    }
+
+    public @Nullable SeenAnime get(Anime anime) {
+        return seenAnimeDao.getFromKitsuId(
+                Integer.parseInt(anime.getKitsuAnime().id)
+        );
+    }
+
+    public @NotNull SeenAnime create(Anime anime) {
+        SeenAnime seenAnime = new SeenAnime(
+                anime.toEmbeddedDatabaseObject(),
+                System.currentTimeMillis()
+        );
+
+        seenAnime.id = (int) seenAnimeDao.insert(
+                seenAnime
+        );
+
+        return seenAnime;
+    }
+
+    public @NotNull SeenAnime getOrCreate(Anime anime) {
+        SeenAnime seenAnime = get(anime);
+
+        // seenAnime doesn't exist, let's create it.
+        if (seenAnime == null) {
+            seenAnime = create(anime);
+        }
+
+        return seenAnime;
+    }
+
+    public void update(SeenAnime seenAnime) {
+        seenAnimeDao.update(seenAnime);
+    }
+
+    public void delete(SeenAnime seenAnime) {
+        if (seenAnime.id == 0)
+            throw new IllegalArgumentException("SeenAnime Id cannot be 0, can't delete if it doesn't exist");
+
+        SeenAnimeWithEpisodes seenAnimeWithEpisodes = seenAnimeDao.getRelation(seenAnime.id);
+
+        if (seenAnimeWithEpisodes == null) {
+            seenAnimeDao.delete(seenAnime);
+            seenAnime.id = 0;
+            return;
+        }
+
+        for (SeenEpisode seenEpisode : seenAnimeWithEpisodes.episodes) {
+            seenEpisodeDao.delete(seenEpisode);
+        }
+
+        seenAnimeDao.delete(seenAnime);
+        seenAnime.id = 0;
     }
 }

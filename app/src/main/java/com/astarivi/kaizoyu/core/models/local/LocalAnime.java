@@ -88,7 +88,7 @@ public class LocalAnime extends Anime {
 
             for (FavoriteAnimeWithSeenAnime favRelation : this.anime) {
                 result.add(
-                        favRelation.seenAnime.toLocalAnime()
+                        favRelation.toLocalAnime()
                 );
             }
 

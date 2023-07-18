@@ -90,7 +90,7 @@ public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder im
                             )
                     );
 
-            if (seenAnime == null || !seenAnime.isFavorite()) {
+            if (seenAnime == null || !seenAnime.isRelated()) {
                 return;
             }
 

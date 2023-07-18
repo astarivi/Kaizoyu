@@ -1,7 +1,7 @@
 package com.astarivi.kaizoyu.core.storage.database.data.embedded;
 
-
 import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
+
 
 public class EmbeddedEpisode {
     public int kitsuId;

@@ -251,14 +251,14 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             SeenAnimeDao seenAnimeDao = Data.getRepositories().getSeenAnimeRepository().getAnimeDao();
             seenAnime = seenAnimeDao.getFromKitsuId(animeKtId);
 
-            if (seenAnime != null && seenAnime.isFavorite())
+            if (seenAnime != null && seenAnime.isRelated())
                 binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active);
         });
     }
 
     private void initializeFavorite() {
         if (seenAnime != null) {
-            if (seenAnime.isFavorite())
+            if (seenAnime.isRelated())
                 binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active);
             continueInitialization();
             return;
@@ -270,7 +270,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             SeenAnimeDao seenAnimeDao = Data.getRepositories().getSeenAnimeRepository().getAnimeDao();
             seenAnime = seenAnimeDao.getFromKitsuId(animeKtId);
 
-            if (seenAnime != null && seenAnime.isFavorite()) {
+            if (seenAnime != null && seenAnime.isRelated()) {
                 binding.getRoot().post(() ->
                     binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active)
                 );
@@ -505,15 +505,15 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                     );
                 }
 
-                if (seenAnime.isFavorite()) {
+                if (seenAnime.isRelated()) {
                     Data.getRepositories()
-                            .getFavoriteAnimeRepository()
+                            .getAnimeStorageRepository()
                             .deleteFromRelated(seenAnime);
                     binding.getRoot().post(() ->
                             binding.favoriteButton.setImageResource(R.drawable.ic_favorite));
                 } else {
                     Data.getRepositories()
-                            .getFavoriteAnimeRepository()
+                            .getAnimeStorageRepository()
                             .createFromRelated(seenAnime, System.currentTimeMillis());
                     binding.getRoot().post(() ->
                             binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active));

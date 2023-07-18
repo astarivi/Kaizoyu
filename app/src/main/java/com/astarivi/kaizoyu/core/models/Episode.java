@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
+import com.astarivi.kaizoyu.core.storage.database.data.embedded.EmbeddedEpisode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,6 +38,20 @@ public class Episode implements Parcelable, Comparable<Episode> {
 
     public int getAnimeId() {
         return animeId;
+    }
+
+    public EmbeddedEpisode toEmbeddedDatabaseObject(int currentPosition) {
+        KitsuEpisode kitsuEpisode = getKitsuEpisode();
+
+        return new EmbeddedEpisode(
+                Integer.parseInt(kitsuEpisode.id),
+                this.animeId,
+                kitsuEpisode.attributes.number,
+                kitsuEpisode.attributes.seasonNumber != null ? kitsuEpisode.attributes.seasonNumber: 0,
+                kitsuEpisode.attributes.relativeNumber != null ? kitsuEpisode.attributes.relativeNumber : 0,
+                kitsuEpisode.attributes.length != null ? kitsuEpisode.attributes.length : 0,
+                currentPosition
+        );
     }
 
     // region Parcelable implementation

@@ -20,7 +20,7 @@ import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenEpisodeDao;
                 SeenEpisode.class,
                 SearchHistory.class
         },
-        version = 1
+        version = 2
 )
 public abstract class AppDatabase extends RoomDatabase {
     public abstract FavoriteAnimeDao favoriteAnimeDao();
