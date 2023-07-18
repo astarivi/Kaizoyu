@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.gui.library.adapter;
+package com.astarivi.kaizoyu.gui.library.watching.adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +12,9 @@ import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
 
 
-public class LibraryRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<LocalAnime>, LocalAnime> {
+public class WatchingRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<LocalAnime>, LocalAnime> {
 
-    public LibraryRecyclerAdapter(AnimeViewHolder.ItemClickListener<LocalAnime> itemClickListener) {
+    public WatchingRecyclerAdapter(AnimeViewHolder.ItemClickListener<LocalAnime> itemClickListener) {
         super(itemClickListener);
     }
 

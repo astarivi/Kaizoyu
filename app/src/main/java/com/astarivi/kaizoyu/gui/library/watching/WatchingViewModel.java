@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.gui.library;
+package com.astarivi.kaizoyu.gui.library.watching;
 
 import android.view.View;
 
@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
 import com.astarivi.kaizoyu.core.storage.database.data.favorite.FavoriteAnimeDao;
 import com.astarivi.kaizoyu.core.storage.database.data.favorite.FavoriteAnimeWithSeenAnime;
-import com.astarivi.kaizoyu.databinding.FragmentLibraryBinding;
+import com.astarivi.kaizoyu.databinding.ActivityWatchingBinding;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 
@@ -18,14 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class LibraryViewModel extends ViewModel {
+public class WatchingViewModel extends ViewModel {
     private final MutableLiveData<ArrayList<LocalAnime>> animeList = new MutableLiveData<>();
 
     public MutableLiveData<ArrayList<LocalAnime>> getAnimeList() {
         return animeList;
     }
 
-    public void fetchFavorites(@NotNull FragmentLibraryBinding binding) {
+    public void fetchFavorites(@NotNull ActivityWatchingBinding binding) {
         binding.emptyLibraryPopup.setVisibility(View.GONE);
         binding.loadingBar.setVisibility(View.VISIBLE);
         binding.libraryContents.setVisibility(View.INVISIBLE);

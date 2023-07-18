@@ -8,97 +8,57 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
-import com.astarivi.kaizoyu.core.models.base.ModelType;
+import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
 import com.astarivi.kaizoyu.databinding.FragmentLibraryBinding;
-import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
-import com.astarivi.kaizoyu.gui.library.adapter.LibraryRecyclerAdapter;
-import com.astarivi.kaizoyu.utils.Data;
+import com.astarivi.kaizoyu.gui.library.watching.WatchingActivity;
+import com.astarivi.kaizoyu.utils.Utils;
 
 
-public class LibraryFragment extends Fragment {
-    private FragmentLibraryBinding binding;
-    private LibraryViewModel viewModel;
-    private LibraryRecyclerAdapter adapter;
+public class LibraryFragment extends TabFragment {
+    FragmentLibraryBinding binding;
 
-    public LibraryFragment() {
-        // Required empty public constructor
-    }
-
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentLibraryBinding.inflate(inflater, container, false);
 
         return binding.getRoot();
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        if (viewModel == null || adapter == null || binding == null) return;
-
-        checkForRefresh();
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        viewModel = new ViewModelProvider(this).get(LibraryViewModel.class);
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.getRoot(),
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
 
-        binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
+                    if (getContext() == null) return windowInsets;
 
-        // RecyclerView
-        RecyclerView recyclerView = binding.libraryContents;
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setHasFixedSize(true);
+                    v.setPadding(
+                            0,
+                            insets.top + (int) Utils.convertDpToPixel(8, requireContext()),
+                            0,
+                            insets.bottom + (int) Utils.convertDpToPixel(8, requireContext())
+                    );
 
-        adapter = new LibraryRecyclerAdapter(anime -> {
-            Intent intent = new Intent(getActivity(), AnimeDetailsActivity.class);
-            intent.putExtra("anime", anime);
-            intent.putExtra("type", ModelType.Anime.LOCAL.name());
+                    return windowInsets;
+                }
+        );
+
+        binding.currentlyWatching.setOnClickListener(v -> {
+            if (getActivity() == null) return;
+
+            Intent intent = new Intent(requireActivity(), WatchingActivity.class);
             startActivity(intent);
         });
-
-        recyclerView.setAdapter(adapter);
-
-        viewModel.getAnimeList().observe(getViewLifecycleOwner(), localAnime -> {
-            if (localAnime == null) {
-                binding.emptyLibraryPopup.setVisibility(View.VISIBLE);
-                binding.loadingBar.setVisibility(View.GONE);
-                binding.libraryContents.setVisibility(View.INVISIBLE);
-                return;
-            }
-
-            manager.scrollToPosition(0);
-            binding.loadingBar.setVisibility(View.GONE);
-            binding.libraryContents.setVisibility(View.VISIBLE);
-
-            adapter.replaceData(localAnime);
-            adapter.notifyDataSetChanged();
-        });
-
-        viewModel.fetchFavorites(binding);
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        adapter.clear();
-    }
+    public void onTabReselected() {
 
-    private void checkForRefresh() {
-        final Data.TemporarySwitches switches = Data.getTemporarySwitches();
-
-        if (switches.isPendingFavoritesRefresh()) {
-            switches.setPendingFavoritesRefresh(false);
-
-            viewModel.fetchFavorites(binding);
-        }
     }
 }
