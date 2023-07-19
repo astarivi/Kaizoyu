@@ -34,6 +34,7 @@ import com.astarivi.kaizoyu.core.models.base.ImageSize;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
 import com.astarivi.kaizoyu.core.schedule.AnimeScheduleChecker;
+import com.astarivi.kaizoyu.core.storage.database.repositories.AnimeStorageRepository;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.ActivityAnimeDetailsBinding;
@@ -51,6 +52,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -440,7 +442,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                                     getString(R.string.d_share_app_desc)
                             )
                     },
-                    index -> {
+                    (index, highlight) -> {
                         if (index == 0) {
                             new ShareCompat.IntentBuilder(this)
                                     .setType("text/plain")
@@ -487,40 +489,105 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
         binding.favoriteTouchArea.setOnClickListener(v -> {
             binding.favoriteTouchArea.setEnabled(false);
-//            Threading.submitTask(Threading.TASK.DATABASE, () -> {
-//                SeenAnimeDao seenAnimeDao = Data.getRepositories().getSeenAnimeRepository().getAnimeDao();
-//                seenAnime = seenAnimeDao.getFromKitsuId(
-//                        Integer.parseInt(anime.getKitsuAnime().id)
-//                );
-//
-//                if (seenAnime == null) {
-//                    seenAnime = new SeenAnime(
-//                            anime.toEmbeddedDatabaseObject(),
-//                            System.currentTimeMillis()
-//                    );
-//
-//                    seenAnime.id = (int) seenAnimeDao.insert(
-//                            seenAnime
-//                    );
-//                }
-//
-//                if (seenAnime.isRelated()) {
-//                    Data.getRepositories()
-//                            .getAnimeStorageRepository()
-//                            .deleteFromRelated(seenAnime);
-//                    binding.getRoot().post(() ->
-//                            binding.favoriteButton.setImageResource(R.drawable.ic_favorite));
-//                } else {
-//                    Data.getRepositories()
-//                            .getAnimeStorageRepository()
-//                            .createFromRelated(seenAnime, System.currentTimeMillis());
-//                    binding.getRoot().post(() ->
-//                            binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active));
-//                }
-//                binding.getRoot().post(() ->
-//                        binding.favoriteTouchArea.setEnabled(true)
-//                );
-//            });
+
+            GenericModalBottomSheet modalDialog = new GenericModalBottomSheet(
+                    getString(R.string.d_save_title),
+                    new ModalOption[]{
+                            new ModalOption(
+                                    getString(R.string.d_pending),
+                                    getString(R.string.d_pending_desc),
+                                    localType != null && localType == ModelType.LocalAnime.PENDING
+                            ),
+                            new ModalOption(
+                                    getString(R.string.d_favorite_list),
+                                    getString(R.string.d_favorite_desc),
+                                    localType != null && localType == ModelType.LocalAnime.FAVORITE
+                            ),
+                            new ModalOption(
+                                    getString(R.string.d_watched_list),
+                                    getString(R.string.d_watched_desc),
+                                    localType != null && localType == ModelType.LocalAnime.WATCHED
+                            )
+                    },
+                    (index, highlight) -> {
+                        if (highlight) {
+                            new MaterialAlertDialogBuilder(this)
+                                    .setTitle(R.string.d_remove_list)
+                                    .setMessage(R.string.d_remove_desc)
+                                    .setNegativeButton(R.string.d_remove_negative, null)
+                                    .setPositiveButton(R.string.d_remove_positive, (dialog, which) ->
+                                        Data.getRepositories().getAnimeStorageRepository().asyncDelete(anime, new AnimeStorageRepository.Callback() {
+                                            @Override
+                                            public void onFinished() {
+                                                Toast.makeText(
+                                                        AnimeDetailsActivity.this,
+                                                        R.string.d_remove_toast_p,
+                                                        Toast.LENGTH_SHORT
+                                                ).show();
+                                                localType = null;
+                                                binding.favoriteButton.setImageResource(R.drawable.ic_details_add);
+                                                // TODO Maybe go back if we're in offline mode
+                                                binding.favoriteTouchArea.setEnabled(true);
+                                            }
+
+                                            @Override
+                                            public void onFailure() {
+                                                Toast.makeText(
+                                                        AnimeDetailsActivity.this,
+                                                        R.string.d_remove_toast_n,
+                                                        Toast.LENGTH_SHORT
+                                                ).show();
+                                                binding.favoriteTouchArea.setEnabled(true);
+                                            }
+                                        })
+                                    )
+                                    .show();
+                            return;
+                        }
+
+                        ModelType.LocalAnime newLocalType;
+
+                        switch(index){
+                            case 0:
+                                newLocalType = ModelType.LocalAnime.PENDING;
+                                break;
+                            case 1:
+                                newLocalType = ModelType.LocalAnime.FAVORITE;
+                                break;
+                            case 2:
+                            default:
+                                newLocalType = ModelType.LocalAnime.WATCHED;
+                        }
+
+                        Data.getRepositories().getAnimeStorageRepository().asyncCreateOrUpdate(anime, newLocalType, new AnimeStorageRepository.Callback() {
+                            @Override
+                            public void onFinished() {
+                                Toast.makeText(
+                                        AnimeDetailsActivity.this,
+                                        R.string.d_general_toast_p,
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                                localType = newLocalType;
+                                binding.favoriteButton.setImageResource(R.drawable.ic_details_added);
+                                binding.favoriteTouchArea.setEnabled(true);
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                Toast.makeText(
+                                        AnimeDetailsActivity.this,
+                                        R.string.d_general_toast_n,
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                                binding.favoriteTouchArea.setEnabled(true);
+                            }
+                        });
+                    }
+            );
+
+            modalDialog.setCancelListener(() -> binding.favoriteTouchArea.setEnabled(true));
+
+            modalDialog.show(getSupportFragmentManager(), GenericModalBottomSheet.TAG);
         });
 
         binding.loadingScreen.setVisibility(View.GONE);

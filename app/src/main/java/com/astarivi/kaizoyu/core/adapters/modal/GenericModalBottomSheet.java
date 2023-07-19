@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.core.adapters.modal;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ public class GenericModalBottomSheet extends BottomSheetDialogFragment {
     public static String TAG = "GenericModalBottomSheet";
     private BottomSheetGenericBinding binding;
     private final ResultListener listener;
+    private CancelListener cancelListener;
     private final ModalOption[] options;
     private final String title;
 
@@ -32,6 +34,17 @@ public class GenericModalBottomSheet extends BottomSheetDialogFragment {
         listener = l;
         this.options = options;
         this.title = title;
+    }
+
+    public void setCancelListener(CancelListener listener) {
+        cancelListener = listener;
+    }
+
+    @Override
+    public void onCancel(@NonNull DialogInterface dialog) {
+        super.onCancel(dialog);
+
+        if (cancelListener != null) cancelListener.onCancel();
     }
 
     @Nullable
@@ -68,14 +81,18 @@ public class GenericModalBottomSheet extends BottomSheetDialogFragment {
             int finalIndex = index;
             reBinding.getRoot().setOnClickListener(v -> {
                 dismiss();
-                listener.onOptionSelected(finalIndex);
+                listener.onOptionSelected(finalIndex, option.shouldHighlight());
             });
 
             index++;
         }
     }
 
+    public interface CancelListener {
+        void onCancel();
+    }
+
     public interface ResultListener {
-        void onOptionSelected(int index);
+        void onOptionSelected(int index, boolean wasHighlighted);
     }
 }

@@ -14,4 +14,20 @@
     <string name="d_share_app_desc">Share the URL for this show in Kaizoyu!. Only Kaizoyu! users can open it.</string>
     <string name="d_issue_unavailable">Not available yet, please report issues at our Discord server for now.</string>
     <string name="d_trailer_title">PV</string>
+    <string name="d_save_title">Add this show to your list</string>
+    <string name="d_pending">Watch Later</string>
+    <string name="d_pending_desc">Add to your watch list, for later.</string>
+    <string name="d_favorite_list">Currently Watching</string>
+    <string name="d_favorite_desc">Add to your currently watching list.</string>
+    <string name="d_watched_list">Finished</string>
+    <string name="d_watched_desc">Add to your finished shows list.</string>
+    <string name="d_remove_list">Remove this show</string>
+    <string name="d_remove_desc">Delete all your progress for this show, and remove it from your list(s). This CANNOT be reversed.</string>
+    <string name="d_remove_negative">Cancel</string>
+    <string name="d_remove_positive">Remove it</string>
+
+    <string name="d_remove_toast_p">This show has been removed from your lists.</string>
+    <string name="d_remove_toast_n">We couldn\'t remove this show due to an error.</string>
+    <string name="d_general_toast_p">Saved successfully</string>
+    <string name="d_general_toast_n">We couldn\'t modify your lists due to an error.</string>
 </resources>
