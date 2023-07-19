@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.adapters.modal.GenericModalBottomSheet;
+import com.astarivi.kaizoyu.core.adapters.modal.ModalOption;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
@@ -22,7 +24,6 @@ import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.io.File;
@@ -99,6 +100,7 @@ public class SettingsActivity extends AppCompatActivityTheme {
         binding.autoFavoriteValue.setOnCheckedChangeListener(this::triggerSave);
         binding.advancedSearch.setOnCheckedChangeListener(this::triggerSave);
         binding.strictModeValue.setOnCheckedChangeListener(this::triggerSave);
+        binding.autoMoveValue.setOnCheckedChangeListener(this::triggerSave);
 
         binding.clearCacheTrigger.setOnClickListener(view -> {
             Utils.clearCache();
@@ -131,26 +133,50 @@ public class SettingsActivity extends AppCompatActivityTheme {
     }
 
     private void showNightThemePopup(View v) {
-        final String night_theme_default = getString(R.string.night_theme_default);
-        final String night_theme_day = getString(R.string.night_theme_day);
-        final String night_theme_night = getString(R.string.night_theme_night);
+        GenericModalBottomSheet genericModal = new GenericModalBottomSheet(
+                getString(R.string.night_theme_context),
+                new ModalOption[]{
+                        new ModalOption(
+                                Translation.getNightThemeTranslation(
+                                        0,
+                                        this
+                                ),
+                                getString(R.string.night_theme_default_d),
+                                nightTheme == 0
+                        ),
+                        new ModalOption(
+                                Translation.getNightThemeTranslation(
+                                        1,
+                                        this
+                                ),
+                                getString(R.string.night_theme_day_d),
+                                nightTheme == 1
+                        ),
+                        new ModalOption(
+                                Translation.getNightThemeTranslation(
+                                        2,
+                                        this
+                                ),
+                                getString(R.string.night_theme_night_d),
+                                nightTheme == 2
+                        )
+                },
+                (index, wasHighlighted) -> {
+                    // Already selected
+                    if (wasHighlighted) return;
 
-        final String[] themes = {
-                night_theme_default,
-                night_theme_day,
-                night_theme_night
-        };
+                    binding.nightThemeValue.setText(
+                            Translation.getNightThemeTranslation(
+                                    index,
+                                    this
+                            )
+                    );
+                    nightTheme = index;
+                    saveSettings();
+                }
+        );
 
-        TextView theme = binding.nightThemeValue;
-
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-        builder.setTitle(getString(R.string.night_theme_context));
-        builder.setItems(themes, (dialog, index) -> {
-            nightTheme = index;
-            theme.setText(themes[index]);
-            saveSettings();
-        });
-        builder.show();
+        genericModal.show(getSupportFragmentManager(), GenericModalBottomSheet.TAG);
     }
 
     private void triggerSave(View v, boolean value) {
@@ -183,6 +209,11 @@ public class SettingsActivity extends AppCompatActivityTheme {
         config.setBooleanProperty(
                 "auto_favorite",
                 binding.autoFavoriteValue.isChecked()
+        );
+
+        config.setBooleanProperty(
+                "auto_move",
+                binding.autoMoveValue.isChecked()
         );
 
         config.setBooleanProperty(
@@ -234,6 +265,10 @@ public class SettingsActivity extends AppCompatActivityTheme {
 
         binding.autoFavoriteValue.setChecked(
                 config.getBooleanProperty("auto_favorite", false)
+        );
+
+        binding.autoMoveValue.setChecked(
+                config.getBooleanProperty("auto_move", false)
         );
 
         binding.themeValue.setText(

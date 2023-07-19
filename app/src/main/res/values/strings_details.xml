@@ -25,7 +25,6 @@
     <string name="d_remove_desc">Delete all your progress for this show, and remove it from your list(s). This CANNOT be reversed.</string>
     <string name="d_remove_negative">Cancel</string>
     <string name="d_remove_positive">Remove it</string>
-
     <string name="d_remove_toast_p">This show has been removed from your lists.</string>
     <string name="d_remove_toast_n">We couldn\'t remove this show due to an error.</string>
     <string name="d_general_toast_p">Saved successfully</string>

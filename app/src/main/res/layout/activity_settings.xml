@@ -184,6 +184,43 @@
                         android:layout_marginEnd="10dp"
                         android:textSize="17sp"
                         android:textColor="?attr/colorOnSurfaceVariant"
+                        android:text="@string/automove_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:fontFamily="@font/lato_regular"
+                        android:id="@+id/autoMoveValue"
+                    />
+                    <TextView
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="90dp"
+                        android:textSize="13sp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:text="@string/automove_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_regular"
+                    />
+                </LinearLayout>
+
+                <View
+                    style="@style/Divider"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="10dp"
+                />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    >
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="17sp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:text="@string/preferenglish_title"
                         android:layout_width="match_parent"
                         android:layout_height="42dp"
