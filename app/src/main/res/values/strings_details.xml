@@ -4,7 +4,7 @@
     <string name="d_share_intent">Open show in Kaizoyu!</string>
     <string name="d_share">Share</string>
     <string name="d_issue">Report issue</string>
-    <string name="d_favorite">Favorite</string>
+    <string name="d_favorite">Save</string>
     <string name="d_favorite_description">Report an issue with this episode</string>
     <string name="d_share_description">Share this show</string>
     <string name="d_share_title">Share this show</string>

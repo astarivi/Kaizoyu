@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.core.adapters;
+package com.astarivi.kaizoyu.core.adapters.modal;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,8 +7,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
-import com.astarivi.kaizolib.common.util.StringPair;
+import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.databinding.BottomSheetGenericBinding;
 import com.astarivi.kaizoyu.databinding.ItemSheetGenericBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -18,7 +19,7 @@ public class GenericModalBottomSheet extends BottomSheetDialogFragment {
     public static String TAG = "GenericModalBottomSheet";
     private BottomSheetGenericBinding binding;
     private final ResultListener listener;
-    private final StringPair[] options;
+    private final ModalOption[] options;
     private final String title;
 
     public GenericModalBottomSheet() {
@@ -27,7 +28,7 @@ public class GenericModalBottomSheet extends BottomSheetDialogFragment {
         title = null;
     }
 
-    public GenericModalBottomSheet(String title, StringPair[] options, ResultListener l) {
+    public GenericModalBottomSheet(String title, ModalOption[] options, ResultListener l) {
         listener = l;
         this.options = options;
         this.title = title;
@@ -50,7 +51,7 @@ public class GenericModalBottomSheet extends BottomSheetDialogFragment {
 
         int index = 0;
 
-        for (StringPair option : options) {
+        for (ModalOption option : options) {
             ItemSheetGenericBinding reBinding = ItemSheetGenericBinding.inflate(
                     getLayoutInflater(),
                     binding.options,
@@ -59,6 +60,10 @@ public class GenericModalBottomSheet extends BottomSheetDialogFragment {
 
             reBinding.itemTitle.setText(option.getName());
             reBinding.itemDescription.setText(option.getValue());
+
+            if (option.shouldHighlight()) {
+                reBinding.getRoot().setStrokeColor(ContextCompat.getColor(requireContext(), R.color.branding_alternate));
+            }
 
             int finalIndex = index;
             reBinding.getRoot().setOnClickListener(v -> {

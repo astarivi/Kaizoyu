@@ -30,18 +30,33 @@ public class AnimeStorageRepository {
         return favoriteAnimeDao;
     }
 
+    @ThreadedOnly
+    public ModelType.LocalAnime getLocalType(Anime anime) {
+        // Get the LocalAnime type of this Anime, if available
+        FavoriteAnimeWithSeenAnime favoriteAnimeWithSeenAnime = getFavoriteAnimeWithSeenAnime(anime);
+
+        if (favoriteAnimeWithSeenAnime == null) return null;
+
+        return ModelType.LocalAnime.getLocalAnime(favoriteAnimeWithSeenAnime.favoriteAnime.type);
+    }
+
+    @ThreadedOnly
     public @Nullable LocalAnime get(Anime anime) {
         // Get the LocalAnime equivalent of this Anime, if available
-
-        SeenAnime seenAnime = Data.getRepositories().getSeenAnimeRepository().get(anime);
-
-        if (seenAnime == null || !seenAnime.isRelated()) return null;
-
-        FavoriteAnimeWithSeenAnime favoriteAnimeWithSeenAnime = favoriteAnimeDao.getRelation(seenAnime.favoriteId);
+        FavoriteAnimeWithSeenAnime favoriteAnimeWithSeenAnime = getFavoriteAnimeWithSeenAnime(anime);
 
         if (favoriteAnimeWithSeenAnime == null) return null;
 
         return favoriteAnimeWithSeenAnime.toLocalAnime();
+    }
+
+    @ThreadedOnly
+    public @Nullable FavoriteAnimeWithSeenAnime getFavoriteAnimeWithSeenAnime(Anime anime) {
+        SeenAnime seenAnime = Data.getRepositories().getSeenAnimeRepository().get(anime);
+
+        if (seenAnime == null || !seenAnime.isRelated()) return null;
+
+        return favoriteAnimeDao.getRelation(seenAnime.favoriteId);
     }
 
     public void asyncCreateOrUpdate(Anime anime, ModelType.LocalAnime type, Callback callback) {

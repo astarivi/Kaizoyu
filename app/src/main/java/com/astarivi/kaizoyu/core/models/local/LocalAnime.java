@@ -17,7 +17,7 @@ import java.util.List;
 public class LocalAnime extends Anime {
     protected final int databaseId;
     protected final Date watchDate;
-    protected final ModelType.LocalAnime localAnimeType;
+protected final ModelType.LocalAnime localAnimeType;
 
     public LocalAnime(KitsuAnime anime, int databaseId, Date watchDate, ModelType.LocalAnime type) {
         super(anime);

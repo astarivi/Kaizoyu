@@ -22,7 +22,6 @@ import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
-import com.astarivi.kaizoyu.core.models.base.AnimeBase;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
@@ -85,7 +84,7 @@ public class Utils {
     }
 
     @SuppressWarnings("deprecation")
-    public static @Nullable AnimeBase getAnimeFromBundle(@NotNull Bundle bundle, @NotNull ModelType.Anime type) {
+    public static @Nullable Anime getAnimeFromBundle(@NotNull Bundle bundle, @NotNull ModelType.Anime type) {
         switch(type) {
             case BASE:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

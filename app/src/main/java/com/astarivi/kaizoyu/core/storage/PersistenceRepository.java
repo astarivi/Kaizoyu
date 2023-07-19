@@ -9,6 +9,7 @@ import com.astarivi.kaizolib.common.network.UserHttpClient;
 import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
+import com.astarivi.kaizoyu.core.storage.database.migrations.Migrations;
 import com.astarivi.kaizoyu.core.storage.database.repositories.RepositoryDirectory;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.utils.Utils;
@@ -48,6 +49,8 @@ public class PersistenceRepository {
                 KaizoyuApplication.getApplication().getApplicationContext(),
                 AppDatabase.class,
                 "kaizo-database"
+        ).addMigrations(
+                Migrations.MIGRATION_1_2
         ).build(
         );
 

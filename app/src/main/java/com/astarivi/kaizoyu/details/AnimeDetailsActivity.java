@@ -18,7 +18,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.palette.graphics.Palette;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.astarivi.kaizolib.common.util.StringPair;
 import com.astarivi.kaizolib.kitsu.Kitsu;
 import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
 import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
@@ -26,16 +25,15 @@ import com.astarivi.kaizolib.kitsu.exception.NoResultsException;
 import com.astarivi.kaizolib.kitsu.exception.ParsingException;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.adapters.GenericModalBottomSheet;
+import com.astarivi.kaizoyu.core.adapters.modal.GenericModalBottomSheet;
+import com.astarivi.kaizoyu.core.adapters.modal.ModalOption;
 import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
-import com.astarivi.kaizoyu.core.models.base.AnimeBase;
 import com.astarivi.kaizoyu.core.models.base.ImageSize;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
+import com.astarivi.kaizoyu.core.models.local.LocalAnime;
 import com.astarivi.kaizoyu.core.schedule.AnimeScheduleChecker;
-import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnime;
-import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnimeDao;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.ActivityAnimeDetailsBinding;
@@ -65,9 +63,9 @@ import java.util.Objects;
 
 public class AnimeDetailsActivity extends AppCompatActivityTheme {
     private ActivityAnimeDetailsBinding binding;
-    private AnimeBase anime;
+    private Anime anime;
     private ModelType.Anime animeType;
-    private SeenAnime seenAnime;
+    private ModelType.LocalAnime localType = null;
     private Zparc zparc;
 
     // The bundle must contain the following keys to create this Details Activity:
@@ -179,6 +177,10 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                 return;
             }
 
+            if (animeType == ModelType.Anime.LOCAL) {
+                localType = ((LocalAnime) anime).getLocalAnimeType();
+            }
+
             // Local anime or deep link
             if (animeType == ModelType.Anime.LOCAL || finalKitsuId != null) {
                 Kitsu kitsu = new Kitsu(
@@ -247,36 +249,33 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
     public void triggerFavoriteRefresh() {
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            int animeKtId = Integer.parseInt(anime.getKitsuAnime().id);
-            SeenAnimeDao seenAnimeDao = Data.getRepositories().getSeenAnimeRepository().getAnimeDao();
-            seenAnime = seenAnimeDao.getFromKitsuId(animeKtId);
+            localType = Data.getRepositories().getAnimeStorageRepository().getLocalType(anime);
 
-            if (seenAnime != null && seenAnime.isRelated())
-                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active);
+            if (localType != null && localType != ModelType.LocalAnime.SEEN) {
+                binding.getRoot().post(() ->
+                    binding.favoriteButton.setImageResource(R.drawable.ic_details_added)
+                );
+            }
         });
     }
 
     private void initializeFavorite() {
-        if (seenAnime != null) {
-            if (seenAnime.isRelated())
-                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active);
+        if (localType != null && localType != ModelType.LocalAnime.SEEN) {
+            binding.favoriteButton.setImageResource(R.drawable.ic_details_added);
             continueInitialization();
             return;
         }
 
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            int animeKtId = Integer.parseInt(anime.getKitsuAnime().id);
+            localType = Data.getRepositories().getAnimeStorageRepository().getLocalType(anime);
 
-            SeenAnimeDao seenAnimeDao = Data.getRepositories().getSeenAnimeRepository().getAnimeDao();
-            seenAnime = seenAnimeDao.getFromKitsuId(animeKtId);
+            binding.getRoot().post(() -> {
+                if (localType != null && localType != ModelType.LocalAnime.SEEN) {
+                    binding.favoriteButton.setImageResource(R.drawable.ic_details_added);
+                }
 
-            if (seenAnime != null && seenAnime.isRelated()) {
-                binding.getRoot().post(() ->
-                    binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active)
-                );
-            }
-
-            binding.getRoot().post(this::continueInitialization);
+                continueInitialization();
+            });
         });
     }
 
@@ -431,12 +430,12 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         binding.shareTouchArea.setOnClickListener(v -> {
             GenericModalBottomSheet modalDialog = new GenericModalBottomSheet(
                     getString(R.string.d_share_title),
-                    new StringPair[]{
-                            new StringPair(
+                    new ModalOption[]{
+                            new ModalOption(
                                     getString(R.string.d_share_kitsu),
                                     getString(R.string.d_share_kitsu_desc)
                             ),
-                            new StringPair(
+                            new ModalOption(
                                     getString(R.string.d_share_app),
                                     getString(R.string.d_share_app_desc)
                             )
@@ -488,40 +487,40 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
         binding.favoriteTouchArea.setOnClickListener(v -> {
             binding.favoriteTouchArea.setEnabled(false);
-            Threading.submitTask(Threading.TASK.DATABASE, () -> {
-                SeenAnimeDao seenAnimeDao = Data.getRepositories().getSeenAnimeRepository().getAnimeDao();
-                seenAnime = seenAnimeDao.getFromKitsuId(
-                        Integer.parseInt(anime.getKitsuAnime().id)
-                );
-
-                if (seenAnime == null) {
-                    seenAnime = new SeenAnime(
-                            anime.toEmbeddedDatabaseObject(),
-                            System.currentTimeMillis()
-                    );
-
-                    seenAnime.id = (int) seenAnimeDao.insert(
-                            seenAnime
-                    );
-                }
-
-                if (seenAnime.isRelated()) {
-                    Data.getRepositories()
-                            .getAnimeStorageRepository()
-                            .deleteFromRelated(seenAnime);
-                    binding.getRoot().post(() ->
-                            binding.favoriteButton.setImageResource(R.drawable.ic_favorite));
-                } else {
-                    Data.getRepositories()
-                            .getAnimeStorageRepository()
-                            .createFromRelated(seenAnime, System.currentTimeMillis());
-                    binding.getRoot().post(() ->
-                            binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active));
-                }
-                binding.getRoot().post(() ->
-                        binding.favoriteTouchArea.setEnabled(true)
-                );
-            });
+//            Threading.submitTask(Threading.TASK.DATABASE, () -> {
+//                SeenAnimeDao seenAnimeDao = Data.getRepositories().getSeenAnimeRepository().getAnimeDao();
+//                seenAnime = seenAnimeDao.getFromKitsuId(
+//                        Integer.parseInt(anime.getKitsuAnime().id)
+//                );
+//
+//                if (seenAnime == null) {
+//                    seenAnime = new SeenAnime(
+//                            anime.toEmbeddedDatabaseObject(),
+//                            System.currentTimeMillis()
+//                    );
+//
+//                    seenAnime.id = (int) seenAnimeDao.insert(
+//                            seenAnime
+//                    );
+//                }
+//
+//                if (seenAnime.isRelated()) {
+//                    Data.getRepositories()
+//                            .getAnimeStorageRepository()
+//                            .deleteFromRelated(seenAnime);
+//                    binding.getRoot().post(() ->
+//                            binding.favoriteButton.setImageResource(R.drawable.ic_favorite));
+//                } else {
+//                    Data.getRepositories()
+//                            .getAnimeStorageRepository()
+//                            .createFromRelated(seenAnime, System.currentTimeMillis());
+//                    binding.getRoot().post(() ->
+//                            binding.favoriteButton.setImageResource(R.drawable.ic_favorite_active));
+//                }
+//                binding.getRoot().post(() ->
+//                        binding.favoriteTouchArea.setEnabled(true)
+//                );
+//            });
         });
 
         binding.loadingScreen.setVisibility(View.GONE);

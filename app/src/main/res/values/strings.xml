@@ -54,7 +54,7 @@
     <string name="update_already_latest">No updates available</string>
     <string name="search_history_icon_desc">Search history icon</string>
     <string name="anime_cover_image_desc">Anime cover image</string>
-    <string name="favorite_button_desc">Favorite button</string>
+    <string name="favorite_button_desc">Save button</string>
     <string name="go_back_desc">Go back</string>
     <string name="tip_icon_desc">Tip icon</string>
     <string name="close_modal_button_desc">Close modal button</string>
