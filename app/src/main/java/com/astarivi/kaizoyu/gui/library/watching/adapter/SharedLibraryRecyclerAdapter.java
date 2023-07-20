@@ -12,9 +12,9 @@ import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
 
 
-public class WatchingRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<LocalAnime>, LocalAnime> {
+public class SharedLibraryRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<LocalAnime>, LocalAnime> {
 
-    public WatchingRecyclerAdapter(AnimeViewHolder.ItemClickListener<LocalAnime> itemClickListener) {
+    public SharedLibraryRecyclerAdapter(AnimeViewHolder.ItemClickListener<LocalAnime> itemClickListener) {
         super(itemClickListener);
     }
 

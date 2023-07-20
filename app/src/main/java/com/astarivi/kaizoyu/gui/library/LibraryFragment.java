@@ -13,8 +13,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
+import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.databinding.FragmentLibraryBinding;
-import com.astarivi.kaizoyu.gui.library.watching.WatchingActivity;
+import com.astarivi.kaizoyu.gui.library.watching.SharedLibraryActivity;
 import com.astarivi.kaizoyu.utils.Utils;
 
 
@@ -52,7 +53,8 @@ public class LibraryFragment extends TabFragment {
         binding.currentlyWatching.setOnClickListener(v -> {
             if (getActivity() == null) return;
 
-            Intent intent = new Intent(requireActivity(), WatchingActivity.class);
+            Intent intent = new Intent(requireActivity(), SharedLibraryActivity.class);
+            intent.putExtra("local_type", ModelType.LocalAnime.FAVORITE.name());
             startActivity(intent);
         });
     }

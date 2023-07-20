@@ -40,4 +40,7 @@ public interface FavoriteAnimeDao {
     @Transaction
     @Query("SELECT * FROM favorite_anime ORDER BY date DESC LIMIT :limit")
     List<FavoriteAnimeWithSeenAnime> getRelationPartial(int limit);
+    @Transaction
+    @Query("SELECT * FROM favorite_anime WHERE type=:type ORDER BY date DESC")
+    List<FavoriteAnimeWithSeenAnime> getSpecificRelation(int type);
 }

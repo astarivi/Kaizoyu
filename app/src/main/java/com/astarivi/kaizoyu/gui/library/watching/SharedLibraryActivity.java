@@ -5,24 +5,29 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
-import com.astarivi.kaizoyu.databinding.ActivityWatchingBinding;
+import com.astarivi.kaizoyu.databinding.ActivitySharedLibraryBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
-import com.astarivi.kaizoyu.gui.library.watching.adapter.WatchingRecyclerAdapter;
+import com.astarivi.kaizoyu.gui.library.watching.adapter.SharedLibraryRecyclerAdapter;
 import com.astarivi.kaizoyu.utils.Data;
 
+import org.tinylog.Logger;
 
-public class WatchingActivity extends AppCompatActivityTheme {
-    private ActivityWatchingBinding binding;
-    private WatchingViewModel viewModel;
-    private WatchingRecyclerAdapter adapter;
 
-    public WatchingActivity() {
+public class SharedLibraryActivity extends AppCompatActivityTheme {
+    private ActivitySharedLibraryBinding binding;
+    private SharedLibraryViewModel viewModel;
+    private SharedLibraryRecyclerAdapter adapter;
+    private ModelType.LocalAnime localAnimeType;
+
+    public SharedLibraryActivity() {
         // Required empty public constructor
     }
 
@@ -30,13 +35,53 @@ public class WatchingActivity extends AppCompatActivityTheme {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityWatchingBinding.inflate(getLayoutInflater());
+        binding = ActivitySharedLibraryBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
 
-        viewModel = new ViewModelProvider(this).get(WatchingViewModel.class);
-
         binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
+
+        viewModel = new ViewModelProvider(this).get(SharedLibraryViewModel.class);
+
+        Bundle bundle = getIntent().getExtras();
+
+        if (bundle == null) {
+            finish();
+            return;
+        }
+
+        final String type = bundle.getString("local_type");
+
+        if (type == null || type.equals("")) {
+            finish();
+            return;
+        }
+
+        try {
+            localAnimeType = ModelType.LocalAnime.valueOf(type);
+        } catch(IllegalArgumentException e) {
+            Logger.error("Invalid anime local type {}", type);
+            finish();
+            return;
+        }
+
+        binding.internalToolbar.setNavigationOnClickListener(v -> finish());
+
+        @StringRes int title;
+
+        switch (localAnimeType) {
+            case PENDING:
+                title = R.string.d_pending;
+                break;
+            case WATCHED:
+                title = R.string.d_watched_list;
+                break;
+            case FAVORITE:
+            default:
+                title = R.string.d_favorite_list;
+        }
+
+        binding.internalToolbar.setTitle(title);
 
         // RecyclerView
         RecyclerView recyclerView = binding.libraryContents;
@@ -44,7 +89,7 @@ public class WatchingActivity extends AppCompatActivityTheme {
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
 
-        adapter = new WatchingRecyclerAdapter(anime -> {
+        adapter = new SharedLibraryRecyclerAdapter(anime -> {
             Intent intent = new Intent(this, AnimeDetailsActivity.class);
             intent.putExtra("anime", anime);
             intent.putExtra("type", ModelType.Anime.LOCAL.name());
@@ -69,7 +114,7 @@ public class WatchingActivity extends AppCompatActivityTheme {
             adapter.notifyDataSetChanged();
         });
 
-        viewModel.fetchFavorites(binding);
+        viewModel.fetchFavorites(binding, localAnimeType);
     }
 
     @Override
@@ -93,7 +138,7 @@ public class WatchingActivity extends AppCompatActivityTheme {
         if (switches.isPendingFavoritesRefresh()) {
             switches.setPendingFavoritesRefresh(false);
 
-            viewModel.fetchFavorites(binding);
+            viewModel.fetchFavorites(binding, localAnimeType);
         }
     }
 }

@@ -61,9 +61,8 @@
             android:label="Settings"
         />
         <activity
-            android:name=".gui.library.watching.WatchingActivity"
-            android:label="Watching"
-            android:noHistory="true"
+            android:name=".gui.library.watching.SharedLibraryActivity"
+            android:label="SharedLibraryActivity"
         />
         <activity
             android:name=".updater.UpdaterActivity"

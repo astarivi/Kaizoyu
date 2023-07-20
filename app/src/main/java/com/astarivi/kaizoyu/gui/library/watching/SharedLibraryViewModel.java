@@ -5,10 +5,11 @@ import android.view.View;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
 import com.astarivi.kaizoyu.core.storage.database.data.favorite.FavoriteAnimeDao;
 import com.astarivi.kaizoyu.core.storage.database.data.favorite.FavoriteAnimeWithSeenAnime;
-import com.astarivi.kaizoyu.databinding.ActivityWatchingBinding;
+import com.astarivi.kaizoyu.databinding.ActivitySharedLibraryBinding;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 
@@ -18,14 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class WatchingViewModel extends ViewModel {
+public class SharedLibraryViewModel extends ViewModel {
     private final MutableLiveData<ArrayList<LocalAnime>> animeList = new MutableLiveData<>();
 
     public MutableLiveData<ArrayList<LocalAnime>> getAnimeList() {
         return animeList;
     }
 
-    public void fetchFavorites(@NotNull ActivityWatchingBinding binding) {
+    public void fetchFavorites(@NotNull ActivitySharedLibraryBinding binding, ModelType.LocalAnime type) {
         binding.emptyLibraryPopup.setVisibility(View.GONE);
         binding.loadingBar.setVisibility(View.VISIBLE);
         binding.libraryContents.setVisibility(View.INVISIBLE);
@@ -35,7 +36,7 @@ public class WatchingViewModel extends ViewModel {
                     .getAnimeStorageRepository()
                     .getFavoriteAnimeDao();
 
-            List<FavoriteAnimeWithSeenAnime> favAnimeList = favDao.getRelation();
+            List<FavoriteAnimeWithSeenAnime> favAnimeList = favDao.getSpecificRelation(type.getValue());
 
             if (favAnimeList.isEmpty()) {
                 animeList.postValue(null);

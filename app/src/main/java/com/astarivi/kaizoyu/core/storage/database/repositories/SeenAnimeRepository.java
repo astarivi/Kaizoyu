@@ -59,6 +59,8 @@ public class SeenAnimeRepository {
     private void saveSeenEpisode(int currentPlayerTime, Anime anime, Episode episode) {
         final boolean isAutoFavorite = Data.getProperties(Data.CONFIGURATION.APP)
                 .getBooleanProperty("auto_favorite", false);
+        final boolean isAutoMove = Data.getProperties(Data.CONFIGURATION.APP)
+                .getBooleanProperty("auto_move", false);
 
         SeenAnime parentAnime;
         if (isAutoFavorite) {
@@ -71,9 +73,11 @@ public class SeenAnimeRepository {
             return;
         }
 
-
         // Auto-Favorite
-        if (isAutoFavorite && !parentAnime.isRelated()) {
+        if (
+                (isAutoFavorite && !parentAnime.isRelated()) ||
+                (isAutoMove && parentAnime.isRelated())
+        ) {
             Data.getRepositories()
                     .getAnimeStorageRepository()
                     .createOrUpdate(anime, ModelType.LocalAnime.FAVORITE);
