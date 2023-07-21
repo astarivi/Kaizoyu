@@ -1,7 +1,7 @@
 package com.astarivi.kaizoyu.core.schedule;
 
 import com.astarivi.kaizoyu.core.adapters.WebAdapter;
-import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
+import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

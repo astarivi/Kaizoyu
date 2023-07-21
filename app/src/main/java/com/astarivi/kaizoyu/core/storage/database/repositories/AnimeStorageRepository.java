@@ -2,7 +2,7 @@ package com.astarivi.kaizoyu.core.storage.database.repositories;
 
 import androidx.annotation.Nullable;
 
-import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
+import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.base.ModelType;

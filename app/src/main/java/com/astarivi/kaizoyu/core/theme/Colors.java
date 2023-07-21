@@ -21,6 +21,16 @@ public class Colors {
         );
     }
 
+    public static @ColorInt int getColorScrim(View source, @AttrRes int color) {
+        return ColorUtils.setAlphaComponent(
+                MaterialColors.getColor(
+                        source,
+                        color
+                ),
+                200
+        );
+    }
+
     public static GradientDrawable fadeSurfaceFromStatusBar(View source, @AttrRes int color, GradientDrawable.Orientation orientation) {
         GradientDrawable gd = new GradientDrawable(
                 orientation,

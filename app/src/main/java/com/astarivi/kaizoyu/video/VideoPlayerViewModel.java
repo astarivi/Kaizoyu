@@ -15,7 +15,7 @@ import com.astarivi.kaizolib.xdcc.XDCCDownloader;
 import com.astarivi.kaizolib.xdcc.base.XDCCDownloadListener;
 import com.astarivi.kaizolib.xdcc.base.XDCCFailure;
 import com.astarivi.kaizolib.xdcc.model.DCC;
-import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
+import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.Result;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.utils.Data;

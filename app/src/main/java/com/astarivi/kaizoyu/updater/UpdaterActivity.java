@@ -13,7 +13,7 @@ import androidx.core.content.FileProvider;
 import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.HttpFileDownloader;
-import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
+import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.ActivityUpdaterBinding;

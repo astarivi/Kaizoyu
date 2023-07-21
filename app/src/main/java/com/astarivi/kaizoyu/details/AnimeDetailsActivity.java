@@ -27,7 +27,7 @@ import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.modal.GenericModalBottomSheet;
 import com.astarivi.kaizoyu.core.adapters.modal.ModalOption;
-import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
+import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.models.base.ImageSize;

@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.core.analytics;
+package com.astarivi.kaizoyu.core.common;
 
 import com.flurry.android.FlurryAgent;
 

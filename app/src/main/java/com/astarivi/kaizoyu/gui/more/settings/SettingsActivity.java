@@ -15,7 +15,7 @@ import androidx.core.content.FileProvider;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.modal.GenericModalBottomSheet;
 import com.astarivi.kaizoyu.core.adapters.modal.ModalOption;
-import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
+import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Theme;

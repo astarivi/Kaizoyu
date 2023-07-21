@@ -12,9 +12,10 @@ import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.databinding.FragmentHomeBinding;
-import com.astarivi.kaizoyu.gui.home.recycler.MainCategoryContainer;
+import com.astarivi.kaizoyu.gui.home.recycler.recommendations.MainCategoryContainer;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
+import com.rometools.rome.feed.synd.SyndEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +24,15 @@ import java.util.concurrent.Future;
 
 public class HomeViewModel extends ViewModel {
     private final MutableLiveData<ArrayList<MainCategoryContainer>> containers = new MutableLiveData<>();
+    private final MutableLiveData<List<SyndEntry>> news = new MutableLiveData<>();
     private Future<?> reloadFuture = null;
 
     public MutableLiveData<ArrayList<MainCategoryContainer>> getContainers() {
         return containers;
+    }
+
+    public MutableLiveData<List<SyndEntry>> getNews() {
+        return news;
     }
 
     public void reloadHome(FragmentHomeBinding binding) {

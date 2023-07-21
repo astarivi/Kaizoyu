@@ -16,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
-import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
+import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.FragmentMoreBinding;

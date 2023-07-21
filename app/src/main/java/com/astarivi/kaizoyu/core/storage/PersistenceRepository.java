@@ -7,7 +7,7 @@ import androidx.room.Room;
 
 import com.astarivi.kaizolib.common.network.UserHttpClient;
 import com.astarivi.kaizoyu.KaizoyuApplication;
-import com.astarivi.kaizoyu.core.analytics.AnalyticsClient;
+import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
 import com.astarivi.kaizoyu.core.storage.database.migrations.Migrations;
 import com.astarivi.kaizoyu.core.storage.database.repositories.RepositoryDirectory;
