@@ -50,13 +50,17 @@ public class LibraryFragment extends TabFragment {
                 }
         );
 
-        binding.currentlyWatching.setOnClickListener(v -> {
-            if (getActivity() == null) return;
+        binding.currentlyWatching.setOnClickListener(v -> openSharedLibrary(ModelType.LocalAnime.FAVORITE));
+        binding.watchLater.setOnClickListener(v -> openSharedLibrary(ModelType.LocalAnime.PENDING));
+        binding.finishedWatching.setOnClickListener(v -> openSharedLibrary(ModelType.LocalAnime.WATCHED));
+    }
 
-            Intent intent = new Intent(requireActivity(), SharedLibraryActivity.class);
-            intent.putExtra("local_type", ModelType.LocalAnime.FAVORITE.name());
-            startActivity(intent);
-        });
+    private void openSharedLibrary(ModelType.LocalAnime type) {
+        if (getActivity() == null) return;
+
+        Intent intent = new Intent(requireActivity(), SharedLibraryActivity.class);
+        intent.putExtra("local_type", type.name());
+        startActivity(intent);
     }
 
     @Override

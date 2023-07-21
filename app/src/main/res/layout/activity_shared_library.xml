@@ -52,6 +52,14 @@
         />
     </LinearLayout>
 
+    <View
+        android:id="@+id/status_bar_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_gravity="top"
+        android:background="@color/black"
+    />
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -63,6 +71,7 @@
             android:layout_height="wrap_content"
             app:navigationIcon="@drawable/ic_back_new_small"
             android:id="@+id/internalToolbar"
+            android:background="?attr/colorSurfaceVariant"
         />
     </com.google.android.material.appbar.AppBarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

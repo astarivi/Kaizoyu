@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivityTheme {
         final int[] tabIcons = new int[]{
                 R.drawable.ic_main_home_alt,
                 R.drawable.ic_main_emission_alt,
-                R.drawable.ic_main_history_alt,
+                R.drawable.ic_main_collection,
                 R.drawable.ic_main_more_alt
         };
 

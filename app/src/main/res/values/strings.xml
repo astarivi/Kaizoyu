@@ -1,11 +1,10 @@
 <resources>
-    <string name="library_watching_title">Currently Watching</string>
     <string name="pause_video">Pause video</string>
     <string name="skip_intro">Skip intro</string>
     <string name="title_activity_video_player">FullscreenActivity</string>
     <string name="home_button">Home</string>
     <string name="schedule_button">Schedule</string>
-    <string name="history_button">Favorites</string>
+    <string name="history_button">Library</string>
     <string name="more_button">More</string>
     <string name="title_activity_anime_details">AnimeDetails</string>
     <string name="change_language_of_video">Change language of video</string>

@@ -57,7 +57,7 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:icon="@drawable/ic_main_history_alt"
+            android:icon="@drawable/ic_main_collection"
             android:text="@string/history_button"
         />
 

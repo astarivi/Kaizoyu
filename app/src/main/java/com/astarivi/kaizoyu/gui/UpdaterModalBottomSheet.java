@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
@@ -14,6 +17,7 @@ import com.astarivi.kaizoyu.databinding.BottomSheetUpdaterBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 
+// TODO: Check if immersive mode hasn't messed this up.
 public class UpdaterModalBottomSheet extends BottomSheetDialogFragment {
     public static String TAG = "UpdaterBottomModalSheet";
     private BottomSheetUpdaterBinding binding;
@@ -39,8 +43,24 @@ public class UpdaterModalBottomSheet extends BottomSheetDialogFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        // Dum
         if (update == null) return;
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.getRoot(),
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+
+                    if (getContext() == null) return windowInsets;
+
+                    v.setPadding(
+                            0,
+                            0,
+                            0,
+                            insets.bottom
+                    );
+
+                    return windowInsets;
+        });
 
         binding.versionJump.setText(
                 String.format(

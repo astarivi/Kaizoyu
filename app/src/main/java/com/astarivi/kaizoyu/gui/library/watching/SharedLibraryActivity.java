@@ -3,9 +3,16 @@ package com.astarivi.kaizoyu.gui.library.watching;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,10 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
+import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.ActivitySharedLibraryBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
 import com.astarivi.kaizoyu.gui.library.watching.adapter.SharedLibraryRecyclerAdapter;
 import com.astarivi.kaizoyu.utils.Data;
+import com.astarivi.kaizoyu.utils.Utils;
+import com.google.android.material.color.MaterialColors;
 
 import org.tinylog.Logger;
 
@@ -82,6 +92,64 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
         }
 
         binding.internalToolbar.setTitle(title);
+
+        final Window window = getWindow();
+        WindowCompat.setDecorFitsSystemWindows(window, false);
+        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
+        window.setStatusBarColor(
+                MaterialColors.getColor(
+                        binding.getRoot(),
+                        R.attr.colorSurfaceVariant
+                )
+        );
+
+        binding.statusBarScrim.setBackgroundColor(
+                Colors.getSemiTransparentStatusBar(
+                        binding.getRoot(),
+                        R.attr.colorSurfaceVariant
+                )
+        );
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.statusBarScrim,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+
+                    ViewGroup.LayoutParams params = v.getLayoutParams();
+                    params.height = insets.top;
+                    v.setLayoutParams(params);
+
+                    return windowInsets;
+                }
+        );
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.libraryContents,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+
+                    v.setPadding(
+                            0,
+                            (int) Utils.convertDpToPixel(4, this),
+                            0,
+                            insets.bottom + (int) Utils.convertDpToPixel(4, this)
+                    );
+
+                    return windowInsets;
+                }
+        );
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.internalToolbar,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+
+                    v.setPadding(0, insets.top, 0, 0);
+
+                    return windowInsets;
+                }
+        );
 
         // RecyclerView
         RecyclerView recyclerView = binding.libraryContents;

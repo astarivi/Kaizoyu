@@ -16,7 +16,7 @@
         android:layout_marginEnd="8dp"
     >
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/currentlyWatching"
+            android:id="@+id/watchLater"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="?attr/materialCardViewFilledStyle"
@@ -31,12 +31,86 @@
                 android:padding="18dp"
             >
                 <TextView
-                    android:text="@string/library_watching_title"
+                    android:text="@string/d_pending"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato_bold"
                     android:textSize="20sp"
                     android:layout_marginBottom="4dp"
+                />
+                <TextView
+                    android:textSize="13sp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:text="@string/d_pending_a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/currentlyWatching"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_marginBottom="8dp"
+            app:cardBackgroundColor="?attr/colorSecondaryContainer"
+            >
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="18dp"
+                >
+                <TextView
+                    android:text="@string/d_favorite_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_bold"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="4dp"
+                />
+                <TextView
+                    android:textSize="13sp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:text="@string/d_favorite_a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/finishedWatching"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_marginBottom="8dp"
+            app:cardBackgroundColor="?attr/colorSecondaryContainer"
+            >
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="18dp"
+            >
+                <TextView
+                    android:text="@string/d_watched_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_bold"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="4dp"
+                />
+                <TextView
+                    android:textSize="13sp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:text="@string/d_watched_a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
                 />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
