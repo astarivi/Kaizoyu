@@ -8,7 +8,7 @@
     android:id="@+id/episode_card_button"
     android:layout_marginLeft="4dp"
     android:layout_marginRight="4dp"
-    app:cardBackgroundColor="?attr/colorSecondaryContainer"
+    app:cardBackgroundColor="?attr/colorSurface"
 >
     <FrameLayout
         android:layout_width="match_parent"
@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/newsTitle"
-                android:fontFamily="@font/lato_regular"
+                android:fontFamily="@font/lato_bold"
                 android:text=""
                 android:textSize="13sp"
             />

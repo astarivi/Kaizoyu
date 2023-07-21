@@ -13,44 +13,79 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
     />
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/search_app_bar"
-        app:layout_scrollFlags="enterAlwaysCollapsed"
+        android:background="?attr/colorSurfaceVariant"
     >
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_scrollFlags="scroll|enterAlways"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:contentScrim="?attr/colorSurfaceVariant"
+            android:background="?attr/colorSurfaceVariant"
         >
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="KAIZOYU!"
-                tools:ignore="HardcodedText"
-                android:letterSpacing="-0.1"
-                android:textSize="28sp"
-                android:layout_gravity="center"
-                android:layout_marginStart="16dp"
-                android:fontFamily="@font/lato_black"
-                android:id="@+id/mainAppTitle"
-            />
+                app:layout_collapseMode="none"
+                android:layout_marginBottom="64dp"
+                android:orientation="vertical"
+            >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="KAIZOYU!"
+                        tools:ignore="HardcodedText"
+                        android:letterSpacing="-0.1"
+                        android:textSize="30sp"
+                        android:layout_gravity="start"
+                        android:fontFamily="@font/lato_black"
+                        android:id="@+id/mainAppTitle"
+                    />
+                </LinearLayout>
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginTop="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="108dp"
+                    android:clipToPadding="false"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:id="@+id/newsRecycler"
+                />
+            </LinearLayout>
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/internalToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_gravity="top"
+                app:layout_collapseMode="pin"
+            />
             <com.google.android.material.search.SearchBar
+                android:layout_gravity="bottom"
+                app:layout_collapseMode="pin"
                 android:id="@+id/mainSearchBar"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                app:defaultMarginsEnabled="false"
+                android:layout_height="44dp"
                 android:padding="0dp"
                 android:hint="@string/main_search_hint"
-                android:layout_gravity="center"
-                android:backgroundTint="?attr/colorSurfaceVariant"
+                android:backgroundTint="?attr/colorSurface"
+                app:defaultMarginsEnabled="false"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
             />
-        </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 </com.astarivi.kaizoyu.core.adapters.NestedCoordinatorLayout>

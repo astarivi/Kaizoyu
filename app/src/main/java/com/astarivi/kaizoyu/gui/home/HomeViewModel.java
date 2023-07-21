@@ -11,11 +11,14 @@ import com.astarivi.kaizolib.kitsu.KitsuSearchParams;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
+import com.astarivi.kaizoyu.core.rss.RssFetcher;
 import com.astarivi.kaizoyu.databinding.FragmentHomeBinding;
 import com.astarivi.kaizoyu.gui.home.recycler.recommendations.MainCategoryContainer;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.rometools.rome.feed.synd.SyndEntry;
+
+import org.tinylog.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +49,15 @@ public class HomeViewModel extends ViewModel {
                 Threading.TASK.INSTANT,
                 () -> {
                     UserHttpClient httpClient = Data.getUserHttpClient();
+
+                    try {
+                        news.postValue(
+                                RssFetcher.getANNFeed()
+                        );
+                    } catch (Exception e) {
+                        Logger.error(e);
+                    }
+
                     Kitsu kitsu = new Kitsu(httpClient);
 
                     fetchCategory(

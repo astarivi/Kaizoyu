@@ -27,7 +27,7 @@
     <string name="fragment_episodes_empty">Nothing to show here… yet. This shows is either too old, is yet to air, or your internet connection has failed. Sorry for the inconvenience!</string>
     <string name="title_activity_licenses">LicensesActivity</string>
     <string name="title_activity_fullsearch">FullSearchActivity</string>
-    <string name="main_search_hint">Search library....</string>
+    <string name="main_search_hint">Search Kaizoyu</string>
     <string name="quality">Quality</string>
     <string name="episode_long_press_title">Select an action for episode %d</string>
     <string name="episode_long_press_watched">Mark as watched</string>

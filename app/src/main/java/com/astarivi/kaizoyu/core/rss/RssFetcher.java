@@ -48,6 +48,7 @@ public class RssFetcher {
         return entries;
     }
 
+    @ThreadedOnly
     public static String getThumbnailUrl(SyndEntry entry) {
         if (entry.getLink() == null) return null;
 

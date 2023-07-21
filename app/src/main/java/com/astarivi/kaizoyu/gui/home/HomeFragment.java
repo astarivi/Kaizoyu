@@ -2,6 +2,7 @@ package com.astarivi.kaizoyu.gui.home;
 
 import android.content.Intent;
 import android.graphics.Shader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +23,7 @@ import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.databinding.FragmentHomeBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
 import com.astarivi.kaizoyu.fullsearch.FullSearchActivity;
+import com.astarivi.kaizoyu.gui.home.recycler.news.NewsRecyclerAdapter;
 import com.astarivi.kaizoyu.gui.home.recycler.recommendations.HomeMainRecyclerAdapter;
 import com.astarivi.kaizoyu.gui.home.recycler.recommendations.HomeRecyclerAdapter;
 import com.astarivi.kaizoyu.search.SearchActivity;
@@ -32,11 +37,6 @@ public class HomeFragment extends Fragment {
     private HomeRecyclerAdapter.ItemClickListener listener;
 
     public HomeFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -67,12 +67,6 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
@@ -81,6 +75,17 @@ public class HomeFragment extends Fragment {
         final Shader textShader = Utils.getBrandingTextShader(appTitle.getTextSize());
 
         appTitle.getPaint().setShader(textShader);
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.appBar,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+
+                    v.setPadding(0, insets.top, 0, 0);
+
+                    return windowInsets;
+                }
+        );
 
         binding.mainSearchBar.setOnClickListener(v -> {
             if (getActivity() == null) return;
@@ -100,13 +105,34 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(false);
-
         HomeMainRecyclerAdapter adapter = new HomeMainRecyclerAdapter(requireContext(), listener);
 
         recyclerView.setAdapter(adapter);
 
         viewModel.getContainers().observe(getViewLifecycleOwner(), adapter::replaceData);
 
+        RecyclerView newsRecycler = binding.newsRecycler;
+        newsRecycler.setLayoutManager(new LinearLayoutManager(
+                getContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+        ));
+        newsRecycler.setHasFixedSize(false);
+
+        NewsRecyclerAdapter newsAdapter =  new NewsRecyclerAdapter(article ->
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getLink())))
+        );
+
+        newsRecycler.setAdapter(newsAdapter);
+
+        viewModel.getNews().observe(getViewLifecycleOwner(), newsAdapter::replaceData);
+
         viewModel.reloadHome(binding);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

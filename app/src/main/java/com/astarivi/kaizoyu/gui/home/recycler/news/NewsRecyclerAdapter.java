@@ -11,17 +11,24 @@ import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.rss.RssFetcher;
 import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.ItemNewsBinding;
+import com.astarivi.kaizoyu.utils.Threading;
 import com.bumptech.glide.Glide;
 import com.rometools.rome.feed.synd.SyndEntry;
 
 import org.tinylog.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 
 public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.HomeNewsViewHolder>{
-    private ItemClickListener itemClickListener;
-    private List<SyndEntry> items;
+    private final ItemClickListener itemClickListener;
+    private final List<SyndEntry> items = new ArrayList<>();
+
+    public NewsRecyclerAdapter(ItemClickListener listener) {
+        itemClickListener = listener;
+    }
 
     @NonNull
     @Override
@@ -42,6 +49,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     public void replaceData(List<SyndEntry> entries) {
         items.clear();
         items.addAll(entries);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -63,6 +71,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     public class HomeNewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ItemNewsBinding binding;
         private SyndEntry entry;
+        private Future<?> imageUrlFetcher;
 
         public HomeNewsViewHolder(@NonNull ItemNewsBinding binding) {
             super(binding.getRoot());
@@ -77,16 +86,24 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         public void fetchImage() {
             if (entry == null) return;
 
-            String url = RssFetcher.getThumbnailUrl(entry);
-
-            if (url == null) return;
-
             binding.newsBackground.setImageDrawable(null);
 
-            Glide.with(binding.getRoot().getContext())
-                    .load(url)
-                    .centerCrop()
-                    .into(binding.newsBackground);
+            if (imageUrlFetcher != null && !imageUrlFetcher.isDone()) {
+                imageUrlFetcher.cancel(true);
+            }
+
+            imageUrlFetcher = Threading.submitTask(Threading.TASK.INSTANT, () -> {
+                String url = RssFetcher.getThumbnailUrl(entry);
+
+                if (url == null) return;
+
+                binding.getRoot().post(() ->
+                        Glide.with(binding.getRoot().getContext())
+                                .load(url)
+                                .centerCrop()
+                                .into(binding.newsBackground)
+                );
+            });
         }
 
         @Override
@@ -96,11 +113,15 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
                 return;
             }
 
+            if (entry == null || entry.getLink() == null) {
+                return;
+            }
+
             itemClickListener.onItemClick(entry);
         }
     }
 
     public interface ItemClickListener {
-        void onItemClick(SyndEntry anime);
+        void onItemClick(SyndEntry article);
     }
 }
