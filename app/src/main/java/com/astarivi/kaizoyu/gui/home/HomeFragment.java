@@ -24,6 +24,7 @@ import com.astarivi.kaizoyu.fullsearch.FullSearchActivity;
 import com.astarivi.kaizoyu.gui.home.recycler.news.NewsRecyclerAdapter;
 import com.astarivi.kaizoyu.gui.home.recycler.recommendations.HomeMainRecyclerAdapter;
 import com.astarivi.kaizoyu.gui.home.recycler.recommendations.HomeRecyclerAdapter;
+import com.astarivi.kaizoyu.gui.more.settings.SettingsActivity;
 import com.astarivi.kaizoyu.search.SearchActivity;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Utils;
@@ -95,6 +96,15 @@ public class HomeFragment extends Fragment {
                     return windowInsets;
                 }
         );
+
+        binding.settingsButton.bringToFront();
+
+        binding.settingsButton.setOnClickListener(v -> {
+            if (getActivity() == null) return;
+
+            Intent intent = new Intent(requireActivity(), SettingsActivity.class);
+            startActivity(intent);
+        });
 
         binding.mainSearchBar.setOnClickListener(v -> {
             if (getActivity() == null) return;

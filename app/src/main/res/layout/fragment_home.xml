@@ -40,6 +40,7 @@
                     android:orientation="horizontal"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
+                    android:gravity="center_vertical"
                 >
                     <TextView
                         android:layout_width="wrap_content"
@@ -51,6 +52,21 @@
                         android:layout_gravity="start"
                         android:fontFamily="@font/lato_black"
                         android:id="@+id/mainAppTitle"
+                    />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                    />
+
+                    <ImageView
+                        android:id="@+id/settingsButton"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        app:srcCompat="@drawable/ic_home_settings"
+                        android:clickable="true"
+                        android:focusable="true"
                     />
                 </LinearLayout>
 
@@ -65,7 +81,7 @@
                 />
             </LinearLayout>
 
-            <com.google.android.material.appbar.MaterialToolbar
+            <com.astarivi.kaizoyu.core.adapters.ClickableMaterialToolbar
                 android:id="@+id/internalToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
