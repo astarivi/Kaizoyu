@@ -58,7 +58,9 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         holder.setEntry(entry);
 
         holder.binding.newsTitle.setText(entry.getTitle());
-        holder.binding.newsDescription.setText(entry.getDescription().getValue());
+        holder.binding.newsDescription.setText(
+                entry.getDescription().getValue().replaceAll("\\s*</?[^>\\s]*>\\s*", "")
+        );
 
         holder.fetchImage();
     }
