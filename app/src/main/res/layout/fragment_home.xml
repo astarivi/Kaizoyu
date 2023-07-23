@@ -10,13 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/items_layout"
+        android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
     />
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurfaceVariant"
     >
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingBar"
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:contentScrim="?attr/colorSurfaceVariant"
-            android:background="?attr/colorSurfaceVariant"
+            android:background="?attr/colorSurface"
         >
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,6 +34,7 @@
                 android:orientation="vertical"
             >
                 <LinearLayout
+                    android:layout_marginTop="6dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -46,7 +47,7 @@
                         android:text="KAIZOYU!"
                         tools:ignore="HardcodedText"
                         android:letterSpacing="-0.1"
-                        android:textSize="30sp"
+                        android:textSize="32sp"
                         android:layout_gravity="start"
                         android:fontFamily="@font/lato_black"
                         android:id="@+id/mainAppTitle"
@@ -54,7 +55,7 @@
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="108dp"
                     android:clipToPadding="false"
@@ -79,7 +80,7 @@
                 android:layout_height="44dp"
                 android:padding="0dp"
                 android:hint="@string/main_search_hint"
-                android:backgroundTint="?attr/colorSurface"
+                android:backgroundTint="?attr/colorSecondaryContainer"
                 app:defaultMarginsEnabled="false"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"

@@ -1,13 +1,11 @@
 package com.astarivi.kaizoyu.gui.home;
 
 import android.content.Intent;
-import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
@@ -69,19 +67,30 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-
-        TextView appTitle = binding.mainAppTitle;
-
-        final Shader textShader = Utils.getBrandingTextShader(appTitle.getTextSize());
-
-        appTitle.getPaint().setShader(textShader);
-
         ViewCompat.setOnApplyWindowInsetsListener(
                 binding.appBar,
                 (v, windowInsets) -> {
                     Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
 
                     v.setPadding(0, insets.top, 0, 0);
+
+                    return windowInsets;
+                }
+        );
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.itemsLayout,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+
+                    if (getContext() == null) return windowInsets;
+
+                    v.setPadding(
+                            0,
+                            (int) Utils.convertDpToPixel(6, requireContext()),
+                            0,
+                            insets.bottom + (int) Utils.convertDpToPixel(8, requireContext())
+                    );
 
                     return windowInsets;
                 }

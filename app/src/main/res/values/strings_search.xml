@@ -3,9 +3,6 @@
     <string name="no_results">Sorry, we found no matches for your\nsearch. Try checking your spelling\nor searching for other related works.</string>
     <string name="episode_no_results">Sorry, no results were found for this episode.</string>
     <string name="episode_busy">We\'re already searching for an episode, please wait…</string>
-    <string name="episode_quality_popup_title">Select watch quality</string>
-    <string name="episode_popup_title">Select episode</string>
-    <string name="quality_unknown">Unknown</string>
     <string name="anime_busy">We\'re already searching for an anime, please wait…</string>
     <string name="fragment_search_hint">Search online anime library…</string>
     <string name="advanced_search_hint">Search for XDCC files…</string>

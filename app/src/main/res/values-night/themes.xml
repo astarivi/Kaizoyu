@@ -34,10 +34,4 @@
         <item name="android:statusBarColor">?attr/colorSurface</item>
         <item name="android:navigationBarColor">?attr/colorSurfaceVariant</item>
     </style>
-
-    <style name="Theme.Kaizoyu.Fullscreen" parent="AppTheme">
-        <item name="android:actionBarStyle">@style/Widget.Theme.Kaizoyu.ActionBar.Fullscreen</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-    </style>
 </resources>
