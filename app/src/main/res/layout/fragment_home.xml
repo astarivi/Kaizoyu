@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.astarivi.kaizoyu.core.adapters.NestedCoordinatorLayout
+<com.astarivi.kaizoyu.core.adapters.gui.NestedCoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -81,7 +81,7 @@
                 />
             </LinearLayout>
 
-            <com.astarivi.kaizoyu.core.adapters.ClickableMaterialToolbar
+            <com.astarivi.kaizoyu.core.adapters.gui.ClickableMaterialToolbar
                 android:id="@+id/internalToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
@@ -105,4 +105,4 @@
             />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
-</com.astarivi.kaizoyu.core.adapters.NestedCoordinatorLayout>
+</com.astarivi.kaizoyu.core.adapters.gui.NestedCoordinatorLayout>

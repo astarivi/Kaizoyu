@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.databinding.FragmentHomeBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
@@ -68,7 +68,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        ViewCompat.setOnApplyWindowInsetsListener(
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
                 binding.appBar,
                 (v, windowInsets) -> {
                     Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
@@ -79,7 +79,7 @@ public class HomeFragment extends Fragment {
                 }
         );
 
-        ViewCompat.setOnApplyWindowInsetsListener(
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
                 binding.itemsLayout,
                 (v, windowInsets) -> {
                     Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());

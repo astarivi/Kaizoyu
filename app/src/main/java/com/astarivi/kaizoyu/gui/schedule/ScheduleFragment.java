@@ -10,12 +10,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
@@ -55,7 +55,7 @@ public class ScheduleFragment extends TabFragment {
         binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
         binding.dowTabs.getLayoutTransition().setAnimateParentHierarchy(false);
 
-        ViewCompat.setOnApplyWindowInsetsListener(
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
                 binding.scheduleAnimeRecycler,
                 (v, windowInsets) -> {
                     Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
@@ -73,7 +73,7 @@ public class ScheduleFragment extends TabFragment {
                 }
         );
 
-        ViewCompat.setOnApplyWindowInsetsListener(
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
                 binding.dowTabs,
                 (v, windowInsets) -> {
                     Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());

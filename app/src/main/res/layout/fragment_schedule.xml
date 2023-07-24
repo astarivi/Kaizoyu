@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.astarivi.kaizoyu.core.adapters.NestedCoordinatorLayout
+<com.astarivi.kaizoyu.core.adapters.gui.NestedCoordinatorLayout
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -128,4 +128,4 @@
             app:tabTextColor="@color/main_tab_layout_selector"
         />
     </com.google.android.material.appbar.AppBarLayout>
-</com.astarivi.kaizoyu.core.adapters.NestedCoordinatorLayout>
+</com.astarivi.kaizoyu.core.adapters.gui.NestedCoordinatorLayout>

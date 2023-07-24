@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.core.adapters;
+package com.astarivi.kaizoyu.core.adapters.gui;
 
 import android.content.Context;
 import android.util.AttributeSet;

@@ -11,10 +11,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
@@ -44,7 +44,7 @@ public class MoreFragment extends TabFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        ViewCompat.setOnApplyWindowInsetsListener(
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
                 binding.getRoot(),
                 (v, windowInsets) -> {
                     Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());

@@ -4,20 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Colors;
@@ -26,7 +23,6 @@ import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
 import com.astarivi.kaizoyu.gui.library.watching.adapter.SharedLibraryRecyclerAdapter;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Utils;
-import com.google.android.material.color.MaterialColors;
 
 import org.tinylog.Logger;
 
@@ -93,16 +89,7 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
 
         binding.internalToolbar.setTitle(title);
 
-        final Window window = getWindow();
-        WindowCompat.setDecorFitsSystemWindows(window, false);
-        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-
-        window.setStatusBarColor(
-                MaterialColors.getColor(
-                        binding.getRoot(),
-                        R.attr.colorSurfaceVariant
-                )
-        );
+        WindowCompatUtils.setWindowFullScreen(getWindow());
 
         binding.statusBarScrim.setBackgroundColor(
                 Colors.getSemiTransparentStatusBar(
@@ -111,7 +98,7 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
                 )
         );
 
-        ViewCompat.setOnApplyWindowInsetsListener(
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
                 binding.statusBarScrim,
                 (v, windowInsets) -> {
                     Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
@@ -124,7 +111,7 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
                 }
         );
 
-        ViewCompat.setOnApplyWindowInsetsListener(
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
                 binding.libraryContents,
                 (v, windowInsets) -> {
                     Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
@@ -140,7 +127,7 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
                 }
         );
 
-        ViewCompat.setOnApplyWindowInsetsListener(
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
                 binding.internalToolbar,
                 (v, windowInsets) -> {
                     Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());

@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.core.adapters;
+package com.astarivi.kaizoyu.core.adapters.gui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
