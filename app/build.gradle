@@ -43,7 +43,7 @@ android {
 
         beta {
             applicationIdSuffix '.beta'
-            versionNameSuffix '01-BETA'
+            versionNameSuffix '02-BETA'
             resValue "string", "app_k_name", "Kaizoyu! Beta"
             resValue "string", "provider_authority", "com.astarivi.kaizoyu.beta.fileprovider"
         }
