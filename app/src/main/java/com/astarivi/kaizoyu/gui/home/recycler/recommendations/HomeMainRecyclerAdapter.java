@@ -83,11 +83,15 @@ public class HomeMainRecyclerAdapter extends RecyclerView.Adapter<HomeMainRecycl
         return items.size();
     }
 
-
     public synchronized void replaceData(ArrayList<MainCategoryContainer> item) {
         items.clear();
         items.addAll(item);
         notifyItemInserted(item.size() - 1);
+    }
+
+    public synchronized void clearData() {
+        items.clear();
+        notifyDataSetChanged();
     }
 
     static class HomeMainViewHolder extends RecyclerView.ViewHolder {

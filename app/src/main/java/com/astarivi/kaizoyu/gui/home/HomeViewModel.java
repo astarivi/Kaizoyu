@@ -1,5 +1,7 @@
 package com.astarivi.kaizoyu.gui.home;
 
+import android.view.View;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.lifecycle.MutableLiveData;
@@ -40,6 +42,11 @@ public class HomeViewModel extends ViewModel {
 
     public void reloadHome(FragmentHomeBinding binding) {
         if (reloadFuture != null && !reloadFuture.isDone()) return;
+        binding.newsRecycler.setVisibility(View.INVISIBLE);
+        binding.itemsLayout.setVisibility(View.INVISIBLE);
+        binding.loadingBar.setVisibility(View.VISIBLE);
+
+        containers.postValue(new ArrayList<>());
 
         fetchHome();
     }
