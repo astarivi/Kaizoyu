@@ -89,15 +89,31 @@
                     />
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
+                <FrameLayout
                     android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="108dp"
-                    android:clipToPadding="false"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:id="@+id/newsRecycler"
-                />
+                >
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipToPadding="false"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:id="@+id/newsRecycler"
+                    />
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/news_loading"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/an_horizontal_loading"
+                        app:lottie_speed="1"
+                        android:scaleX="2"
+                        android:scaleY="2"
+                    />
+                </FrameLayout>
             </LinearLayout>
 
             <com.astarivi.kaizoyu.core.adapters.gui.ClickableMaterialToolbar

@@ -45,6 +45,7 @@ public class HomeViewModel extends ViewModel {
         binding.newsRecycler.setVisibility(View.INVISIBLE);
         binding.itemsLayout.setVisibility(View.INVISIBLE);
         binding.loadingBar.setVisibility(View.VISIBLE);
+        binding.newsLoading.setVisibility(View.VISIBLE);
 
         containers.postValue(new ArrayList<>());
 

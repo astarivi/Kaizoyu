@@ -157,6 +157,8 @@ public class HomeFragment extends Fragment {
         viewModel.getNews().observe(getViewLifecycleOwner(), (news) -> {
             if (news.isEmpty()) return;
 
+            binding.newsLoading.setVisibility(View.GONE);
+
             binding.newsRecycler.setVisibility(View.VISIBLE);
             newsAdapter.replaceData(news);
         });
