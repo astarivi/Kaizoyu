@@ -13,6 +13,7 @@ import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.base.ImageSize;
 import com.astarivi.kaizoyu.databinding.FragmentHomeAnimeBinding;
+import com.astarivi.kaizoyu.utils.Data;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 
@@ -118,7 +119,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
                 if (isCoverVisible) return;
                 isCoverVisible = true;
                 Glide.with(binding.getRoot().getContext())
-                        .load(anime.getImageUrlFromSize(ImageSize.TINY, false))
+                        .load(anime.getThumbnailUrl(false))
                         .skipMemoryCache(true)
                         .placeholder(R.drawable.ic_general_placeholder)
                         .into(binding.popupPoster);
@@ -135,11 +136,23 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
         public void fetchImages() {
             if (this.anime == null) return;
 
+            String imageUrl;
+            if (Data.isDeviceLowSpec()) {
+                imageUrl = anime.getImageUrlFromSize(ImageSize.TINY, true);
+            } else {
+                imageUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.MEDIUM, true);
+            }
+
+            if (imageUrl == null) {
+                binding.animeCover.setImageResource(R.drawable.ic_general_placeholder);
+                return;
+            }
+
             Glide.get(binding.getRoot().getContext())
                             .setMemoryCategory(MemoryCategory.LOW);
 
             Glide.with(binding.getRoot().getContext())
-                    .load(anime.getImageUrlFromSize(ImageSize.TINY, true))
+                    .load(imageUrl)
                     .centerCrop()
                     .skipMemoryCache(true)
                     .placeholder(R.drawable.ic_general_placeholder)

@@ -289,7 +289,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         String coverUrl;
         String posterUrl;
 
-        if (Utils.isDeviceLowSpec(this)) {
+        if (Data.isDeviceLowSpec()) {
             coverUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.SMALL, true);
             posterUrl = anime.getImageUrlFromSize(ImageSize.TINY, false);
         } else {
@@ -362,7 +362,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
                 File downloadedFile;
                 try {
-                    downloadedFile = DetailsUtils.downloadImage(this, (Anime) anime, false);
+                    downloadedFile = DetailsUtils.downloadImage(this, anime, false);
                 } catch (Exception ignored) {
                     return;
                 }
@@ -394,7 +394,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
                     File downloadedFile;
                     try {
-                        downloadedFile = DetailsUtils.downloadImage(this, (Anime) anime, true);
+                        downloadedFile = DetailsUtils.downloadImage(this, anime, true);
                     } catch (Exception ignored) {
                         return;
                     }
@@ -602,7 +602,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         ViewPager2 viewPager = binding.informationViewPager;
 
         Bundle bundle = new Bundle();
-        bundle.putParcelable("anime", ((Anime) anime));
+        bundle.putParcelable("anime", anime);
 
         DetailsTabAdapter detailsTabAdapter = new DetailsTabAdapter(this, bundle);
         viewPager.setAdapter(detailsTabAdapter);

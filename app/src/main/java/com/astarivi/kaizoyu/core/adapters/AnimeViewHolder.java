@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.models.base.ImageSize;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnime;
 import com.astarivi.kaizoyu.databinding.ItemAnimeBinding;
 import com.astarivi.kaizoyu.utils.Data;
@@ -126,14 +125,18 @@ public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder im
         // Would it even be possible for binding to be null?
         if (anime == null || binding == null) return;
 
-        String coverUrl = anime.getImageUrlFromSize(ImageSize.TINY, true);
-        String posterUrl = anime.getImageUrlFromSize(ImageSize.TINY, false);
+        String coverUrl = anime.getThumbnailUrl(true);
+        String posterUrl = anime.getThumbnailUrl(false);
 
         if (posterUrl == null) {
             // Nothing to display
             binding.imagePoster.setImageResource(R.drawable.ic_general_placeholder);
             binding.imageCover.setImageResource(R.drawable.ic_general_placeholder);
             return;
+        }
+
+        if (coverUrl == null) {
+            binding.imageCover.setImageResource(R.drawable.ic_general_placeholder);
         }
 
         Glide.with(binding.getRoot().getContext())
@@ -170,11 +173,9 @@ public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder im
                 .placeholder(R.drawable.ic_general_placeholder)
                 .into(binding.imagePoster);
 
-        if (coverUrl == null) {
-            binding.imageCover.setImageResource(R.drawable.ic_general_placeholder);
-            return;
-        }
+        if (coverUrl == null) return;
 
+        // Handle cover image
         Glide.with(binding.getRoot().getContext())
                 .load(coverUrl)
                 // Fixes pixel level imperfections. This could be profiled to see if it's worth it.

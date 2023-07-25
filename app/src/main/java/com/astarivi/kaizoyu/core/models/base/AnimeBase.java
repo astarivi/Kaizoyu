@@ -2,6 +2,7 @@ package com.astarivi.kaizoyu.core.models.base;
 
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizoyu.core.storage.database.data.embedded.EmbeddedAnime;
+import com.astarivi.kaizoyu.utils.Data;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,14 @@ public abstract class AnimeBase {
                 getImageUrlFromSize(ImageSize.TINY, true),
                 getImageUrlFromSize(ImageSize.TINY, false)
         );
+    }
+
+    public @Nullable String getThumbnailUrl(boolean isCover) {
+        if (Data.isDeviceLowSpec()) {
+            return getImageUrlFromSize(ImageSize.TINY, isCover);
+        } else {
+            return getImageUrlFromSizeWithFallback(ImageSize.SMALL, isCover);
+        }
     }
 
     public @Nullable String getImageUrlFromSize(@NotNull ImageSize size, boolean isCover) {

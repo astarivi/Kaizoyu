@@ -125,7 +125,7 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(false);
-        HomeMainRecyclerAdapter adapter = new HomeMainRecyclerAdapter(requireContext(), listener);
+        HomeMainRecyclerAdapter adapter = new HomeMainRecyclerAdapter(listener);
 
         recyclerView.setAdapter(adapter);
 
@@ -161,6 +161,7 @@ public class HomeFragment extends Fragment {
 
             binding.newsRecycler.setVisibility(View.VISIBLE);
             newsAdapter.replaceData(news);
+            binding.newsRecycler.smoothScrollToPosition(0);
         });
 
         binding.swipeRefresh.setOnRefreshListener(() -> {

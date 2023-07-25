@@ -1,6 +1,5 @@
 package com.astarivi.kaizoyu.gui.home.recycler.recommendations;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -9,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.astarivi.kaizoyu.databinding.FragmentHomeItemBinding;
-import com.astarivi.kaizoyu.utils.Utils;
+import com.astarivi.kaizoyu.utils.Data;
 import com.google.android.material.carousel.CarouselLayoutManager;
 
 import java.util.ArrayList;
@@ -19,12 +18,9 @@ public class HomeMainRecyclerAdapter extends RecyclerView.Adapter<HomeMainRecycl
     private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
     private final HomeRecyclerAdapter.ItemClickListener itemClickListener;
     private final ArrayList<MainCategoryContainer> items = new ArrayList<>();
-    private final boolean isLowRam;
 
-    public HomeMainRecyclerAdapter(Context context, HomeRecyclerAdapter.ItemClickListener itemClickListener) {
+    public HomeMainRecyclerAdapter(HomeRecyclerAdapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
-
-        isLowRam = Utils.isDeviceLowSpec(context);
     }
 
     @NonNull
@@ -55,7 +51,7 @@ public class HomeMainRecyclerAdapter extends RecyclerView.Adapter<HomeMainRecycl
         childAdapter.setItemClickListener(itemClickListener);
         childAdapter.replaceData(container.getAnime());
 
-        if (isLowRam) {
+        if (Data.isDeviceLowSpec()) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(
                     childRecycler.getContext(),
                     LinearLayoutManager.HORIZONTAL,

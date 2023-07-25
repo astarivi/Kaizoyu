@@ -1,8 +1,10 @@
 package com.astarivi.kaizoyu.core.storage;
 
+import android.app.ActivityManager;
 import android.content.Context;
 
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityManagerCompat;
 import androidx.room.Room;
 
 import com.astarivi.kaizolib.common.network.UserHttpClient;
@@ -28,6 +30,7 @@ public class PersistenceRepository {
     private final AppDatabase database;
     private final RepositoryDirectory repositoryDirectory;
     private final UserHttpClient httpClient = new UserHttpClient();
+    public final boolean isDeviceLowSpec;
 
     private PersistenceRepository() {
         if (instance != null) {
@@ -39,6 +42,13 @@ public class PersistenceRepository {
         }
 
         Context context = KaizoyuApplication.getContext();
+
+        // Check for low specs device
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+        activityManager.getMemoryInfo(memInfo);
+
+        isDeviceLowSpec = ActivityManagerCompat.isLowRamDevice(activityManager) || memInfo.totalMem < 1000000000L;
 
         appConfiguration = new ExtendedProperties(context, "Kaizoyu.properties");
         Utils.generateIrcUsername(appConfiguration);
