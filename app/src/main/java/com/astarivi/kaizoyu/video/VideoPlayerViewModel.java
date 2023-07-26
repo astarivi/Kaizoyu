@@ -107,6 +107,14 @@ public class VideoPlayerViewModel extends ViewModel {
                     10
             );
 
+            boolean useXdcc = appProperties.getBooleanProperty("use_xdcc", false);
+
+            Logger.info("User has set 'use XDCC' to {}", useXdcc);
+
+            xdccDownloader.setXDCC(
+                    useXdcc
+            );
+
             xdccDownloader.setXDCCDownloadListener(new XDCCDownloadListener() {
                 @Override
                 public void onDownloadReadyToPlay(int i, File file) {

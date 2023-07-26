@@ -4,6 +4,7 @@ import com.astarivi.kaizolib.xdcc.base.TimeoutException;
 import com.astarivi.kaizolib.xdcc.base.XDCCDownloadListener;
 import com.astarivi.kaizolib.xdcc.base.XDCCFailure;
 import com.astarivi.kaizolib.xdcc.model.DCC;
+
 import org.tinylog.Logger;
 
 import java.io.*;
@@ -21,6 +22,7 @@ public class XDCCDownloader {
     private int speedKBps = 0;
     private long lastTimeReminderRan = 0;
     private XDCCDownloadListener downloadEventListener;
+    private boolean isXDCC = false;
 
     // Uses default timeout of 20 seconds
     public XDCCDownloader(DCC dcc, File downloadFile) {
@@ -39,6 +41,10 @@ public class XDCCDownloader {
 
     public void setXDCCDownloadListener(XDCCDownloadListener listener){
         downloadEventListener = listener;
+    }
+
+    public void setXDCC(boolean value) {
+        isXDCC = value;
     }
 
     @SuppressWarnings("unused")
@@ -102,7 +108,7 @@ public class XDCCDownloader {
             Logger.debug("About to start download loop. Downloading from: " + dcc.getIp());
 
             // Signal start
-            output.write(0);
+            write(output, 0);
 
             while (downloadedLength < fileLength && !stop) {
                 // Has the download not even started?
@@ -135,7 +141,7 @@ public class XDCCDownloader {
 
                 fileOutput.write(buffer, 0, read);
                 // For old DCC compatibility
-                output.write((int) downloadedLength);
+                write(output, (int) downloadedLength);
 
                 //Update progress every 400 repetitions to avoid calculating the progress so often.
                 if (repetitions >= 400) {
@@ -210,7 +216,7 @@ public class XDCCDownloader {
         // First time we run
         if (lastTimeReminderRan == 0) {
             lastTimeReminderRan = timeNow;
-            output.write(0);
+            write(output, 0);
             Logger.debug("Telling server that we're waiting.");
             return;
         }
@@ -220,7 +226,13 @@ public class XDCCDownloader {
         }
 
         lastTimeReminderRan = timeNow;
-        output.write(0);
+        write(output, 0);
         Logger.debug("Telling server that we're waiting.");
+    }
+
+    private void write(OutputStream stream, int value) throws IOException {
+        if (isXDCC) return;
+
+        stream.write(value);
     }
 }

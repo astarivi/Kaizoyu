@@ -101,6 +101,7 @@ public class SettingsActivity extends AppCompatActivityTheme {
         binding.advancedSearch.setOnCheckedChangeListener(this::triggerSave);
         binding.strictModeValue.setOnCheckedChangeListener(this::triggerSave);
         binding.autoMoveValue.setOnCheckedChangeListener(this::triggerSave);
+        binding.xdccValue.setOnCheckedChangeListener(this::triggerSave);
 
         binding.clearCacheTrigger.setOnClickListener(view -> {
             Utils.clearCache();
@@ -197,6 +198,11 @@ public class SettingsActivity extends AppCompatActivityTheme {
         );
 
         config.setBooleanProperty(
+                "use_xdcc",
+                binding.xdccValue.isChecked()
+        );
+
+        config.setBooleanProperty(
                 "show_ipv6",
                 binding.ipv6SorcesValue.isChecked()
         );
@@ -251,6 +257,10 @@ public class SettingsActivity extends AppCompatActivityTheme {
         );
 
         // Switches
+        binding.xdccValue.setChecked(
+                config.getBooleanProperty("use_xdcc", false)
+        );
+
         binding.analyticsValue.setChecked(
                 config.getBooleanProperty("analytics", true)
         );

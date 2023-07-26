@@ -53,4 +53,6 @@
     <string name="dev_hide_title">Hide Developer Menu</string>
     <string name="dev_hide_description">Hides the developer section again</string>
     <string name="dev_section_toast">Welcome to developer mode, fellow weeb</string>
+    <string name="xdcc_title">Use XDCC</string>
+    <string name="xdcc_description">When enabled, XDCC will be used instead of DCC; this may result in faster downloads. May cause complete download failure</string>
 </resources>
