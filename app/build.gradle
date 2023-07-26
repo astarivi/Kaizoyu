@@ -43,7 +43,7 @@ android {
 
         beta {
             applicationIdSuffix '.beta'
-            versionNameSuffix '02-BETA'
+            versionNameSuffix '03-BETA'
             resValue "string", "app_k_name", "Kaizoyu! Beta"
             resValue "string", "provider_authority", "com.astarivi.kaizoyu.beta.fileprovider"
         }
@@ -118,8 +118,12 @@ dependencies {
 
     // Jackson
     // Don't update to 2.14 as Android minSdk support changes.
+
+    //noinspection GradleDependency
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.5'
+    //noinspection GradleDependency
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.5'
+    //noinspection GradleDependency
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.5'
 
     // HTTP

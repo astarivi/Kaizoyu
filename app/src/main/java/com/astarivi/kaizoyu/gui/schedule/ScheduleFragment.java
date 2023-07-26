@@ -56,6 +56,28 @@ public class ScheduleFragment extends TabFragment {
         binding.dowTabs.getLayoutTransition().setAnimateParentHierarchy(false);
 
         WindowCompatUtils.setOnApplyWindowInsetsListener(
+                binding.episodeCardButton,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+
+                    if (getContext() == null) return windowInsets;
+
+                    if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                        ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+                        p.setMargins(
+                                0,
+                                0,
+                                0,
+                                insets.bottom + (int) Utils.convertDpToPixel(78, requireContext())
+                        );
+                        v.requestLayout();
+                    }
+
+                    return windowInsets;
+                }
+        );
+
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
                 binding.scheduleAnimeRecycler,
                 (v, windowInsets) -> {
                     Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
