@@ -46,6 +46,8 @@ public class HomeViewModel extends ViewModel {
         binding.itemsLayout.setVisibility(View.INVISIBLE);
         binding.loadingBar.setVisibility(View.VISIBLE);
         binding.newsLoading.setVisibility(View.VISIBLE);
+        binding.newsHeader.setVisibility(View.VISIBLE);
+        binding.noResultsMessage.setVisibility(View.GONE);
 
         containers.postValue(new ArrayList<>());
 
@@ -63,6 +65,7 @@ public class HomeViewModel extends ViewModel {
                                 RssFetcher.getANNFeed()
                         );
                     } catch (Exception e) {
+                        news.postValue(null);
                         Logger.error(e);
                     }
 
@@ -235,6 +238,12 @@ public class HomeViewModel extends ViewModel {
                                             "popularityRank"
                                     )
                     );
+
+                    @Nullable ArrayList<MainCategoryContainer> items = containers.getValue();
+
+                    if (items == null || items.isEmpty()) {
+                        containers.postValue(null);
+                    }
                 }
         );
     }
@@ -244,7 +253,6 @@ public class HomeViewModel extends ViewModel {
         try {
             anime = kitsu.searchAnime(params);
         } catch (Exception ignored) {
-            // TODO: Tell user that there was an issue.
             return;
         }
 

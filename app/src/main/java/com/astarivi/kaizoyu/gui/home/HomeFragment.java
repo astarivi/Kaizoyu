@@ -3,7 +3,6 @@ package com.astarivi.kaizoyu.gui.home;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +67,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        binding.header.getLayoutTransition().setAnimateParentHierarchy(false);
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         WindowCompatUtils.setOnApplyWindowInsetsListener(
                 binding.appBar,
@@ -130,6 +130,13 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         viewModel.getContainers().observe(getViewLifecycleOwner(), (containers) -> {
+            if (containers == null) {
+                binding.noResultsMessage.setVisibility(View.VISIBLE);
+                binding.loadingBar.setVisibility(View.GONE);
+                adapter.clearData();
+                return;
+            }
+
             if (containers.isEmpty()) return;
 
             binding.loadingBar.setVisibility(View.GONE);
@@ -155,6 +162,11 @@ public class HomeFragment extends Fragment {
         newsRecycler.setAdapter(newsAdapter);
 
         viewModel.getNews().observe(getViewLifecycleOwner(), (news) -> {
+            if (news == null) {
+                binding.newsHeader.setVisibility(View.GONE);
+                return;
+            }
+
             if (news.isEmpty()) return;
 
             binding.newsLoading.setVisibility(View.GONE);
@@ -169,12 +181,6 @@ public class HomeFragment extends Fragment {
             binding.swipeRefresh.setRefreshing(false);
             viewModel.reloadHome(binding);
         });
-
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int screenHalfHeightDp = (int) (displayMetrics.heightPixels / displayMetrics.density);
-
-        // Make swipe refresh half of the screen height
-        binding.swipeRefresh.setDistanceToTriggerSync(screenHalfHeightDp);
 
         viewModel.reloadHome(binding);
     }

@@ -13,6 +13,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
+// TODO: Replace with HttpMethods class from :service module
 public class WebAdapter {
     public static @Nullable String getJSON(HttpUrl url) {
         Request.Builder getRequestBuilder = new Request.Builder();
