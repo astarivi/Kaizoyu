@@ -35,7 +35,10 @@ public class AssistedResultSearcher {
 
         if (searchEnhancer == null) return independentResultSearcher.searchEpisode(title, episode);
 
-        List<NiblResult> niblResults = independentResultSearcher.fetchEpisode(searchEnhancer.title, episode);
+        List<NiblResult> niblResults = independentResultSearcher.fetchEpisode(
+                searchEnhancer.title,
+                searchEnhancer.episode != null ? searchEnhancer.episode + episode : episode
+        );
 
         if (niblResults == null) {
             Logger.error("Got no results after using enhanced search.");
@@ -80,6 +83,7 @@ public class AssistedResultSearcher {
         public String responseType;
         public String title;
         public String regex;
+        public Integer episode;
 
         @JsonIgnore
         public void filter(@NotNull List<NiblResult> niblResults) {
