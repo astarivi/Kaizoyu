@@ -97,6 +97,15 @@ dependencies {
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.0.0'
     implementation 'com.rometools:rome:2.1.0'
 
+    // Lombok
+    //noinspection AnnotationProcessorOnCompilePath
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+
+    //noinspection AnnotationProcessorOnCompilePath
+    testCompileOnly 'org.projectlombok:lombok:1.18.28'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+
     // Analytics
     implementation 'com.flurry.android:analytics:14.2.0'
 

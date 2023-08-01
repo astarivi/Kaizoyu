@@ -1,13 +1,14 @@
 package com.astarivi.kaizolib.kitsu.parser;
 
+import com.astarivi.kaizolib.common.util.JsonMapper;
 import com.astarivi.kaizolib.kitsu.exception.ParsingException;
 import com.astarivi.kaizolib.kitsu.model.KitsuEpisodeResults;
 import com.astarivi.kaizolib.kitsu.model.KitsuResourceResult;
 import com.astarivi.kaizolib.kitsu.model.KitsuSearchResults;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 
 public class ParseJson {
@@ -20,31 +21,25 @@ public class ParseJson {
     }
 
     public static @NotNull KitsuEpisodeResults parseEpisodes(@NotNull String jsonInString) throws ParsingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try {
-            return objectMapper.readValue(jsonInString, KitsuEpisodeResults.class);
-        } catch (JsonProcessingException e) {
+            return JsonMapper.getObjectReader().readValue(jsonInString, KitsuEpisodeResults.class);
+        } catch (IOException e) {
             throw new ParsingException(e);
         }
     }
 
     public static @NotNull KitsuSearchResults parseAnime(@NotNull String jsonInString) throws ParsingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try {
-            return objectMapper.readValue(jsonInString, KitsuSearchResults.class);
-        } catch (JsonProcessingException e) {
+            return JsonMapper.getObjectReader().readValue(jsonInString, KitsuSearchResults.class);
+        } catch (IOException e) {
             throw new ParsingException(e);
         }
     }
 
     public static @NotNull KitsuResourceResult parseAnimeResource(@NotNull String jsonInString) throws ParsingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try {
-            return objectMapper.readValue(jsonInString, KitsuResourceResult.class);
-        } catch (JsonProcessingException e) {
+            return JsonMapper.getObjectReader().readValue(jsonInString, KitsuResourceResult.class);
+        } catch (IOException e) {
             throw new ParsingException(e);
         }
     }

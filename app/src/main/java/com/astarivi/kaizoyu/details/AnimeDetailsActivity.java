@@ -34,6 +34,8 @@ import com.astarivi.kaizoyu.core.models.base.ImageSize;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
 import com.astarivi.kaizoyu.core.schedule.AnimeScheduleChecker;
+import com.astarivi.kaizoyu.core.search.AssistedResultSearcher;
+import com.astarivi.kaizoyu.core.search.SearchEnhancer;
 import com.astarivi.kaizoyu.core.storage.database.repositories.AnimeStorageRepository;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Colors;
@@ -68,6 +70,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     private Anime anime;
     private ModelType.Anime animeType;
     private ModelType.LocalAnime localType = null;
+    private SearchEnhancer searchEnhancer = null;
     private Zparc zparc;
 
     // The bundle must contain the following keys to create this Details Activity:
@@ -264,20 +267,38 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     private void initializeFavorite() {
         if (localType != null && localType != ModelType.LocalAnime.SEEN) {
             binding.favoriteButton.setImageResource(R.drawable.ic_details_added);
-            continueInitialization();
+            getSearchEnhancer();
             return;
         }
 
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
             localType = Data.getRepositories().getAnimeStorageRepository().getLocalType(anime);
 
-            binding.getRoot().post(() -> {
-                if (localType != null && localType != ModelType.LocalAnime.SEEN) {
-                    binding.favoriteButton.setImageResource(R.drawable.ic_details_added);
-                }
+            if (localType != null && localType != ModelType.LocalAnime.SEEN) {
+                binding.getRoot().post(() ->
+                    binding.favoriteButton.setImageResource(R.drawable.ic_details_added)
+                );
+            }
 
-                continueInitialization();
-            });
+            getSearchEnhancer();
+        });
+    }
+
+    private void getSearchEnhancer() {
+        binding.getRoot().post(() ->
+                binding.loadingHint.setText(R.string.d_search_enhancer)
+        );
+
+        Threading.submitTask(Threading.TASK.INSTANT, () -> {
+            Logger.info("Reaching KaizoSearch for search enhancement...");
+
+            searchEnhancer = AssistedResultSearcher.getSearchEnhancer(
+                    Integer.parseInt(anime.getKitsuAnime().id)
+            );
+
+            Logger.info("Got search enhancer response {}", searchEnhancer);
+
+            binding.getRoot().post(this::continueInitialization);
         });
     }
 
@@ -603,6 +624,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("anime", anime);
+        bundle.putParcelable("search_enhancer", searchEnhancer);
 
         DetailsTabAdapter detailsTabAdapter = new DetailsTabAdapter(this, bundle);
         viewPager.setAdapter(detailsTabAdapter);

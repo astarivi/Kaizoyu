@@ -2,6 +2,7 @@ package com.astarivi.kaizoyu.details.gui;
 
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -15,13 +16,12 @@ import com.astarivi.kaizoyu.core.models.Episode;
 import com.astarivi.kaizoyu.core.models.Result;
 import com.astarivi.kaizoyu.core.search.AssistedResultSearcher;
 import com.astarivi.kaizoyu.core.search.Organizer;
+import com.astarivi.kaizoyu.core.search.SearchEnhancer;
 import com.astarivi.kaizoyu.core.video.VideoQuality;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeEpisodesBinding;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.TreeMap;
@@ -118,10 +118,11 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
         });
     }
 
-    public void searchEpisodeAndDisplayResults(@NotNull Episode episode,
-                                               @NotNull Anime anime,
-                                               @NotNull FragmentAnimeEpisodesBinding binding,
-                                               @NotNull FragmentActivity context,
+    public void searchEpisodeAndDisplayResults(Episode episode,
+                                               Anime anime,
+                                               @Nullable SearchEnhancer searchEnhancer,
+                                               FragmentAnimeEpisodesBinding binding,
+                                               FragmentActivity context,
                                                AnimeEpisodesModalBottomSheet.ResultListener listener) {
         if (isSearching) {
             Toast.makeText(
@@ -135,36 +136,34 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
 
         isSearching = true;
 
-        Threading.submitTask(
-                Threading.TASK.INSTANT,
-                () -> {
-                    List<Result> results = new AssistedResultSearcher().searchEpisode(
-                            episode.getAnimeId(),
-                            anime.getDefaultTitle(),
-                            episode.getKitsuEpisode().attributes.number
-                    );
+        Threading.submitTask(Threading.TASK.INSTANT,() -> {
+                List<Result> results = AssistedResultSearcher.searchEpisode(
+                        searchEnhancer,
+                        episode.getAnimeId(),
+                        anime.getDefaultTitle(),
+                        episode.getKitsuEpisode().attributes.number
+                );
 
-                    if (results == null) {
-                        binding.getRoot().post(() -> Toast.makeText(
-                                context,
-                                context.getString(R.string.episode_no_results),
-                                Toast.LENGTH_SHORT
-                        ).show(
-                        ));
-                        isSearching = false;
-                        return;
-                    }
-
-                    TreeMap<VideoQuality, List<Result>> organizedResults = Organizer.organizeResultsByQuality(results);
-
-                    results.clear();
-
-                    binding.getRoot().post(() -> {
-                        AnimeEpisodesModalBottomSheet modalBottomSheet = new AnimeEpisodesModalBottomSheet(organizedResults, listener);
-                        modalBottomSheet.show(context.getSupportFragmentManager(), AnimeEpisodesModalBottomSheet.TAG);
-                    });
+                if (results == null) {
+                    binding.getRoot().post(() -> Toast.makeText(
+                            context,
+                            context.getString(R.string.episode_no_results),
+                            Toast.LENGTH_SHORT
+                    ).show(
+                    ));
                     isSearching = false;
+                    return;
                 }
-        );
+
+                TreeMap<VideoQuality, List<Result>> organizedResults = Organizer.organizeResultsByQuality(results);
+
+                results.clear();
+
+                binding.getRoot().post(() -> {
+                    AnimeEpisodesModalBottomSheet modalBottomSheet = new AnimeEpisodesModalBottomSheet(organizedResults, listener);
+                    modalBottomSheet.show(context.getSupportFragmentManager(), AnimeEpisodesModalBottomSheet.TAG);
+                });
+                isSearching = false;
+        });
     }
 }

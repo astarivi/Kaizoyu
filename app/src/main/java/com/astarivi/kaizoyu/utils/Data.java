@@ -43,7 +43,7 @@ public class Data {
     }
 
     public static boolean isDeviceLowSpec() {
-        return PersistenceRepository.getInstance().isDeviceLowSpec;
+        return PersistenceRepository.getInstance().isDeviceLowSpec();
     }
 
     public enum CONFIGURATION {
