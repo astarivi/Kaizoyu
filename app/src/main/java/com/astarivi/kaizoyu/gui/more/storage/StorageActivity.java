@@ -12,6 +12,7 @@ import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.storage.database.io.Manager;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.databinding.ActivityStorageBinding;
+import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -78,8 +79,19 @@ public class StorageActivity extends AppCompatActivityTheme {
 
         setContentView(binding.getRoot());
 
+        binding.storageMainContainer.getLayoutTransition().setAnimateParentHierarchy(false);
         binding.loadingBar.setProgressCompat(0, false);
         binding.currentOperationContainer.setVisibility(View.GONE);
+
+        binding.clearCacheTrigger.setOnClickListener(view -> {
+            Utils.clearCache();
+            Toast.makeText(this, getString(R.string.cache_toast), Toast.LENGTH_SHORT).show();
+        });
+
+        binding.clearSearchTrigger.setOnClickListener(v -> {
+            Data.getRepositories().getSearchHistoryRepository().deleteAllAsync();
+            Toast.makeText(this, getString(R.string.history_toast), Toast.LENGTH_SHORT).show();
+        });
 
         binding.cancelOperation.setOnClickListener(v ->
             Manager.cancelOperation()

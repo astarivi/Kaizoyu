@@ -6,6 +6,7 @@
     <string name="st_db_backup_operation">Performing database backup</string>
     <string name="st_db_import_operation">Performing database import</string>
     <string name="section_database">Database</string>
+    <string name="section_temporary">Temporary</string>
     <string name="backup_database">Backup</string>
     <string name="backup_database_desc">Export a copy of your database. This includes lists (saved shows) and settings.</string>
     <string name="restore_database">Restore</string>
