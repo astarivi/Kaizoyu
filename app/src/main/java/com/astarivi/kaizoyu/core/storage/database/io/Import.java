@@ -11,9 +11,9 @@ import com.astarivi.kaizoyu.utils.Data;
 import org.tinylog.Logger;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -27,7 +27,7 @@ public class Import {
         callback = c;
     }
 
-    public void importBackup(Context context, FileInputStream zippedFile) {
+    public void importBackup(Context context, InputStream zippedFile) {
         AppDatabase database = PersistenceRepository.getInstance().getDatabase();
 
         database.close();

@@ -4,8 +4,9 @@ import android.content.Context;
 
 import com.astarivi.kaizoyu.utils.Threading;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.concurrent.Future;
 
 
 public class Manager {
@@ -36,6 +37,7 @@ public class Manager {
     private static int progress = -1;
     private static Exception error = null;
     private static State state = State.IDLE;
+    private static Future<?> operation = null;
 
     public static void subscribe(FacadeCallback callback) {
         facadeCallback = callback;
@@ -54,18 +56,22 @@ public class Manager {
         }
     }
 
-    public static void doExportDatabase(Context context, FileOutputStream output) {
+    public static void doExportDatabase(Context context, OutputStream output) {
         if (state != State.IDLE) return;
 
         changeState(State.EXPORT);
-        Threading.submitTask(Threading.TASK.DATABASE, () -> exportDatabase.exportBackup(context, output));
+        operation = Threading.submitTask(Threading.TASK.DATABASE, () -> exportDatabase.exportBackup(context, output));
     }
 
-    public static void doImportDatabase(Context context, FileInputStream zippedFile) {
+    public static void doImportDatabase(Context context, InputStream zippedFile) {
         if (state != State.IDLE) return;
 
         changeState(State.IMPORT);
-        Threading.submitTask(Threading.TASK.DATABASE, () -> importDatabase.importBackup(context, zippedFile));
+        operation = Threading.submitTask(Threading.TASK.DATABASE, () -> importDatabase.importBackup(context, zippedFile));
+    }
+
+    public static void cancelOperation() {
+        if (operation != null && !operation.isDone()) operation.cancel(true);
     }
 
     private static void changeState(State s) {

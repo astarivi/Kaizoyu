@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings_button">Settings</string>
+    <string name="storage_button">Storage</string>
+    <string name="storage_subtitle">Manage storage related settings, like backups, cache and downloads</string>
     <string name="settings_subtitle">Change Kaizoyu! related settings, like appearance or quality of life functionalities</string>
     <string name="analytics">Analytics</string>
     <string name="analytics_description">Send anonymous usage and performance reports to help improve the app</string>
