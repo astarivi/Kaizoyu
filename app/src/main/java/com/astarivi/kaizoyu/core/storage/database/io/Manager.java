@@ -19,7 +19,7 @@ public class Manager {
 
         @Override
         public void onFinished() {
-            if (facadeCallback != null) facadeCallback.onFinished();
+            if (facadeCallback != null) facadeCallback.onFinished(state);
             progress = -1;
             changeState(State.IDLE);
         }
@@ -72,6 +72,8 @@ public class Manager {
 
     public static void cancelOperation() {
         if (operation != null && !operation.isDone()) operation.cancel(true);
+
+        changeState(State.IDLE);
     }
 
     private static void changeState(State s) {
@@ -94,7 +96,7 @@ public class Manager {
     public interface FacadeCallback {
         void onStatusChange(State currentState);
         void onProgress(int percentage);
-        void onFinished();
+        void onFinished(State lastState);
         void onError(Exception e);
     }
 }

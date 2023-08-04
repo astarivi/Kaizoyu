@@ -2,7 +2,9 @@
 <resources>
     <string name="st_current_operation">Current operation</string>
     <string name="st_cancel_operation">Cancel</string>
+    <string name="st_db_operation_done">Operation finished successfully</string>
     <string name="st_db_backup_operation">Performing database backup</string>
+    <string name="st_db_import_operation">Performing database import</string>
     <string name="section_database">Database</string>
     <string name="backup_database">Backup</string>
     <string name="backup_database_desc">Export a copy of your database. This includes lists (saved shows) and settings.</string>
@@ -12,5 +14,5 @@
     <string name="restore_dialog_description">All current lists (saved shows) and settings will be lost forever. They will be replaced with the backup of your choosing.</string>
     <string name="restore_positive">I\'m ready</string>
     <string name="restore_negative">Cancel</string>
-    <string name="backup_io_failure">Failed to write to the specified folder</string>
+    <string name="backup_io_failure">Failed to read/write to the specified folder</string>
 </resources>

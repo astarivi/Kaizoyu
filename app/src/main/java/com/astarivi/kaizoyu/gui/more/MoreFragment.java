@@ -22,6 +22,7 @@ import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.FragmentMoreBinding;
 import com.astarivi.kaizoyu.gui.UpdaterModalBottomSheet;
 import com.astarivi.kaizoyu.gui.more.settings.SettingsActivity;
+import com.astarivi.kaizoyu.gui.more.storage.StorageActivity;
 import com.astarivi.kaizoyu.updater.UpdaterActivity;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
@@ -93,6 +94,13 @@ public class MoreFragment extends TabFragment {
             if (getActivity() == null) return;
 
             Intent intent = new Intent(requireActivity(), OssLicensesMenuActivity.class);
+            startActivity(intent);
+        });
+
+        binding.openDataSettings.setOnClickListener(v -> {
+            if (getActivity() == null) return;
+
+            Intent intent = new Intent(requireActivity(), StorageActivity.class);
             startActivity(intent);
         });
 

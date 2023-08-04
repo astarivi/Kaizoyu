@@ -40,11 +40,33 @@ public class Utils {
     @ThreadedOnly
     public static void makeToastRegardless(Context context, @StringRes int resId, int duration) {
         try {
-            runOnUiThread(() -> Toast.makeText(
-                    context,
-                    resId,
-                    duration
-            ).show());
+            runOnUiThread(() -> {
+                try {
+                    Toast.makeText(
+                            context,
+                            resId,
+                            duration
+                    ).show();
+                } catch(Exception ignored) {
+                }
+            });
+        } catch(Exception ignored) {
+        }
+    }
+
+    @ThreadedOnly
+    public static void makeToastRegardless(Context context, String message, int duration) {
+        try {
+            runOnUiThread(() -> {
+                try {
+                    Toast.makeText(
+                            context,
+                            message,
+                            duration
+                    ).show();
+                } catch(Exception ignored) {
+                }
+            });
         } catch(Exception ignored) {
         }
     }

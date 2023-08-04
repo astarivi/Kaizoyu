@@ -74,6 +74,7 @@ public class Export {
                     Threading.submitTask(Threading.TASK.INSTANT, () -> {
                         try {
                             Data.getProperties(Data.CONFIGURATION.APP).store(pipeOutput, "APP_CONFIG");
+                            pipeOutput.close();
                         } catch (IOException e) {
                             Logger.error("Couldn't write to PipedOutput to save");
                             Logger.error(e);

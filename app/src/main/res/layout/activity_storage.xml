@@ -64,6 +64,7 @@
                             android:layout_gravity="center"
                         />
                         <TextView
+                            android:id="@+id/loading_percentage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0%"
@@ -79,6 +80,7 @@
                         android:layout_marginStart="20dp"
                     >
                         <TextView
+                            android:id="@+id/currentTask"
                             android:textSize="17sp"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             android:text="@string/st_db_backup_operation"
@@ -93,6 +95,7 @@
                             android:layout_weight="1"
                         />
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/cancel_operation"
                             android:layout_gravity="center|bottom"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
