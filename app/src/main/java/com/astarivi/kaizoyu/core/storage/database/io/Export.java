@@ -42,9 +42,9 @@ public class Export {
         int currentItem = 0;
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(output)) {
             for (File databasePath : databasePaths) {
-                if (!databasePath.exists()) {
+                if (!databasePath.exists() && databasePath.getName().equalsIgnoreCase("kaizo-database")) {
                     Logger.error("Missing database files while exporting, {}", databasePath);
-                    callback.onError(new IllegalStateException("Missing database files"));
+                    callback.onError(new IllegalStateException("Missing database file"));
                     return;
                 }
 

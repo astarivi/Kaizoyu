@@ -67,7 +67,8 @@ public class StorageActivity extends AppCompatActivityTheme {
 
         @Override
         public void onError(Exception e) {
-            Utils.makeToastRegardless(StorageActivity.this, e.getMessage(), Toast.LENGTH_SHORT);
+            Utils.makeToastRegardless(StorageActivity.this, e.getMessage(), Toast.LENGTH_LONG);
+            Manager.cancelOperation();
         }
     };
 
