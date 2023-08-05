@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class IndependentResultSearcher {
@@ -39,6 +40,11 @@ public class IndependentResultSearcher {
     }
 
     public @Nullable List<NiblResult> fetchEpisode(String title, int episode) {
+        if (episode > 999) {
+            title = String.format(Locale.UK, "%s %d", title, episode);
+            episode = -1;
+        }
+
         return nibl.searchAnimeEpisode(40, title, episode);
     }
 }
