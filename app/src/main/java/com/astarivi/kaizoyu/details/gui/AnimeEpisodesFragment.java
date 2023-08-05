@@ -181,7 +181,11 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
             final int animeLength;
 
             // Get anime length
-            if (anime instanceof SeasonalAnime && (searchEnhancer != null && searchEnhancer.episode == null) && ((SeasonalAnime) anime).getCurrentEpisode() > 0) {
+            if (
+                    (searchEnhancer == null || searchEnhancer.episode == null)
+                    && anime instanceof SeasonalAnime
+                    && ((SeasonalAnime) anime).getCurrentEpisode() > 0
+            ) {
                 animeLength = ((SeasonalAnime) anime).getCurrentEpisode();
             } else {
                 Kitsu kitsu = new Kitsu(
