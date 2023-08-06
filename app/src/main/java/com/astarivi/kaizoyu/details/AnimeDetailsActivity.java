@@ -315,7 +315,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             posterUrl = anime.getImageUrlFromSize(ImageSize.TINY, false);
         } else {
             coverUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.ORIGINAL, true);
-            posterUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.MEDIUM, false);
+            posterUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.ORIGINAL, false);
         }
 
         if (coverUrl != null)
