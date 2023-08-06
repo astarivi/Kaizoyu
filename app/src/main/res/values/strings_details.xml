@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="d_loading_hint">Fetching the latest data, just for you…</string>
+    <string name="d_search_enhancer">Communicating with search enhancer…</string>
     <string name="d_share">Share</string>
     <string name="d_issue">Report issue</string>
     <string name="d_favorite">Save</string>

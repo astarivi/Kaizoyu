@@ -128,60 +128,55 @@ public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder im
         String coverUrl = anime.getThumbnailUrl(true);
         String posterUrl = anime.getThumbnailUrl(false);
 
-        if (posterUrl == null) {
-            // Nothing to display
-            binding.imagePoster.setImageResource(R.drawable.ic_general_placeholder);
-            binding.imageCover.setImageResource(R.drawable.ic_general_placeholder);
-            return;
-        }
+        if (posterUrl != null) {
+            Glide.with(binding.getRoot().getContext())
+                    .load(posterUrl)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            return false;
+                        }
 
-        if (coverUrl == null) {
-            binding.imageCover.setImageResource(R.drawable.ic_general_placeholder);
-        }
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            if (coverUrl != null || !(resource instanceof BitmapDrawable)) return false;
 
-        Glide.with(binding.getRoot().getContext())
-                .load(posterUrl)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        return false;
-                    }
+                            Palette.from(
+                                    // Welcome to casting hell, again
+                                    ((BitmapDrawable) resource).getBitmap()
+                            ).generate(palette -> {
+                                if (palette == null) return;
 
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        if (coverUrl != null || !(resource instanceof BitmapDrawable)) return false;
-
-                        Palette.from(
-                                // Welcome to casting hell, again
-                                ((BitmapDrawable) resource).getBitmap()
-                        ).generate(palette -> {
-                            if (palette == null) return;
-
-                            binding.getRoot().post(() -> {
-                                try {
-                                    binding.imageCover.setImageDrawable(null);
-                                    binding.imageCover.setBackgroundColor(palette.getMutedColor(
-                                            Color.parseColor("#9240aa")
-                                    ));
-                                } catch(Exception ignored) {
-                                }
+                                binding.getRoot().post(() -> {
+                                    try {
+                                        binding.imageCover.setImageDrawable(null);
+                                        binding.imageCover.setBackgroundColor(palette.getMutedColor(
+                                                Color.parseColor("#9240aa")
+                                        ));
+                                    } catch(Exception ignored) {
+                                    }
+                                });
                             });
-                        });
-                        return false;
-                    }
-                })
-                .placeholder(R.drawable.ic_general_placeholder)
-                .into(binding.imagePoster);
+                            return false;
+                        }
+                    })
+                    .placeholder(R.drawable.ic_general_placeholder)
+                    .into(binding.imagePoster);
+        } else {
+            binding.imagePoster.setImageResource(R.drawable.ic_general_placeholder);
+        }
 
-        if (coverUrl == null) return;
-
-        // Handle cover image
-        Glide.with(binding.getRoot().getContext())
-                .load(coverUrl)
-                // Fixes pixel level imperfections. This could be profiled to see if it's worth it.
-                .centerCrop()
-                .placeholder(R.drawable.ic_general_placeholder)
-                .into(binding.imageCover);
+        if (coverUrl != null) {
+            Glide.with(binding.getRoot().getContext())
+                    .load(coverUrl)
+                    // Fixes pixel level imperfections. This could be profiled to see if it's worth it.
+                    // Profiled 2023-8-6, it's absolutely worth it.
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_general_placeholder)
+                    .into(binding.imageCover);
+        } else {
+            binding.imageCover.setImageResource(R.drawable.ic_general_placeholder);
+        }
     }
 
     public void unloadImages() {

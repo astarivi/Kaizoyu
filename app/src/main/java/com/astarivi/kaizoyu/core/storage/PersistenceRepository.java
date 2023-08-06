@@ -22,18 +22,23 @@ import org.tinylog.Logger;
 import java.io.File;
 import java.util.concurrent.FutureTask;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 
+
+@Getter
 public class PersistenceRepository {
-    private static volatile PersistenceRepository instance = null;
+    @Getter(AccessLevel.NONE)
+    private static volatile PersistenceRepository _instance = null;
     private final ExtendedProperties appConfiguration;
     private final ExtendedProperties botsConfiguration;
     private final AppDatabase database;
     private final RepositoryDirectory repositoryDirectory;
     private final UserHttpClient httpClient = new UserHttpClient();
-    public final boolean isDeviceLowSpec;
+    private final boolean isDeviceLowSpec;
 
     private PersistenceRepository() {
-        if (instance != null) {
+        if (_instance != null) {
             throw new RuntimeException("Duplicated singleton ConfigurationRepository");
         }
 
@@ -84,12 +89,12 @@ public class PersistenceRepository {
     }
 
     public static @NotNull PersistenceRepository getInstance() {
-        if (instance == null) {
+        if (_instance == null) {
             synchronized (PersistenceRepository.class) {
-                if (instance == null) instance = new PersistenceRepository();
+                if (_instance == null) _instance = new PersistenceRepository();
             }
         }
-        return instance;
+        return _instance;
     }
 
     public void applyConfigurationChanges() {
@@ -112,26 +117,6 @@ public class PersistenceRepository {
     public void saveSettings() {
         appConfiguration.save();
         botsConfiguration.save();
-    }
-
-    public ExtendedProperties getAppConfiguration() {
-        return appConfiguration;
-    }
-
-    public ExtendedProperties getBotsConfiguration() {
-        return botsConfiguration;
-    }
-
-    public AppDatabase getDatabase() {
-        return database;
-    }
-
-    public RepositoryDirectory getRepositoryDirectory() {
-        return repositoryDirectory;
-    }
-
-    public UserHttpClient getHttpClient() {
-        return httpClient;
     }
 
     @Override

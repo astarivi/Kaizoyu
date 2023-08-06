@@ -24,8 +24,8 @@ android {
         applicationId "com.astarivi.kaizoyu"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 8
-        versionName "0.7"
+        versionCode 9
+        versionName "0.8"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -43,7 +43,7 @@ android {
 
         beta {
             applicationIdSuffix '.beta'
-            versionNameSuffix '03-BETA'
+            versionNameSuffix '01-BETA'
             resValue "string", "app_k_name", "Kaizoyu! Beta"
             resValue "string", "provider_authority", "com.astarivi.kaizoyu.beta.fileprovider"
         }
@@ -97,6 +97,14 @@ dependencies {
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.0.0'
     implementation 'com.rometools:rome:2.1.0'
 
+    // Lombok
+    //noinspection AnnotationProcessorOnCompilePath
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    //noinspection AnnotationProcessorOnCompilePath
+    testCompileOnly 'org.projectlombok:lombok:1.18.28'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+
     // Analytics
     implementation 'com.flurry.android:analytics:14.2.0'
 
@@ -104,12 +112,12 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation "androidx.work:work-runtime:2.8.0"
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.5.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata:2.5.1'
+    implementation 'androidx.work:work-runtime:2.8.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.6.1'
     implementation 'androidx.palette:palette:1.0.0'
-    implementation "androidx.room:room-runtime:2.5.0"
-    annotationProcessor "androidx.room:room-compiler:2.5.0"
+    implementation 'androidx.room:room-runtime:2.5.2'
+    annotationProcessor 'androidx.room:room-compiler:2.5.2'
 
     // Logger
     implementation 'org.tinylog:tinylog-api:2.6.1'

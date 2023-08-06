@@ -1,6 +1,7 @@
 package com.astarivi.kaizoyu.details.gui;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.astarivi.kaizoyu.core.models.Episode;
 import com.astarivi.kaizoyu.core.models.Result;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
+import com.astarivi.kaizoyu.core.search.SearchEnhancer;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.databinding.ComponentSuggestionChipBinding;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeEpisodesBinding;
@@ -47,6 +49,7 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
     private EpisodesRecyclerAdapter adapter;
     private Anime anime;
     private Episode episode;
+    private SearchEnhancer searchEnhancer = null;
 
     public void scrollTop() {
         if (binding == null) return;
@@ -64,7 +67,13 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
         // Anime object
 
         if (getArguments() != null) {
-            anime = (Anime) Utils.getAnimeFromBundle(getArguments(), ModelType.Anime.BASE);
+            anime = Utils.getAnimeFromBundle(getArguments(), ModelType.Anime.BASE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                searchEnhancer = getArguments().getParcelable("search_enhancer", SearchEnhancer.class);
+            } else {
+                searchEnhancer = getArguments().getParcelable("search_enhancer");
+            }
         }
 
         return binding.getRoot();
@@ -172,7 +181,11 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
             final int animeLength;
 
             // Get anime length
-            if (anime instanceof SeasonalAnime && ((SeasonalAnime) anime).getCurrentEpisode() > 0) {
+            if (
+                    (searchEnhancer == null || searchEnhancer.episode == null)
+                    && anime instanceof SeasonalAnime
+                    && ((SeasonalAnime) anime).getCurrentEpisode() > 0
+            ) {
                 animeLength = ((SeasonalAnime) anime).getCurrentEpisode();
             } else {
                 Kitsu kitsu = new Kitsu(
@@ -311,6 +324,7 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
         viewModel.searchEpisodeAndDisplayResults(
                 episode,
                 anime,
+                searchEnhancer,
                 binding,
                 requireActivity(),
                 this::playResult

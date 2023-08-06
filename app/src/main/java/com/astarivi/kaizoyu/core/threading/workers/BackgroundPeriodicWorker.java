@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class BackgroundPeriodicWorker extends Worker {
-
     public BackgroundPeriodicWorker(@NonNull Context appContext, @NonNull WorkerParameters workerParams) {
         super(appContext, workerParams);
     }

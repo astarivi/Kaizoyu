@@ -103,16 +103,6 @@ public class SettingsActivity extends AppCompatActivityTheme {
         binding.autoMoveValue.setOnCheckedChangeListener(this::triggerSave);
         binding.xdccValue.setOnCheckedChangeListener(this::triggerSave);
 
-        binding.clearCacheTrigger.setOnClickListener(view -> {
-            Utils.clearCache();
-            Toast.makeText(this, getString(R.string.cache_toast), Toast.LENGTH_SHORT).show();
-        });
-
-        binding.clearSearchTrigger.setOnClickListener(v -> {
-            Data.getRepositories().getSearchHistoryRepository().deleteAllAsync();
-            Toast.makeText(this, getString(R.string.history_toast), Toast.LENGTH_SHORT).show();
-        });
-
         binding.themeTrigger.setOnClickListener(v -> {
             ThemeSelectionModalBottomSheet modalBottomSheet = new ThemeSelectionModalBottomSheet(theme -> {
                 AnalyticsClient.logEvent("theme_changed", theme.getTitle(this));

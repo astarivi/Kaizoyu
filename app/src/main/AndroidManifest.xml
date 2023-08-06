@@ -61,6 +61,10 @@
             android:label="Settings"
         />
         <activity
+            android:name=".gui.more.storage.StorageActivity"
+            android:label="Storage"
+        />
+        <activity
             android:name=".gui.library.watching.SharedLibraryActivity"
             android:label="SharedLibraryActivity"
         />
