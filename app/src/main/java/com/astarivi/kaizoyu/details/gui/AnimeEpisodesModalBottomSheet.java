@@ -19,7 +19,6 @@ import com.astarivi.kaizoyu.databinding.BottomSheetEpisodesBinding;
 import com.astarivi.kaizoyu.databinding.ComponentSuggestionChipBinding;
 import com.astarivi.kaizoyu.databinding.ItemEpisodeBinding;
 import com.astarivi.kaizoyu.utils.Threading;
-import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.chip.Chip;
 
@@ -153,7 +152,7 @@ public class AnimeEpisodesModalBottomSheet extends BottomSheetDialogFragment {
                     }
                 });
             } else {
-                Utils.runOnUiThread(() -> {
+                Threading.runOnUiThread(() -> {
                     binding.loadingBar.setVisibility(View.GONE);
 
                     for (View resultingView : resultingViews) {

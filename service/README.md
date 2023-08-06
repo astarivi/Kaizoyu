@@ -1,6 +1,9 @@
 # KaizoLib
 Java API for the Kaizoyu! app.
 
+## Contents
+Everything that has to do with XDCC, Kitsu, or Nibl, is found here.
+
 ## Features
 - T-XDCC support
 - IRC DCC handshake support (Compliant to RFC1459)

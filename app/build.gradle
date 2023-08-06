@@ -24,8 +24,8 @@ android {
         applicationId "com.astarivi.kaizoyu"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 9
-        versionName "0.8"
+        versionCode 10
+        versionName "0.9"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]

@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 
 public class Threading {
+    // Use this sparingly. Prefer using a view .post method. Only use if no context is available,
+    // or for compatibility reasons.
     public static void runOnUiThread(Runnable r) {
         new Handler(Looper.getMainLooper()).post(r);
     }
