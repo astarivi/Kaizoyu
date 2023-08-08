@@ -85,6 +85,8 @@ dependencies {
     implementation project(':service')
 
     // External libraries (third party)
+    // Guava solves a dependency issue between ACRA.ch and work-runtime
+    implementation 'com.google.guava:guava:32.1.2-android'
     implementation 'com.github.WrichikBasu:AudioFocusController:v2.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
     implementation 'com.github.astarivi:Zparc:d0b7473283'
@@ -106,7 +108,7 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
 
     // Analytics
-    implementation 'com.flurry.android:analytics:14.2.0'
+    implementation 'ch.acra:acra-http:5.11.0'
 
     // Android X
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01'

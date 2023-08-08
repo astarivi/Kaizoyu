@@ -105,7 +105,7 @@ public class SettingsActivity extends AppCompatActivityTheme {
 
         binding.themeTrigger.setOnClickListener(v -> {
             ThemeSelectionModalBottomSheet modalBottomSheet = new ThemeSelectionModalBottomSheet(theme -> {
-                AnalyticsClient.logEvent("theme_changed", theme.getTitle(this));
+                AnalyticsClient.logBreadcrumb("Theme changed to " + theme.getTitle(this));
 
                 Theme.setTheme(theme, this);
 

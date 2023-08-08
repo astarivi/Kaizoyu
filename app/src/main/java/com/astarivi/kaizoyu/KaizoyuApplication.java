@@ -3,9 +3,13 @@ package com.astarivi.kaizoyu;
 import android.app.Application;
 import android.content.Context;
 
-import com.astarivi.kaizoyu.core.updater.UpdateManager;
-import com.flurry.android.FlurryAgent;
 import com.google.android.material.color.DynamicColors;
+
+import org.acra.ACRA;
+import org.acra.config.CoreConfigurationBuilder;
+import org.acra.config.HttpSenderConfigurationBuilder;
+import org.acra.data.StringFormat;
+import org.acra.sender.HttpSender;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -28,22 +32,18 @@ public class KaizoyuApplication extends Application {
         application = new WeakReference<>(KaizoyuApplication.this);
         checkDynamicColors();
 
-        if (BuildConfig.DEBUG) {
-            FlurryAgent.setVersionName(UpdateManager.VERSION_NAME + "_debug");
-        } else {
-            FlurryAgent.setVersionName(UpdateManager.VERSION_NAME);
-        }
-
-        new FlurryAgent.Builder()
-                .withReportLocation(false)
-                .withLogEnabled(true)
-                .build(this, getString(R.string.flurry_key));
-
-        FlurryAgent.addSessionProperty("version", UpdateManager.VERSION);
-
-        if (BuildConfig.DEBUG) {
-            FlurryAgent.addSessionProperty("development", "true");
-        }
+        ACRA.init(this, new CoreConfigurationBuilder()
+                .withBuildConfigClass(BuildConfig.class)
+                .withReportFormat(StringFormat.JSON)
+                .withPluginConfigurations(
+                        new HttpSenderConfigurationBuilder()
+                                .withUri("https://acra.kaizoyu.ovh/report")
+                                .withHttpMethod(HttpSender.Method.POST)
+                                .withBasicAuthLogin(getString(R.string.acra_user))
+                                .withBasicAuthPassword(getString(R.string.acra_pass))
+                                .build()
+                )
+        );
     }
 
     private void checkDynamicColors() {

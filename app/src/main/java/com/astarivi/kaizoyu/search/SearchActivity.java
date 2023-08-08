@@ -167,7 +167,7 @@ public class SearchActivity extends AppCompatActivityTheme {
         searchSuggestions.removeAllViews();
 
         if (KaizoyuApplication.application == null) {
-            AnalyticsClient.logEvent("application_null_search_history");
+            AnalyticsClient.logBreadcrumb("application_null_search_history");
             return;
         }
 

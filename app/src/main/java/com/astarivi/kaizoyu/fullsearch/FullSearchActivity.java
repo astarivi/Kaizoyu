@@ -158,7 +158,7 @@ public class FullSearchActivity extends AppCompatActivityTheme {
                     .setTitle(getString(R.string.advanced_search_dialog_title))
                     .setMessage(getString(R.string.advanced_search_dialog_description))
                     .setPositiveButton(getString(R.string.advanced_search_dialog_accept), (dialog, which) -> {
-                        AnalyticsClient.logEvent("advanced_search_first_time");
+                        AnalyticsClient.logBreadcrumb("advanced_search_first_time");
 
                         Toast.makeText(
                                 this,

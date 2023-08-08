@@ -120,7 +120,7 @@ public class UpdaterActivity extends AppCompatActivityTheme {
     }
 
     private void cancelUpdate() {
-        AnalyticsClient.logEvent("canceled_update");
+        AnalyticsClient.logBreadcrumb("canceled_update");
         Toast.makeText(
                 this,
                 getString(R.string.update_error),
@@ -143,7 +143,7 @@ public class UpdaterActivity extends AppCompatActivityTheme {
                 .setMessage(getString(R.string.update_cancel_description))
                 .setPositiveButton(getString(R.string.update_cancel_accept), (dialog, which) -> {
                     downloadingFuture.cancel(true);
-                    AnalyticsClient.logEvent("canceled_update_willingly");
+                    AnalyticsClient.logBreadcrumb("canceled_update_willingly");
                     finish();
                 }).setNegativeButton(getString(R.string.update_cancel_deny), null).show();
     }
