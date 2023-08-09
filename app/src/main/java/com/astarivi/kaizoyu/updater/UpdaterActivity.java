@@ -95,6 +95,8 @@ public class UpdaterActivity extends AppCompatActivityTheme {
     }
 
     private void installUpdate(File updateFile) {
+        AnalyticsClient.logBreadcrumb("About to install update...");
+
         // It better work. I don't want to use that dumb PackageInstaller thing
         startActivity(
                 new Intent(Intent.ACTION_VIEW)
@@ -120,7 +122,7 @@ public class UpdaterActivity extends AppCompatActivityTheme {
     }
 
     private void cancelUpdate() {
-        AnalyticsClient.logBreadcrumb("canceled_update");
+        AnalyticsClient.logBreadcrumb("Update has been canceled (unwillingly)");
         Toast.makeText(
                 this,
                 getString(R.string.update_error),
@@ -143,7 +145,7 @@ public class UpdaterActivity extends AppCompatActivityTheme {
                 .setMessage(getString(R.string.update_cancel_description))
                 .setPositiveButton(getString(R.string.update_cancel_accept), (dialog, which) -> {
                     downloadingFuture.cancel(true);
-                    AnalyticsClient.logBreadcrumb("canceled_update_willingly");
+                    AnalyticsClient.logBreadcrumb("Update has been canceled willingly");
                     finish();
                 }).setNegativeButton(getString(R.string.update_cancel_deny), null).show();
     }

@@ -1,6 +1,7 @@
 package com.astarivi.kaizoyu.core.common;
 
 import org.acra.ACRA;
+import org.tinylog.Logger;
 
 
 public class AnalyticsClient {
@@ -9,7 +10,10 @@ public class AnalyticsClient {
     public static void logBreadcrumb(String event) {
         if (!isEnabled) return;
 
-        ACRA.getErrorReporter().putCustomData("Event at " + System.currentTimeMillis(), event);
+        final String tag = "Event at " + System.currentTimeMillis();
+
+        ACRA.getErrorReporter().putCustomData(tag, event);
+        Logger.info(String.format("%s %s", tag, event));
     }
 
     public static void onError(String errorId, String message, Throwable exception) {

@@ -8,4 +8,22 @@
     <string name="trash_anime">Dumpster fire</string>
     <string name="shoujo_anime">Best for feminine audiences</string>
     <string name="shounen_anime">Best for young audiences</string>
+    <string name="first_welcome">Welcome to Kaizoyu!</string>
+    <string name="first_welcome_desc">It seems it\'s your first time with us. Before we proceed, please take a minute to review the following information:</string>
+    <string name="fw_privacy">Analytics &amp; Tracking</string>
+    <string name="fw_privacy_desc">
+        Analytics and tracking is used across the app to collect data about errors, crashes, events, and performance issues. This data is then sent to us to help improve the app. These reports will never contain any personal data.\n\nTo review what is, and what is not sent to us, please go to the `More` tab and go into the `Privacy &amp; Safety` section.
+    </string>
+    <string name="fw_privacy_conf">Do you want to enable Analytics?</string>
+    <string name="fw_privacy_true">Yes</string>
+    <string name="fw_privacy_false">No</string>
+    <string name="fw_privacy_updates">Do you want to check for updates automatically?</string>
+    <string name="fw_preferences">Customization</string>
+    <string name="fw_preferences_desc">Everyone likes their app to behave a certain way. Tell us what you like.\n\nDon\'t worry, you can change any of these later.</string>
+    <string name="fw_pref_language">Do you prefer English, or Romaji show titles?</string>
+    <string name="fw_pref_language_true">English</string>
+    <string name="fw_pref_language_false">Romaji</string>
+    <string name="fw_pref_autofav">Would you like to save everything you watch automatically?</string>
+    <string name="fw_end">That is all, thanks for your time!\nWe hope you enjoy the app.\n\nIf you experience any issues, or want to provide your valuable feedback to us, you may find our media links at the `More` tab.</string>
+    <string name="fw_end_button">Let\'s go</string>
 </resources>

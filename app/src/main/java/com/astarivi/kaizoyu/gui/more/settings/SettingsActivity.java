@@ -97,6 +97,7 @@ public class SettingsActivity extends AppCompatActivityTheme {
         MaterialSwitch preferEnglishTitles = binding.preferEnglishValue;
         preferEnglishTitles.setOnCheckedChangeListener(this::triggerSave);
 
+        binding.autoUpdateValue.setOnCheckedChangeListener(this::triggerSave);
         binding.autoFavoriteValue.setOnCheckedChangeListener(this::triggerSave);
         binding.advancedSearch.setOnCheckedChangeListener(this::triggerSave);
         binding.strictModeValue.setOnCheckedChangeListener(this::triggerSave);
@@ -188,6 +189,11 @@ public class SettingsActivity extends AppCompatActivityTheme {
         );
 
         config.setBooleanProperty(
+                "autoupdate",
+                binding.autoUpdateValue.isChecked()
+        );
+
+        config.setBooleanProperty(
                 "use_xdcc",
                 binding.xdccValue.isChecked()
         );
@@ -249,6 +255,10 @@ public class SettingsActivity extends AppCompatActivityTheme {
         // Switches
         binding.xdccValue.setChecked(
                 config.getBooleanProperty("use_xdcc", false)
+        );
+
+        binding.autoUpdateValue.setChecked(
+                config.getBooleanProperty("autoupdate", true)
         );
 
         binding.analyticsValue.setChecked(

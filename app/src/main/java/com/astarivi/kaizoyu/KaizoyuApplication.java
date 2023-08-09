@@ -6,6 +6,7 @@ import android.content.Context;
 import com.google.android.material.color.DynamicColors;
 
 import org.acra.ACRA;
+import org.acra.ReportField;
 import org.acra.config.CoreConfigurationBuilder;
 import org.acra.config.HttpSenderConfigurationBuilder;
 import org.acra.data.StringFormat;
@@ -35,6 +36,18 @@ public class KaizoyuApplication extends Application {
         ACRA.init(this, new CoreConfigurationBuilder()
                 .withBuildConfigClass(BuildConfig.class)
                 .withReportFormat(StringFormat.JSON)
+                .withReportContent(
+                        ReportField.APP_VERSION_CODE,
+                        ReportField.APP_VERSION_NAME,
+                        ReportField.PHONE_MODEL,
+                        ReportField.STACK_TRACE,
+                        ReportField.THREAD_DETAILS,
+                        ReportField.USER_CRASH_DATE,
+                        ReportField.USER_APP_START_DATE,
+                        ReportField.REPORT_ID,
+                        ReportField.ANDROID_VERSION,
+                        ReportField.BRAND
+                )
                 .withPluginConfigurations(
                         new HttpSenderConfigurationBuilder()
                                 .withUri("https://acra.kaizoyu.ovh/report")

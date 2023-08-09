@@ -83,8 +83,8 @@ public class ExtendedProperties extends Properties {
         }
     }
 
-    public void setBooleanProperty(String key, boolean defaultValue) {
-        setProperty(key, String.valueOf(defaultValue));
+    public void setBooleanProperty(String key, boolean value) {
+        setProperty(key, String.valueOf(value));
     }
 
     public String getFilename() {

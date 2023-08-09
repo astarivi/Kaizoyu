@@ -19,6 +19,7 @@ import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.ActivityMainBinding;
 import com.astarivi.kaizoyu.gui.UpdaterModalBottomSheet;
+import com.astarivi.kaizoyu.gui.WelcomeModalBottomSheet;
 import com.astarivi.kaizoyu.gui.adapters.TabAdapter;
 import com.astarivi.kaizoyu.updater.UpdaterActivity;
 import com.astarivi.kaizoyu.utils.Data;
@@ -87,44 +88,56 @@ public class MainActivity extends AppCompatActivityTheme {
             tab.select();
         }
 
-        Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            UpdateManager updateManager = new UpdateManager();
+        ExtendedProperties appSettings = Data.getProperties(Data.CONFIGURATION.APP);
 
-            UpdateManager.LatestUpdate latestUpdate;
-            try {
-                latestUpdate = updateManager.getLatestUpdate();
-            } catch (ParseException e) {
-                return;
-            }
+        if (appSettings.getBooleanProperty("first_time", true)) {
+            WelcomeModalBottomSheet welcomeModalBottomSheet = new WelcomeModalBottomSheet();
 
-            String versionToSkip = Data.getProperties(Data.CONFIGURATION.APP)
-                    .getProperty("skip_version", "false");
+            welcomeModalBottomSheet.show(getSupportFragmentManager(), WelcomeModalBottomSheet.TAG);
 
-            if (latestUpdate == null || versionToSkip.equals(latestUpdate.version)) return;
+            appSettings.setBooleanProperty("first_time", false);
+            appSettings.save();
+        // This if is here to avoid showing both the modals at the same time
+        } else if (appSettings.getBooleanProperty("autoupdate", true)) {
+            Threading.submitTask(Threading.TASK.INSTANT, () -> {
+                UpdateManager updateManager = new UpdateManager();
 
-            binding.getRoot().post(() -> {
-                UpdaterModalBottomSheet modalBottomSheet = new UpdaterModalBottomSheet(latestUpdate, (result, update) -> {
-                    if (result == UpdaterModalBottomSheet.Result.SKIP) return;
+                UpdateManager.LatestUpdate latestUpdate;
+                try {
+                    latestUpdate = updateManager.getLatestUpdate();
+                } catch (ParseException e) {
+                    return;
+                }
 
-                    ExtendedProperties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
+                String versionToSkip = Data.getProperties(Data.CONFIGURATION.APP)
+                        .getProperty("skip_version", "false");
 
-                    if (result == UpdaterModalBottomSheet.Result.UPDATE_NOW) {
-                        appProperties.setProperty("skip_version", "false");
-                        Intent intent = new Intent(this, UpdaterActivity.class);
-                        intent.putExtra("latestUpdate", update);
-                        startActivity(intent);
-                    }
+                if (latestUpdate == null || versionToSkip.equals(latestUpdate.version)) return;
 
-                    if (result == UpdaterModalBottomSheet.Result.NEVER) {
-                        appProperties.setProperty("skip_version", update.version);
-                    }
+                binding.getRoot().post(() -> {
+                    UpdaterModalBottomSheet modalBottomSheet = new UpdaterModalBottomSheet(latestUpdate, (result, update) -> {
+                        if (result == UpdaterModalBottomSheet.Result.SKIP) return;
 
-                    appProperties.save();
+                        ExtendedProperties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
+
+                        if (result == UpdaterModalBottomSheet.Result.UPDATE_NOW) {
+                            appProperties.setProperty("skip_version", "false");
+                            Intent intent = new Intent(this, UpdaterActivity.class);
+                            intent.putExtra("latestUpdate", update);
+                            startActivity(intent);
+                        }
+
+                        if (result == UpdaterModalBottomSheet.Result.NEVER) {
+                            appProperties.setProperty("skip_version", update.version);
+                        }
+
+                        appProperties.save();
+                    });
+
+                    modalBottomSheet.show(getSupportFragmentManager(), UpdaterModalBottomSheet.TAG);
                 });
-
-                modalBottomSheet.show(getSupportFragmentManager(), UpdaterModalBottomSheet.TAG);
             });
-        });
+        }
     }
 
     @Override

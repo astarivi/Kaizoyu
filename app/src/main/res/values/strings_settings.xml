@@ -8,6 +8,8 @@
     <string name="analytics_description">Send anonymous usage and performance reports to help improve the app</string>
     <string name="ipv6_sources">Show IPv6 Sources</string>
     <string name="ipv6_sources_description">Include IPv6 download sources. This will display IPv6 sources, but won\'t make them your default</string>
+    <string name="autoupdate">Automatic Update Checking</string>
+    <string name="autoupdate_description">Check for updates every time the app is launched</string>
     <string name="clear_cache">Clear Cache</string>
     <string name="clear_cache_repository">Erase the stored cache files manually</string>
     <string name="clear_search_history">Clear Search History</string>

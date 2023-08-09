@@ -16,6 +16,7 @@ import com.astarivi.kaizoyu.core.storage.database.repositories.RepositoryDirecto
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.utils.Utils;
 
+import org.acra.ACRA;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
@@ -70,7 +71,10 @@ public class PersistenceRepository {
         );
 
         repositoryDirectory = new RepositoryDirectory(database);
-        AnalyticsClient.isEnabled = appConfiguration.getBooleanProperty("analytics", true);
+        boolean areAnalyticsEnabled = appConfiguration.getBooleanProperty("analytics", false);
+
+        AnalyticsClient.isEnabled = areAnalyticsEnabled;
+        ACRA.getErrorReporter().setEnabled(areAnalyticsEnabled);
 
         try {
             //noinspection ResultOfMethodCallIgnored
@@ -111,7 +115,10 @@ public class PersistenceRepository {
                 break;
         }
 
-        AnalyticsClient.isEnabled = appConfiguration.getBooleanProperty("analytics", true);
+        boolean areAnalyticsEnabled = appConfiguration.getBooleanProperty("analytics", false);
+
+        AnalyticsClient.isEnabled = areAnalyticsEnabled;
+        ACRA.getErrorReporter().setEnabled(areAnalyticsEnabled);
     }
 
     public void saveSettings() {

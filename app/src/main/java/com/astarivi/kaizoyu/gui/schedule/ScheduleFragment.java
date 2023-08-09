@@ -2,7 +2,6 @@ package com.astarivi.kaizoyu.gui.schedule;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,12 +109,6 @@ public class ScheduleFragment extends TabFragment {
             binding.swipeRefresh.setRefreshing(false);
             viewModel.reloadSchedule(binding);
         });
-
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int screenHalfHeightDp = (int) (displayMetrics.heightPixels / displayMetrics.density);
-
-        // Make swipe refresh half of the screen height
-        binding.swipeRefresh.setDistanceToTriggerSync(screenHalfHeightDp);
 
         binding.dowTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
