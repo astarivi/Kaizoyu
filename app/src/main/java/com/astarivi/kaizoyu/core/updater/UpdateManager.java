@@ -7,6 +7,8 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.astarivi.kaizoyu.BuildConfig;
+import com.astarivi.kaizoyu.KaizoyuApplication;
+import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.WebAdapter;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -41,6 +43,9 @@ public class UpdateManager {
     public @Nullable LatestUpdate getLatestUpdate() throws ParseException {
         // This version has no update capabilities.
         if (VERSION.contains("-DEBUG")) return null;
+
+        if (Boolean.parseBoolean(KaizoyuApplication.getContext().getString(R.string.is_fdroid)))
+            return null;
 
         final boolean isBeta = isBeta();
         final LatestCDNReleases latestReleaseCDN = getLatestReleases();
