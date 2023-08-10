@@ -12,7 +12,7 @@
     <string name="first_welcome_desc">It seems it\'s your first time with us. Before we proceed, please take a minute to review the following information:</string>
     <string name="fw_privacy">Analytics &amp; Tracking</string>
     <string name="fw_privacy_desc">
-        Analytics and tracking is used across the app to collect data about errors, crashes, events, and performance issues. This data is then sent to us to help improve the app. These reports will never contain any personal data.\n\nTo review what is, and what is not sent to us, please go to the `More` tab and go into the `Privacy &amp; Safety` section.
+        Analytics and tracking is used across the app to collect data about errors, crashes, events, and performance issues. This data is then sent to us to help improve the app. These reports will never contain any personal data.
     </string>
     <string name="fw_privacy_conf">Do you want to enable Analytics?</string>
     <string name="fw_privacy_true">Yes</string>

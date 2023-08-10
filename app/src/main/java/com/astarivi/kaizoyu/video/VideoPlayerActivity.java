@@ -434,7 +434,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                         "Forward by 10s",
                         PendingIntent.getBroadcast(
                                 this,
-                                2,
+                                3,
                                 forwardIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
                         )
