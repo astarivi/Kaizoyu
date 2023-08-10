@@ -68,7 +68,7 @@ cd Kaizoyu
 - Assemble debug APK:
 
 ```bash
-gradlew assembleDebug
+gradlew assembleMainlineDebug
 ```
 
 - Connect your phone, enable USB debugging, allow ADB from host PC, install it:

@@ -57,7 +57,7 @@ publishing {
                 licenses {
                     license {
                         name = 'MIT License'
-                        url = ''
+                        url = 'https://github.com/astarivi/Kaizoyu/blob/975c436925e2f5e00b554bd667c52c2057c1fd08/service/LICENSE'
                     }
                 }
             }

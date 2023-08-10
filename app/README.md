@@ -11,6 +11,13 @@ There are three release types (versions) of the app.
 
 Note: Releases of type `Debug` cannot (and shouldn't) use the in-app updater.
 
+## Flavors
+
+There are two flavors available:
+
+- `Mainline` package id is `com.astarivi.kaizoyu` when using this flavor.
+- `Fdroid` package id is `ovh.kaizoyu.app` when using this flavor.
+
 ## Project contents
 
 The source code is categorized in sections, detailed here:
