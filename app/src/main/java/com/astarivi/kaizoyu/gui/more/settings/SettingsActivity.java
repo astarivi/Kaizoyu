@@ -88,8 +88,7 @@ public class SettingsActivity extends AppCompatActivityTheme {
         // Set click listeners
         binding.nightThemeTrigger.setOnClickListener(this::showNightThemePopup);
 
-        MaterialSwitch analytics = binding.analyticsValue;
-        analytics.setOnCheckedChangeListener(this::triggerSave);
+        binding.analyticsValue.setOnCheckedChangeListener(this::triggerSave);
 
         MaterialSwitch ipv6Sources = binding.ipv6SorcesValue;
         ipv6Sources.setOnCheckedChangeListener(this::triggerSave);
@@ -262,7 +261,7 @@ public class SettingsActivity extends AppCompatActivityTheme {
         );
 
         binding.analyticsValue.setChecked(
-                config.getBooleanProperty("analytics", true)
+                config.getBooleanProperty("analytics", false)
         );
 
         binding.strictModeValue.setChecked(
