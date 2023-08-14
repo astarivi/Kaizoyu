@@ -388,6 +388,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         List<RemoteAction> remoteActions = new ArrayList<>();
 
         Intent rewindIntent = new Intent("PIP_PLAY_PAUSE_PLAYER");
+        rewindIntent.setPackage(getPackageName());
         rewindIntent.putExtra("action", BundleUtils.PictureInPictureAction.REWIND_TEN.name());
 
         // Rewind
@@ -407,6 +408,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
         // Pause - Resume action
         Intent repauseIntent = new Intent("PIP_PLAY_PAUSE_PLAYER");
+        repauseIntent.setPackage(getPackageName());
         repauseIntent.putExtra("action", BundleUtils.PictureInPictureAction.PAUSE_OR_RESUME.name());
 
         remoteActions.add(
@@ -425,6 +427,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
         // Forward
         Intent forwardIntent = new Intent("PIP_PLAY_PAUSE_PLAYER");
+        forwardIntent.setPackage(getPackageName());
         forwardIntent.putExtra("action", BundleUtils.PictureInPictureAction.FORWARD_TEN.name());
 
         remoteActions.add(
