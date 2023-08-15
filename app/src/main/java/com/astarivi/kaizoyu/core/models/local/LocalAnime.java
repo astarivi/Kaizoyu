@@ -13,29 +13,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import lombok.Getter;
 
+
+@Getter
 public class LocalAnime extends Anime {
     protected final int databaseId;
     protected final Date watchDate;
-protected final ModelType.LocalAnime localAnimeType;
+    protected final ModelType.LocalAnime localAnimeType;
 
     public LocalAnime(KitsuAnime anime, int databaseId, Date watchDate, ModelType.LocalAnime type) {
         super(anime);
         this.databaseId = databaseId;
         this.watchDate = watchDate;
         this.localAnimeType = type;
-    }
-
-    public Date getWatchDate() {
-        return watchDate;
-    }
-
-    public int getDatabaseId() {
-        return databaseId;
-    }
-
-    public ModelType.LocalAnime getLocalAnimeType() {
-        return localAnimeType;
     }
 
     // region Parcelable implementation

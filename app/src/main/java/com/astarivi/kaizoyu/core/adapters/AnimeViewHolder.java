@@ -82,7 +82,7 @@ public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder im
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
             SeenAnime seenAnime = Data.getRepositories()
                     .getSeenAnimeRepository()
-                    .getAnimeDao()
+                    .getSeenAnimeDao()
                     .getFromKitsuId(
                             Integer.parseInt(
                                     anime.getKitsuAnime().id

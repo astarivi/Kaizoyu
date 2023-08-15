@@ -18,7 +18,10 @@ import com.astarivi.kaizoyu.utils.Threading;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
+import lombok.Getter;
 
+
+@Getter
 public class SeenAnimeRepository {
     private final SeenAnimeDao seenAnimeDao;
     private final SeenEpisodeDao seenEpisodeDao;
@@ -26,14 +29,6 @@ public class SeenAnimeRepository {
     public SeenAnimeRepository(@NotNull AppDatabase database) {
         seenAnimeDao = database.seenAnimeDao();
         seenEpisodeDao = database.seenEpisodeDao();
-    }
-
-    public SeenAnimeDao getAnimeDao() {
-        return seenAnimeDao;
-    }
-
-    public SeenEpisodeDao getEpisodeDao() {
-        return seenEpisodeDao;
     }
 
     public void saveSeenEpisodeAsync(Anime anime, Episode episode, int currentPlayerTime) {

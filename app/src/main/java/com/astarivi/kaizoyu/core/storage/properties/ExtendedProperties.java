@@ -12,9 +12,12 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Properties;
 
+import lombok.Getter;
+
 
 public class ExtendedProperties extends Properties {
     private static final String subFolder = "config/";
+    @Getter
     private final String filename;
     private final File localFile;
 
@@ -85,10 +88,6 @@ public class ExtendedProperties extends Properties {
 
     public void setBooleanProperty(String key, boolean value) {
         setProperty(key, String.valueOf(value));
-    }
-
-    public String getFilename() {
-        return filename;
     }
 
     private boolean parseBoolean(String value) {

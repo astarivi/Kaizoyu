@@ -14,41 +14,24 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
+import lombok.Getter;
 
+
+@Getter
 public class Result implements Parcelable {
-    protected final NiblResult result;
+    protected final NiblResult niblResult;
     protected final VideoQuality quality;
     protected final String fileExtension;
     protected final String cleanedFilename;
     protected final String botName;
 
-    public Result(@NotNull NiblResult result, String cleanedFilename, String fileExtension,
+    public Result(@NotNull NiblResult niblResult, String cleanedFilename, String fileExtension,
                   VideoQuality quality, String botName) {
-        this.result = result;
+        this.niblResult = niblResult;
         this.cleanedFilename = cleanedFilename;
         this.fileExtension = fileExtension;
         this.quality = quality;
         this.botName = botName;
-    }
-
-    public NiblResult getNiblResult() {
-        return result;
-    }
-
-    public String getBotName() {
-        return botName;
-    }
-
-    public String getCleanedFilename() {
-        return cleanedFilename;
-    }
-
-    public String getFileExtension() {
-        return fileExtension;
-    }
-
-    public VideoQuality getQuality() {
-        return quality;
     }
 
     public @NotNull String getXDCCCommand() {
@@ -56,7 +39,7 @@ public class Result implements Parcelable {
                 Locale.ENGLISH,
                 "%s :xdcc send #%d",
                 botName,
-                result.number
+                niblResult.number
         );
     }
 
@@ -65,7 +48,7 @@ public class Result implements Parcelable {
                 Locale.ENGLISH,
                 "%s %d %s",
                 botName,
-                result.number,
+                niblResult.number,
                 getCleanedFilename()
         );
     }
@@ -75,7 +58,7 @@ public class Result implements Parcelable {
     protected Result(@NotNull Parcel parcel){
         ObjectMapper mapper = new ObjectMapper();
         try {
-            result = mapper.readValue(parcel.readString(), NiblResult.class);
+            niblResult = mapper.readValue(parcel.readString(), NiblResult.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -110,7 +93,7 @@ public class Result implements Parcelable {
         String serializedResult;
 
         try {
-            serializedResult = mapper.writeValueAsString(result);
+            serializedResult = mapper.writeValueAsString(niblResult);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

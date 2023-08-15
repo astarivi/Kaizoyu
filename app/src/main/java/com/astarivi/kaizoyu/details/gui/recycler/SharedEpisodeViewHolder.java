@@ -185,7 +185,7 @@ public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements 
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
             SeenAnimeWithEpisodes seenAnimeWithEpisodes = Data.getRepositories()
                     .getSeenAnimeRepository()
-                    .getAnimeDao()
+                    .getSeenAnimeDao()
                     .getRelationFromKitsuId(
                             episode.getAnimeId()
                     );

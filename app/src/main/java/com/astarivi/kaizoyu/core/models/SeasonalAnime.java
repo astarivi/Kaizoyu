@@ -15,28 +15,15 @@ import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
 
+
+@Getter
 public class SeasonalAnime extends Anime {
     private final String emissionTime;
     private final DayOfWeek emissionDay;
     private final boolean hasAired;
     private int currentEpisode = -1;
-
-    public DayOfWeek getEmissionDay() {
-        return emissionDay;
-    }
-
-    public String getEmissionTime() {
-        return emissionTime;
-    }
-
-    public boolean hasAired() {
-        return hasAired;
-    }
-
-    public int getCurrentEpisode() {
-        return currentEpisode;
-    }
 
     // region Parcelable implementation
 
