@@ -21,6 +21,7 @@ import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
 import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
 import com.astarivi.kaizolib.kitsu.exception.ParsingException;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.Episode;
@@ -334,7 +335,8 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
     private void playResult(Result result) {
         AnimeDetailsActivity activity = (AnimeDetailsActivity) requireActivity();
 
-        Intent intent = new Intent(activity, VideoPlayerActivity.class);
+        Intent intent = new Intent();
+        intent.setClassName(BuildConfig.APPLICATION_ID, VideoPlayerActivity.class.getName());
         intent.putExtra("result", result);
         intent.putExtra("anime", anime);
         intent.putExtra("type", ModelType.Anime.BASE.name());

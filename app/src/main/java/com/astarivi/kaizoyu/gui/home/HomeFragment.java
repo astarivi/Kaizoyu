@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
@@ -33,7 +34,6 @@ import com.astarivi.kaizoyu.utils.Utils;
 public class HomeFragment extends Fragment {
     private HomeViewModel viewModel;
     private FragmentHomeBinding binding;
-    private HomeRecyclerAdapter.ItemClickListener listener;
 
     public HomeFragment() {
     }
@@ -52,7 +52,8 @@ public class HomeFragment extends Fragment {
         binding.mainSearchBar.setOnMenuItemClickListener(item -> {
             // There's only one item, so no need to check. If another item is added, change this.
             if (getActivity() == null) return false;
-            Intent intent = new Intent(requireActivity(), FullSearchActivity.class);
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, FullSearchActivity.class.getName());
             intent.putExtra("openSearch", true);
             startActivity(intent);
             return true;
@@ -103,19 +104,24 @@ public class HomeFragment extends Fragment {
         binding.settingsButton.setOnClickListener(v -> {
             if (getActivity() == null) return;
 
-            Intent intent = new Intent(requireActivity(), SettingsActivity.class);
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, SettingsActivity.class.getName());
             startActivity(intent);
         });
 
         binding.mainSearchBar.setOnClickListener(v -> {
             if (getActivity() == null) return;
-            Intent intent = new Intent(requireActivity(), SearchActivity.class);
+
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, SearchActivity.class.getName());
             intent.putExtra("openSearch", true);
+
             startActivity(intent);
         });
 
-        listener = anime -> {
-            Intent intent = new Intent(getActivity(), AnimeDetailsActivity.class);
+        HomeRecyclerAdapter.ItemClickListener listener = anime -> {
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
             intent.putExtra("anime", anime);
             intent.putExtra("type", ModelType.Anime.BASE.name());
             startActivity(intent);

@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
@@ -145,7 +146,8 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
         recyclerView.setHasFixedSize(true);
 
         adapter = new SharedLibraryRecyclerAdapter(anime -> {
-            Intent intent = new Intent(this, AnimeDetailsActivity.class);
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
             intent.putExtra("anime", anime);
             intent.putExtra("type", ModelType.Anime.LOCAL.name());
             startActivity(intent);

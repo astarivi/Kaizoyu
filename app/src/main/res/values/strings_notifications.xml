@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notifications_success">Thank you, and enjoy your stay!</string>
+    <string name="app_not_group">Platform related</string>
+    <string name="shows_not_group">Content related</string>
+    <string name="updates_channel_title">App updates</string>
+    <string name="updates_channel_description">Checks for app version updates at a daily basis.</string>
+    <string name="updates_schedule_title">New episodes</string>
+    <string name="updates_schedule_description">Checks for new episodes for shows you\'re currently watching.</string>
+    <string name="updates_reports_title">Reports feedback</string>
+    <string name="updates_reports_description">Notifies about responses, and/or resolutions to submitted reports.</string>
+</resources>

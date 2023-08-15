@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.gui;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +18,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class WelcomeModalBottomSheet extends BottomSheetDialogFragment {
     public static String TAG = "WelcomeBottomModalSheet";
     private BottomSheetWelcomeBinding binding;
+    private Callback callback = null;
 
     public WelcomeModalBottomSheet() {
+    }
+
+    public WelcomeModalBottomSheet(Callback c) {
+        callback = c;
     }
 
     @Nullable
@@ -63,5 +69,16 @@ public class WelcomeModalBottomSheet extends BottomSheetDialogFragment {
         binding.goButton.setOnClickListener(v ->
            dismiss()
         );
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+
+        if (callback != null) callback.onDismiss();
+    }
+
+    public interface Callback {
+        void onDismiss();
     }
 }

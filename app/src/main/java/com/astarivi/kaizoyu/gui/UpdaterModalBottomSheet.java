@@ -19,7 +19,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 // TODO: Check if immersive mode hasn't messed this up.
 public class UpdaterModalBottomSheet extends BottomSheetDialogFragment {
-    public static String TAG = "UpdaterBottomModalSheet";
+    public static final String TAG = "UpdaterBottomModalSheet";
     private BottomSheetUpdaterBinding binding;
     private final ResultListener listener;
     private final UpdateManager.LatestUpdate update;

@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
@@ -141,7 +142,8 @@ public class ScheduleFragment extends TabFragment {
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
         adapter = new ScheduleRecyclerAdapter(anime -> {
-            Intent intent = new Intent(getActivity(), AnimeDetailsActivity.class);
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
             intent.putExtra("anime", anime);
             intent.putExtra("type", ModelType.Anime.SEASONAL.name());
             startActivity(intent);

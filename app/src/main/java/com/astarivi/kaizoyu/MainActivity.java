@@ -1,10 +1,15 @@
 package com.astarivi.kaizoyu;
 
+import android.Manifest;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.graphics.Insets;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
@@ -18,6 +23,7 @@ import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.ActivityMainBinding;
+import com.astarivi.kaizoyu.gui.NotificationModalBottomSheet;
 import com.astarivi.kaizoyu.gui.UpdaterModalBottomSheet;
 import com.astarivi.kaizoyu.gui.WelcomeModalBottomSheet;
 import com.astarivi.kaizoyu.gui.adapters.TabAdapter;
@@ -34,6 +40,8 @@ import java.text.ParseException;
 public class MainActivity extends AppCompatActivityTheme {
     private ActivityMainBinding binding;
     private TabLayout tabLayout;
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {});
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +98,14 @@ public class MainActivity extends AppCompatActivityTheme {
 
         ExtendedProperties appSettings = Data.getProperties(Data.CONFIGURATION.APP);
 
-        if (appSettings.getBooleanProperty("first_time", true)) {
-            WelcomeModalBottomSheet welcomeModalBottomSheet = new WelcomeModalBottomSheet();
+        boolean isFirstTime = appSettings.getBooleanProperty("first_time", true);
+
+        if (isFirstTime) {
+            WelcomeModalBottomSheet welcomeModalBottomSheet = new WelcomeModalBottomSheet(() -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    checkForNotificationsPermission();
+                }
+            });
 
             welcomeModalBottomSheet.show(getSupportFragmentManager(), WelcomeModalBottomSheet.TAG);
 
@@ -122,7 +136,8 @@ public class MainActivity extends AppCompatActivityTheme {
 
                         if (result == UpdaterModalBottomSheet.Result.UPDATE_NOW) {
                             appProperties.setProperty("skip_version", "false");
-                            Intent intent = new Intent(this, UpdaterActivity.class);
+                            Intent intent = new Intent();
+                            intent.setClassName(BuildConfig.APPLICATION_ID, UpdaterActivity.class.getName());
                             intent.putExtra("latestUpdate", update);
                             startActivity(intent);
                         }
@@ -137,6 +152,10 @@ public class MainActivity extends AppCompatActivityTheme {
                     modalBottomSheet.show(getSupportFragmentManager(), UpdaterModalBottomSheet.TAG);
                 });
             });
+        }
+
+        if (!isFirstTime && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkForNotificationsPermission();
         }
     }
 
@@ -171,6 +190,19 @@ public class MainActivity extends AppCompatActivityTheme {
         }
 
         super.onBackPressed();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    private void checkForNotificationsPermission() {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+            NotificationModalBottomSheet notificationModalBottomSheet = new NotificationModalBottomSheet(() ->
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            );
+
+            notificationModalBottomSheet.show(getSupportFragmentManager(), NotificationModalBottomSheet.TAG);
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
     }
 
     private void configureTabAdapter(){

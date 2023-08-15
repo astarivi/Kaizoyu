@@ -3,6 +3,7 @@ package com.astarivi.kaizoyu;
 import android.app.Application;
 import android.content.Context;
 
+import com.astarivi.kaizoyu.core.common.NotificationsHub;
 import com.google.android.material.color.DynamicColors;
 
 import org.acra.ACRA;
@@ -57,6 +58,8 @@ public class KaizoyuApplication extends Application {
                                 .build()
                 )
         );
+
+        NotificationsHub.initialize();
     }
 
     private void checkDynamicColors() {

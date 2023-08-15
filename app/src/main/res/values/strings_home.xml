@@ -26,4 +26,12 @@
     <string name="fw_pref_autofav">Would you like to save everything you watch automatically?</string>
     <string name="fw_end">That is all, thanks for your time!\nWe hope you enjoy the app.\n\nIf you experience any issues, or want to provide your valuable feedback to us, you may find our media links at the `More` tab.</string>
     <string name="fw_end_button">Let\'s go</string>
+    <string name="fw_nt_title">Enable Notifications?</string>
+    <string name="fw_nt_description">
+        We use notifications to tell you about new releases from shows you\'re following, app updates, report results and more.
+        \n\nDon\'t worry, our notifications will never fill your inbox with junk.
+    </string>
+    <string name="fw_nt_confirm">Sure</string>
+    <string name="fw_nt_deny">Nope</string>
+
 </resources>
