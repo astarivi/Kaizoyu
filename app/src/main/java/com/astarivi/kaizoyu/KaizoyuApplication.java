@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.astarivi.kaizoyu.core.common.NotificationsHub;
+import com.astarivi.kaizoyu.core.threading.workers.WorkerInitializers;
 import com.google.android.material.color.DynamicColors;
 
 import org.acra.ACRA;
@@ -60,6 +61,7 @@ public class KaizoyuApplication extends Application {
         );
 
         NotificationsHub.initialize();
+        WorkerInitializers.queueWorkers(this);
     }
 
     private void checkDynamicColors() {

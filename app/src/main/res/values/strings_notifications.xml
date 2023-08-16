@@ -9,4 +9,6 @@
     <string name="updates_schedule_description">Checks for new episodes for shows you\'re currently watching.</string>
     <string name="updates_reports_title">Reports feedback</string>
     <string name="updates_reports_description">Notifies about responses, and/or resolutions to submitted reports.</string>
+    <string name="updates_not_title">New Kaizoyu! update available</string>
+    <string name="updates_not_desc">Update %s is out now and ready to be downloaded and installed!</string>
 </resources>

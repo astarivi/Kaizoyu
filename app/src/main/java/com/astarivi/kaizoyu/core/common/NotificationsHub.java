@@ -1,5 +1,7 @@
 package com.astarivi.kaizoyu.core.common;
 
+import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
@@ -7,9 +9,12 @@ import android.content.Context;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.R;
+
+import org.tinylog.Logger;
 
 import lombok.Getter;
 
@@ -34,7 +39,7 @@ public class NotificationsHub {
             NotificationChannel updatesChannel = new NotificationChannel(
                     Channel.APP_UPDATES.getValue(),
                     context.getString(R.string.updates_channel_title),
-                    NotificationManager.IMPORTANCE_MIN
+                    NotificationManager.IMPORTANCE_LOW
             );
 
             updatesChannel.setDescription(
@@ -101,6 +106,24 @@ public class NotificationsHub {
         }
 
         return true;
+    }
+
+    @SuppressLint("MissingPermission")
+    public static void notifyRegardless(Context context, int id, Notification notification) {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        try {
+            notificationManager.notify(id, notification);
+        } catch(Exception e) {
+            Logger.error("Error sending notification id {}", id);
+            Logger.error(e);
+
+            AnalyticsClient.onError(
+                    "notification_error",
+                    "Couldn't send notification due to an error at NotificationsHub",
+                    e
+            );
+        }
     }
 
     public enum Channel {

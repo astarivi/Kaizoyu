@@ -17,6 +17,7 @@ import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.ActivityUpdaterBinding;
+import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.zparc.Zparc;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -40,6 +41,8 @@ public class UpdaterActivity extends AppCompatActivityTheme {
 
         binding = ActivityUpdaterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        Data.getProperties(Data.CONFIGURATION.APP).setProperty("skip_version", "false");
 
         Zparc spark = new Zparc.Builder(this)
                 .setView(binding.getRoot())
