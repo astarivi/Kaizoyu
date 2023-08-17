@@ -65,6 +65,7 @@ public class UpdatePeriodicWorker extends Worker {
                         String.format(context.getString(R.string.updates_not_desc), latestUpdate.version)
                 )
                 .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setAutoCancel(true)
                 .setContentIntent(
                         PendingIntent.getActivity(
                                 context,

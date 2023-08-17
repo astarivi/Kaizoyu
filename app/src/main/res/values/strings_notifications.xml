@@ -16,7 +16,7 @@
     <string name="ne_not_title_long">New episode available for a show you\'re following</string>
     <string name="ne_not_title_long_desc">Episode %d of %s\n</string>
     <string name="ne_not_title_long_end_s">Is out now, watch it now in Kaizoyu!</string>
-    <string name="ne_not_title_long_end">They\'re all available, watch them now in Kaizoyu!</string>
+    <string name="ne_not_title_long_end">Watch them now in Kaizoyu!</string>
     <string name="ne_not_title_mult">New episodes available for several shows you\'re following</string>
     <string name="ne_not_title_mult_sub">There are %d new episodes available.</string>
 </resources>

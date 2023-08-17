@@ -154,6 +154,7 @@ public class EpisodePeriodicWorker extends Worker {
                             .setContentTitle(title)
                             .setContentText(description)
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            .setAutoCancel(true)
                             .setContentIntent(
                                     PendingIntent.getActivity(
                                             context,
@@ -184,7 +185,7 @@ public class EpisodePeriodicWorker extends Worker {
 
         Intent intent = new Intent();
         intent.setClassName(BuildConfig.APPLICATION_ID, SharedLibraryActivity.class.getName());
-        intent.putExtra("local_type", ModelType.LocalAnime.FAVORITE.getValue());
+        intent.putExtra("local_type", ModelType.LocalAnime.FAVORITE.name());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
@@ -201,11 +202,12 @@ public class EpisodePeriodicWorker extends Worker {
                                 notifications.size()
                         ))
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setAutoCancel(true)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(description))
                         .setContentIntent(
                                 taskStackBuilder.getPendingIntent(
-                                        0,
+                                        10,
                                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
                                 )
                         ).build()

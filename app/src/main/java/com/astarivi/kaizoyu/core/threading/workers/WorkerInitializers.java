@@ -8,11 +8,15 @@ import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import org.acra.ACRA;
+
 import java.util.concurrent.TimeUnit;
 
 
 public class WorkerInitializers {
     public static void queueWorkers(Context context) {
+        if (ACRA.isACRASenderServiceProcess()) return;
+
         PeriodicWorkRequest updateWorkRequest = new PeriodicWorkRequest.Builder(
                 UpdatePeriodicWorker.class,
                 24,

@@ -16,7 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
     >
-
         <provider
             android:authorities="@string/provider_authority"
             android:name="androidx.core.content.FileProvider"
