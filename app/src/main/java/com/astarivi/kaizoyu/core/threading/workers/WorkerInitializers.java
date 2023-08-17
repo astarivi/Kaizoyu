@@ -13,25 +13,46 @@ import java.util.concurrent.TimeUnit;
 
 public class WorkerInitializers {
     public static void queueWorkers(Context context) {
-        Constraints constraints = new Constraints.Builder()
-                .setRequiresDeviceIdle(false)
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-
-        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
+        PeriodicWorkRequest updateWorkRequest = new PeriodicWorkRequest.Builder(
                 UpdatePeriodicWorker.class,
                 24,
                 TimeUnit.HOURS,
                 6,
                 TimeUnit.HOURS
         ).setConstraints(
-                constraints
+                new Constraints.Builder()
+                        .setRequiresDeviceIdle(false)
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
         ).build();
 
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        PeriodicWorkRequest episodeWorkRequest = new PeriodicWorkRequest.Builder(
+                EpisodePeriodicWorker.class,
+                // TODO: Change this to 6 hours before release
+                2,
+                TimeUnit.HOURS,
+                1,
+                TimeUnit.HOURS
+        ).setConstraints(
+                new Constraints.Builder()
+                        .setRequiresDeviceIdle(false)
+                        .setRequiredNetworkType(NetworkType.UNMETERED)
+                        .setRequiresBatteryNotLow(true)
+                        .build()
+        ).build();
+
+        WorkManager workManager = WorkManager.getInstance(context);
+
+        workManager.enqueueUniquePeriodicWork(
                 "update_task",
                 ExistingPeriodicWorkPolicy.UPDATE,
-                workRequest
+                updateWorkRequest
+        );
+
+        workManager.enqueueUniquePeriodicWork(
+                "episode_task",
+                ExistingPeriodicWorkPolicy.UPDATE,
+                episodeWorkRequest
         );
     }
 }

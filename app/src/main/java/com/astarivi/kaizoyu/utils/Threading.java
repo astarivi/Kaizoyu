@@ -7,6 +7,7 @@ import com.astarivi.kaizoyu.core.threading.ThreadingAssistant;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -37,4 +38,13 @@ public class Threading {
         DATABASE, INSTANT
     }
 
+    public static class forResult {
+        public static <T> Future<T> fromTask(@NotNull TASK type, @NotNull Callable<T> task) {
+            if (type == TASK.DATABASE) {
+                return ThreadingAssistant.getInstance().getDatabaseThread().submit(task);
+            } else {
+                return ThreadingAssistant.getInstance().getInstantThread().submit(task);
+            }
+        }
+    }
 }

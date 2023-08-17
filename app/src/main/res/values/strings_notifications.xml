@@ -11,4 +11,12 @@
     <string name="updates_reports_description">Notifies about responses, and/or resolutions to submitted reports.</string>
     <string name="updates_not_title">New Kaizoyu! update available</string>
     <string name="updates_not_desc">Update %s is out now and ready to be downloaded and installed!</string>
+    <string name="ne_not_title">Ep %d of %s is out!</string>
+    <string name="ne_not_title_desc">Watch it now in Kaizoyu!</string>
+    <string name="ne_not_title_long">New episode available for a show you\'re following</string>
+    <string name="ne_not_title_long_desc">Episode %d of %s\n</string>
+    <string name="ne_not_title_long_end_s">Is out now, watch it now in Kaizoyu!</string>
+    <string name="ne_not_title_long_end">They\'re all available, watch them now in Kaizoyu!</string>
+    <string name="ne_not_title_mult">New episodes available for several shows you\'re following</string>
+    <string name="ne_not_title_mult_sub">There are %d new episodes available.</string>
 </resources>

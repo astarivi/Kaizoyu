@@ -11,4 +11,11 @@ public class Migrations {
             database.execSQL("ALTER TABLE favorite_anime ADD COLUMN type INTEGER NOT NULL DEFAULT 1");
         }
     };
+
+    public static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE seen_episode ADD COLUMN notified INTEGER NOT NULL DEFAULT 0");
+        }
+    };
 }

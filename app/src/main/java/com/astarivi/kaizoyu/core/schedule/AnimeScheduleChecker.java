@@ -39,7 +39,7 @@ public class AnimeScheduleChecker {
         return null;
     }
 
-    private static @Nullable List<Integer> fetchIds() {
+    public static @Nullable List<Integer> fetchIds() {
         String body = WebAdapter.getJSON(
                 new HttpUrl.Builder()
                         .scheme("https")

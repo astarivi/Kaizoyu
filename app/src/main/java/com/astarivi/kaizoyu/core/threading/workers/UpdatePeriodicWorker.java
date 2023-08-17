@@ -29,7 +29,11 @@ public class UpdatePeriodicWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        if (!NotificationsHub.canSendNotification(channel))
+        if (NotificationsHub.areNotificationDisabled(channel))
+            return Result.success();
+
+        if (!Data.getProperties(Data.CONFIGURATION.APP)
+                .getBooleanProperty("autoupdate", true))
             return Result.success();
 
         Context context = getApplicationContext();

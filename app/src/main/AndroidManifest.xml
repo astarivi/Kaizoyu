@@ -68,6 +68,7 @@
         <activity
             android:name=".gui.library.watching.SharedLibraryActivity"
             android:label="SharedLibraryActivity"
+            android:parentActivityName=".MainActivity"
         />
         <activity
             android:name=".updater.UpdaterActivity"

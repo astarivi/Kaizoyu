@@ -21,91 +21,93 @@ import lombok.Getter;
 
 public class NotificationsHub {
     public static void initialize() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
+
         Context context = KaizoyuApplication.getContext();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
 
-            // App group
+        // App group
 
-            notificationManager.createNotificationChannelGroup(
-                    new NotificationChannelGroup(
-                            Group.PLATFORM.getValue(),
-                            context.getString(R.string.app_not_group)
-                    )
-            );
+        notificationManager.createNotificationChannelGroup(
+                new NotificationChannelGroup(
+                        Group.PLATFORM.getValue(),
+                        context.getString(R.string.app_not_group)
+                )
+        );
 
-            // Updates
-            NotificationChannel updatesChannel = new NotificationChannel(
-                    Channel.APP_UPDATES.getValue(),
-                    context.getString(R.string.updates_channel_title),
-                    NotificationManager.IMPORTANCE_LOW
-            );
+        // Updates
+        NotificationChannel updatesChannel = new NotificationChannel(
+                Channel.APP_UPDATES.getValue(),
+                context.getString(R.string.updates_channel_title),
+                NotificationManager.IMPORTANCE_LOW
+        );
 
-            updatesChannel.setDescription(
-                    context.getString(R.string.updates_channel_description)
-            );
+        updatesChannel.setDescription(
+                context.getString(R.string.updates_channel_description)
+        );
 
-            updatesChannel.setGroup(Group.PLATFORM.getValue());
+        updatesChannel.setGroup(Group.PLATFORM.getValue());
 
-            notificationManager.createNotificationChannel(updatesChannel);
+        notificationManager.createNotificationChannel(updatesChannel);
 
-            // Reports
-            NotificationChannel reportsChannel = new NotificationChannel(
-                    Channel.APP_REPORTS.getValue(),
-                    context.getString(R.string.updates_reports_title),
-                    NotificationManager.IMPORTANCE_LOW
-            );
+        // Reports
+        NotificationChannel reportsChannel = new NotificationChannel(
+                Channel.APP_REPORTS.getValue(),
+                context.getString(R.string.updates_reports_title),
+                NotificationManager.IMPORTANCE_LOW
+        );
 
-            reportsChannel.setDescription(
-                    context.getString(R.string.updates_reports_description)
-            );
+        reportsChannel.setDescription(
+                context.getString(R.string.updates_reports_description)
+        );
 
-            reportsChannel.setGroup(Group.PLATFORM.getValue());
+        reportsChannel.setGroup(Group.PLATFORM.getValue());
 
-            notificationManager.createNotificationChannel(reportsChannel);
+        notificationManager.createNotificationChannel(reportsChannel);
 
-            // Content group
-            notificationManager.createNotificationChannelGroup(
-                    new NotificationChannelGroup(
-                            Group.CONTENT.getValue(),
-                            context.getString(R.string.shows_not_group)
-                    )
-            );
+        // Content group
+        notificationManager.createNotificationChannelGroup(
+                new NotificationChannelGroup(
+                        Group.CONTENT.getValue(),
+                        context.getString(R.string.shows_not_group)
+                )
+        );
 
-            // Episodes
-            NotificationChannel episodesChannel = new NotificationChannel(
-                    Channel.EPISODES.getValue(),
-                    context.getString(R.string.updates_schedule_title),
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
+        // Episodes
+        NotificationChannel episodesChannel = new NotificationChannel(
+                Channel.EPISODES.getValue(),
+                context.getString(R.string.updates_schedule_title),
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
 
-            episodesChannel.setDescription(
-                    context.getString(R.string.updates_schedule_description)
-            );
+        episodesChannel.setDescription(
+                context.getString(R.string.updates_schedule_description)
+        );
 
-            episodesChannel.setGroup(Group.CONTENT.getValue());
+        episodesChannel.setGroup(Group.CONTENT.getValue());
 
-            notificationManager.createNotificationChannel(episodesChannel);
-        }
+        notificationManager.createNotificationChannel(episodesChannel);
     }
 
-    public static boolean canSendNotification(Channel channel) {
+    public static boolean areNotificationDisabled(Channel channel) {
         NotificationManager notificationManager = KaizoyuApplication.getContext().getSystemService(NotificationManager.class);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = notificationManager.getNotificationChannel(channel.getValue());
 
-            if (notificationChannel == null) return false;
+            if (notificationChannel == null) return true;
 
-            return notificationManager.areNotificationsEnabled() && notificationChannel.getImportance() != NotificationManager.IMPORTANCE_NONE;
+            return !notificationManager.areNotificationsEnabled() || notificationChannel.getImportance() == NotificationManager.IMPORTANCE_NONE;
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return notificationManager.areNotificationsEnabled();
+            return !notificationManager.areNotificationsEnabled();
         }
 
-        return true;
+        return false;
     }
 
     @SuppressLint("MissingPermission")

@@ -9,26 +9,31 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 
+
+@Getter
 public class ThreadingAssistant {
-    private static volatile ThreadingAssistant instance = null;
+    @Getter(AccessLevel.NONE)
+    private static volatile ThreadingAssistant _instance = null;
     private final ExecutorService databaseThread = Executors.newSingleThreadExecutor();
     private final ExecutorService instantThread = Executors.newCachedThreadPool();
     private final ScheduledExecutorService scheduledThread = Executors.newSingleThreadScheduledExecutor();
 
     private ThreadingAssistant() {
-        if (instance != null) {
+        if (_instance != null) {
             throw new RuntimeException("Duplicated singleton ThreadingAssistant");
         }
     }
 
     public static @NotNull ThreadingAssistant getInstance() {
-        if (instance == null) {
+        if (_instance == null) {
             synchronized (ThreadingAssistant.class) {
-                if (instance == null) instance = new ThreadingAssistant();
+                if (_instance == null) _instance = new ThreadingAssistant();
             }
         }
-        return instance;
+        return _instance;
     }
 
     public Future<?> submitToInstantThread(Runnable download){
@@ -51,8 +56,8 @@ public class ThreadingAssistant {
             instantThread.shutdownNow();
             scheduledThread.shutdownNow();
             instantThread.awaitTermination(2, TimeUnit.SECONDS);
-            databaseThread.awaitTermination(40, TimeUnit.SECONDS);
             scheduledThread.awaitTermination(2, TimeUnit.SECONDS);
+            databaseThread.awaitTermination(40, TimeUnit.SECONDS);
         } catch (Throwable th) {
             throw th;
         } finally {

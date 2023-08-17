@@ -66,7 +66,8 @@ public class PersistenceRepository {
                 AppDatabase.class,
                 "kaizo-database"
         ).addMigrations(
-                Migrations.MIGRATION_1_2
+                Migrations.MIGRATION_1_2,
+                Migrations.MIGRATION_2_3
         ).build(
         );
 
