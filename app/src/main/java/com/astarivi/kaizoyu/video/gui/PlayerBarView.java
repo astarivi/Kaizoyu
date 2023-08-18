@@ -235,7 +235,7 @@ public class PlayerBarView extends LinearLayout {
 
         skipIntro.setOnClickListener(v -> {
             isInteractive = true;
-            skipAmount(90000, true);
+            skipAmount(85000, true);
             // Update immediately
             binding.currentTime.setText(
                     verboseMillisecondsToDuration(

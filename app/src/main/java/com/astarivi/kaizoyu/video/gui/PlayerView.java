@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 
 import com.astarivi.kaizoyu.databinding.PlayerBinding;
+import com.astarivi.kaizoyu.utils.Threading;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
@@ -17,6 +18,10 @@ import org.videolan.libvlc.MediaPlayer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import in.basulabs.audiofocuscontroller.AudioFocusController;
 
@@ -129,7 +134,19 @@ public class PlayerView extends LinearLayout {
 
         mediaPlayer.pause();
         mediaPlayer.setMedia(null);
-        mediaPlayer.release();
+        mediaPlayer.detachViews();
+
+        Future<?> releaseFuture = Threading.submitTask(Threading.TASK.INSTANT, () ->
+                mediaPlayer.release()
+        );
+
+        // FIXME: Investigate further
+        try {
+            releaseFuture.get(5, TimeUnit.SECONDS);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            releaseFuture.cancel(true);
+        }
+
         mediaPlayer = null;
     }
 

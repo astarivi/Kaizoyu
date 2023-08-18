@@ -110,7 +110,10 @@ dependencies {
     implementation 'com.github.WrichikBasu:AudioFocusController:v2.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
     implementation 'com.github.astarivi:Zparc:4a06b815c4'
-    implementation 'org.videolan.android:libvlc-all:4.0.0-eap12'
+    //noinspection GradleDependency
+    implementation ('org.videolan.android:libvlc-all:4.0.0-eap11') {
+        because 'EAP12 HWA chroma blending is broken (RGBA -> ANOP). Subtitles will not work'
+    }
     implementation 'com.airbnb.android:lottie:6.0.0'
     implementation 'com.github.bumptech.glide:glide:4.15.1'
     implementation 'com.github.bumptech.glide:recyclerview-integration:4.15.1'
