@@ -85,6 +85,7 @@ public class EpisodePeriodicWorker extends Worker {
         }
 
         ArrayList<NewEpisodeNotification> notifications = new ArrayList<>();
+        ArrayList<Integer> episodeIds = new ArrayList<>();
 
         for (AssistedScheduleFetcher.ScheduledAnime anime : scheduledAnime) {
             if (anime.episode == 0 || anime.episode == -1) continue;
@@ -94,16 +95,20 @@ public class EpisodePeriodicWorker extends Worker {
             if (animeUserIsWatching == null) continue;
 
             int lastSeen = 0;
+            SeenEpisode lastEpisode = null;
 
             for (SeenEpisode seenEpisode : animeUserIsWatching.episodes) {
-                if (seenEpisode.episode.episodeNumber > lastSeen) lastSeen = seenEpisode.episode.episodeNumber;
+                if (seenEpisode.episode.episodeNumber > lastSeen) {
+                    lastSeen = seenEpisode.episode.episodeNumber;
+                    lastEpisode = seenEpisode;
+                }
             }
 
-            if (lastSeen == 0 || lastSeen + 1 != anime.episode) continue;
+            if (lastSeen == 0 || lastSeen + 1 != anime.episode || lastEpisode.notified) continue;
+
+            episodeIds.add(lastEpisode.id);
 
             final LocalAnime localAnime = animeUserIsWatching.anime.toLocalAnime(ModelType.LocalAnime.FAVORITE);
-
-            // TODO: Mark the episode as already notified, or look for another workaround
 
             notifications.add(
                     new NewEpisodeNotification(
@@ -112,10 +117,23 @@ public class EpisodePeriodicWorker extends Worker {
                     )
             );
         }
-
         Context context = getApplicationContext();
 
         if (notifications.isEmpty()) return Result.success();
+
+        try {
+            Threading.submitTask(Threading.TASK.DATABASE, () ->
+                Data.getRepositories()
+                        .getSeenAnimeRepository()
+                        .getSeenEpisodeDao()
+                        .setNotified(true, episodeIds)
+            ).get();
+        } catch (ExecutionException | InterruptedException e) {
+            Logger.error("Interrupted while updating database");
+            Logger.error(e);
+
+            return Result.failure();
+        }
 
         // Single notification
         if (notifications.size() == 1) {
