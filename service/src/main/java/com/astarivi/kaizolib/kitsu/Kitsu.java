@@ -52,7 +52,7 @@ public class Kitsu {
     public @NotNull KitsuAnime getAnimeById(int id) throws NetworkConnectionException, NoResponseException, ParsingException, NoResultsException {
         String responseContent = HttpMethods.get(client, KitsuUtils.buildIdUri(id), CommonHeaders.KITSU_HEADERS);
 
-        KitsuResourceResult animeResult = ParseJson.parseAnimeResource(responseContent);
+        KitsuResourceResult animeResult = ParseJson.parseGeneric(responseContent, KitsuResourceResult.class);
 
         if (animeResult.data == null) {
             Logger.debug("Kitsu URL {} yielded no results. (Anime search)");
@@ -185,7 +185,7 @@ public class Kitsu {
     {
         String responseContent = HttpMethods.get(client, url, CommonHeaders.KITSU_HEADERS);
 
-        KitsuEpisodeResults episodeResult = ParseJson.parseEpisodes(responseContent);
+        KitsuEpisodeResults episodeResult = ParseJson.parseGeneric(responseContent, KitsuEpisodeResults.class);
 
         if (episodeResult.data == null || episodeResult.data.isEmpty()) {
             Logger.debug("Kitsu URL {} yielded no results. (Episode search)");
@@ -203,7 +203,7 @@ public class Kitsu {
     {
         String responseContent = HttpMethods.get(client, url, CommonHeaders.KITSU_HEADERS);
 
-        KitsuSearchResults animeResult = ParseJson.parseAnime(responseContent);
+        KitsuSearchResults animeResult = ParseJson.parseGeneric(responseContent, KitsuSearchResults.class);
 
         if (animeResult.data == null || animeResult.data.isEmpty()) {
             Logger.debug("Kitsu URL {} yielded no results. (Anime search)");

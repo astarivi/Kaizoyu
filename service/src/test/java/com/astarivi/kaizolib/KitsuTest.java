@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.astarivi.kaizolib.common.network.UserHttpClient;
 import com.astarivi.kaizolib.kitsu.Kitsu;
+import com.astarivi.kaizolib.kitsu.KitsuRelations;
 import com.astarivi.kaizolib.kitsu.KitsuSearchParams;
 import com.astarivi.kaizolib.kitsu.KitsuUtils;
 import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
@@ -14,6 +15,7 @@ import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
 import com.astarivi.kaizolib.kitsu.exception.NoResultsException;
 import com.astarivi.kaizolib.kitsu.exception.ParsingException;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizolib.kitsu.model.KitsuCategories;
 import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
 
 import org.junit.jupiter.api.AfterAll;
@@ -28,11 +30,13 @@ import java.util.List;
 public class KitsuTest {
     private static UserHttpClient userHttpClient;
     private static Kitsu kitsu;
+    private static KitsuRelations relations;
 
     @BeforeAll
     static void setup() {
         userHttpClient = new UserHttpClient();
         kitsu = new Kitsu(userHttpClient);
+        relations = new KitsuRelations(userHttpClient);
     }
 
     @Test
@@ -47,6 +51,13 @@ public class KitsuTest {
         assertEquals("Chainsaw Man", anime.attributes.canonicalTitle);
         assertEquals("Chainsaw Man", anime.attributes.titles.en);
         assertEquals("2022-10-11", anime.attributes.startDate);
+    }
+
+    @Test
+    @DisplayName("Kitsu relations - Categories")
+    void testKitsuRelationsCategories() throws NetworkConnectionException, ParsingException, NoResponseException, NoResultsException {
+        List<KitsuCategories> categories = relations.getKitsuCategories(13);
+        assertNotNull(categories);
     }
 
     @Test
@@ -182,6 +193,7 @@ public class KitsuTest {
     @AfterAll
     static void finish() {
         userHttpClient.close();
+        relations = null;
         kitsu = null;
     }
 

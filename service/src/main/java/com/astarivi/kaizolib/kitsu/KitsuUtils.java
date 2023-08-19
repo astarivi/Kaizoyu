@@ -16,6 +16,16 @@ public class KitsuUtils {
                 .build();
     }
 
+    public static @NotNull HttpUrl buildCategoriesUri(int id) {
+        return new HttpUrl.Builder()
+                .scheme("https")
+                .host("kitsu.io")
+                .addPathSegments("api/edge/anime")
+                .addPathSegment(Integer.toString(id))
+                .addPathSegment("categories")
+                .build();
+    }
+
     public static @NotNull HttpUrl buildIdUri(int id) {
         return new HttpUrl.Builder()
                 .scheme("https")

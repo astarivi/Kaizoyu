@@ -312,6 +312,8 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                     message,
                     Snackbar.LENGTH_LONG
             ).show();
+
+            if (!isPlaying) delayedExit();
         });
 
         // Handle state

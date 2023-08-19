@@ -32,10 +32,9 @@ public class WorkerInitializers {
 
         PeriodicWorkRequest episodeWorkRequest = new PeriodicWorkRequest.Builder(
                 EpisodePeriodicWorker.class,
-                // TODO: Change this to 6 hours before release
-                2,
+                6,
                 TimeUnit.HOURS,
-                1,
+                2,
                 TimeUnit.HOURS
         ).setConstraints(
                 new Constraints.Builder()
