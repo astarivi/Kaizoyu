@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizolib.kitsu.model.KitsuCategory;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeInfoBinding;
@@ -20,9 +22,12 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 
 public class AnimeInfoFragment extends Fragment {
     private FragmentAnimeInfoBinding binding;
+    private AnimeInfoViewModel viewModel;
     private Anime anime;
 
     public AnimeInfoFragment() {
@@ -38,11 +43,11 @@ public class AnimeInfoFragment extends Fragment {
         binding = FragmentAnimeInfoBinding.inflate(inflater, container, false);
 
         if (getArguments() != null) {
-            anime = (Anime) Utils.getAnimeFromBundle(getArguments(), ModelType.Anime.BASE);
+            anime = Utils.getAnimeFromBundle(getArguments(), ModelType.Anime.BASE);
         }
 
         if (savedInstanceState != null && anime == null){
-            anime = (Anime) Utils.getAnimeFromBundle(savedInstanceState, ModelType.Anime.BASE);
+            anime = Utils.getAnimeFromBundle(savedInstanceState, ModelType.Anime.BASE);
         }
 
         return binding.getRoot();
@@ -50,7 +55,11 @@ public class AnimeInfoFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        viewModel = new ViewModelProvider(this).get(AnimeInfoViewModel.class);
+
         KitsuAnime kitsuAnime = anime.getKitsuAnime();
+
+        binding.categoriesContainer.setVisibility(View.GONE);
 
         binding.animeSynopsis.setText(kitsuAnime.attributes.synopsis);
 
@@ -94,17 +103,19 @@ public class AnimeInfoFragment extends Fragment {
             binding.trailerCard.setVisibility(View.GONE);
         }
 
-        // TODO Add extra metadata here
-//        if (!(anime instanceof LocalAnime)) {
-//
-//        } else {
-//            binding.infoCard.setVisibility(View.GONE);
-//        }
+        viewModel.getCategories().observe(getViewLifecycleOwner(), this::makeCategoryChips);
+
+        viewModel.initialize(anime);
+    }
+
+    private void makeCategoryChips(List<KitsuCategory> categories) {
+
     }
 
     @Override
     public void onDestroy() {
         binding.youtubePlayer.release();
+        if (viewModel != null) viewModel.destroy();
         super.onDestroy();
     }
 

@@ -15,7 +15,7 @@ import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
 import com.astarivi.kaizolib.kitsu.exception.NoResultsException;
 import com.astarivi.kaizolib.kitsu.exception.ParsingException;
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
-import com.astarivi.kaizolib.kitsu.model.KitsuCategories;
+import com.astarivi.kaizolib.kitsu.model.KitsuCategory;
 import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
 
 import org.junit.jupiter.api.AfterAll;
@@ -56,7 +56,7 @@ public class KitsuTest {
     @Test
     @DisplayName("Kitsu relations - Categories")
     void testKitsuRelationsCategories() throws NetworkConnectionException, ParsingException, NoResponseException, NoResultsException {
-        List<KitsuCategories> categories = relations.getKitsuCategories(13);
+        List<KitsuCategory> categories = relations.getKitsuCategories(13);
         assertNotNull(categories);
     }
 

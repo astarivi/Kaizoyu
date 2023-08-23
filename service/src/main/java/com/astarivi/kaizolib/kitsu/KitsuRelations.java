@@ -7,7 +7,7 @@ import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
 import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
 import com.astarivi.kaizolib.kitsu.exception.NoResultsException;
 import com.astarivi.kaizolib.kitsu.exception.ParsingException;
-import com.astarivi.kaizolib.kitsu.model.KitsuCategories;
+import com.astarivi.kaizolib.kitsu.model.KitsuCategory;
 import com.astarivi.kaizolib.kitsu.model.KitsuCategoriesResult;
 import com.astarivi.kaizolib.kitsu.parser.ParseJson;
 
@@ -27,7 +27,7 @@ public class KitsuRelations {
         client = new UserHttpClient();
     }
 
-    public List<KitsuCategories> getKitsuCategories(int kitsuId) throws
+    public List<KitsuCategory> getKitsuCategories(int kitsuId) throws
             NetworkConnectionException,
             NoResponseException,
             ParsingException,

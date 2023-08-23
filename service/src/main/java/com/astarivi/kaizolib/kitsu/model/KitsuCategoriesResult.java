@@ -7,7 +7,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KitsuCategoriesResult {
-    public List<KitsuCategories> data;
+    public List<KitsuCategory> data;
     public KitsuCategoriesMeta meta;
 
     @JsonIgnoreProperties(ignoreUnknown = true)

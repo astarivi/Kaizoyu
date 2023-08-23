@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class KitsuCategories {
+public class KitsuCategory {
     public String id;
     public String type;
     public KitsuCategoriesAttributes attributes;
