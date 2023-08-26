@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.core.theme;
 
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 
@@ -11,6 +12,14 @@ import com.google.android.material.color.MaterialColors;
 
 
 public class Colors {
+    public static @ColorInt int getColorFromString(String string, float saturation, float value) {
+        return Color.HSVToColor(new float[]{
+                (float) Math.abs(string.hashCode() % 360),
+                saturation,
+                value
+        });
+    }
+
     public static @ColorInt int getSemiTransparentStatusBar(View source, @AttrRes int color) {
         return ColorUtils.setAlphaComponent(
                 MaterialColors.getColor(

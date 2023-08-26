@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.details.gui;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,14 +15,19 @@ import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
 import com.astarivi.kaizolib.kitsu.model.KitsuCategory;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
+import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeInfoBinding;
+import com.astarivi.kaizoyu.databinding.ItemChipCategoryBinding;
+import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -109,7 +115,42 @@ public class AnimeInfoFragment extends Fragment {
     }
 
     private void makeCategoryChips(List<KitsuCategory> categories) {
+        Threading.submitTask(Threading.TASK.INSTANT, () -> {
+            ArrayList<View> chipViews = new ArrayList<>();
 
+            LayoutInflater layoutInflater = getLayoutInflater();
+
+            for (KitsuCategory category : categories) {
+                ItemChipCategoryBinding chipBinding = ItemChipCategoryBinding.inflate(
+                        layoutInflater,
+                        null,
+                        false
+                );
+
+                chipBinding.getRoot().setChipBackgroundColor(ColorStateList.valueOf(
+                        Colors.getColorFromString(category.attributes.slug, 0.6F, 0.3F)
+                ));
+
+                chipBinding.getRoot().setText(category.attributes.title);
+
+                chipViews.add(chipBinding.getRoot());
+            }
+
+            if (chipViews.isEmpty()) return;
+
+            binding.getRoot().post(() -> {
+                try {
+                    for (View chip : chipViews) {
+                        binding.categoriesContainer.setVisibility(View.VISIBLE);
+
+                        binding.categoriesChips.addView(chip);
+                    }
+                } catch(Exception e) {
+                    Logger.error("Error while posting categories at show details");
+                    Logger.error(e);
+                }
+            });
+        });
     }
 
     @Override

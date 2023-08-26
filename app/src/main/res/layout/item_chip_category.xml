@@ -9,5 +9,6 @@
     android:checked="false"
     android:fontFamily="@font/lato_regular"
     app:chipBackgroundColor="?attr/colorSurfaceVariant"
+    app:chipStrokeColor="#00FFFFFF"
     android:textColor="?attr/colorOnSurfaceVariant"
 />
