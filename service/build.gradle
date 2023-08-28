@@ -16,9 +16,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.tinylog:tinylog-api:2.6.1'
-    runtimeOnly 'org.tinylog:tinylog-impl:2.6.1'
-    runtimeOnly 'org.tinylog:slf4j-tinylog:2.6.1'
+    implementation 'org.tinylog:tinylog-api:2.6.2'
+    runtimeOnly 'org.tinylog:tinylog-impl:2.6.2'
+    runtimeOnly 'org.tinylog:slf4j-tinylog:2.6.2'
 
     implementation 'org.jetbrains:annotations:24.0.1'
 
@@ -34,7 +34,7 @@ dependencies {
 
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
 }
 
 test {
