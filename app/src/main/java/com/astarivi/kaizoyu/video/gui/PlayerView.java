@@ -134,7 +134,7 @@ public class PlayerView extends LinearLayout {
 
         mediaPlayer.pause();
         mediaPlayer.setMedia(null);
-        mediaPlayer.detachViews();
+//        mediaPlayer.detachViews();
 
         Future<?> releaseFuture = Threading.submitTask(Threading.TASK.INSTANT, () ->
                 mediaPlayer.release()

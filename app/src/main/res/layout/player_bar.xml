@@ -10,7 +10,7 @@
     android:clickable="true"
     android:focusable="true"
 >
-    <SeekBar
+    <com.astarivi.kaizoyu.core.adapters.gui.TickSeekBar
         android:id="@+id/video_progress_bar"
         android:layout_width="match_parent"
         android:layout_height="28dp"
