@@ -2,9 +2,8 @@ package com.astarivi.kaizoyu.core.adapters.gui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 
@@ -12,13 +11,16 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSeekBar;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.astarivi.kaizoyu.R;
+
+import java.util.Arrays;
 
 
 public class TickSeekBar extends AppCompatSeekBar {
     private int[] tickPositions = null;
-    private Bitmap ticksBitmap = null;
+    private Drawable ticksDrawable = null;
 
     public TickSeekBar(@NonNull Context context) {
         super(context);
@@ -53,34 +55,49 @@ public class TickSeekBar extends AppCompatSeekBar {
 
         if (dotsArrayResource != 0) {
             tickPositions = getResources().getIntArray(dotsArrayResource);
+            Arrays.sort(tickPositions);
         }
 
         if (dotDrawableId != 0) {
-            ticksBitmap = BitmapFactory.decodeResource(getResources(), dotDrawableId);
+            ticksDrawable = ResourcesCompat.getDrawable(getResources(), dotDrawableId, null);
         }
     }
 
-    public void setDots(int[] dots) {
-        tickPositions = dots;
+    public void setTicks(int[] dots) {
+        tickPositions = Arrays.copyOf(dots, dots.length);
+        Arrays.sort(tickPositions);
         invalidate();
     }
 
-    public void setDotsDrawable(@DrawableRes int dotsDrawable) {
-        ticksBitmap = BitmapFactory.decodeResource(getResources(), dotsDrawable);
+    public void setTicksDrawable(@DrawableRes int dotsDrawable) {
+        ticksDrawable = ResourcesCompat.getDrawable(getResources(), dotsDrawable, null);
         invalidate();
     }
 
     @Override
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        drawTicks(canvas);
+    }
 
-        float width = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
-        float step = width / (float) (getMax());
+    private void drawTicks(Canvas canvas) {
+        if (tickPositions == null || tickPositions.length == 0 || ticksDrawable == null) return;
 
-        if (tickPositions != null && tickPositions.length != 0 && ticksBitmap != null) {
-            for (int position : tickPositions) {
-                canvas.drawBitmap(ticksBitmap, position * step, 0, null);
-            }
+        final int w = ticksDrawable.getIntrinsicWidth();
+        final int h = ticksDrawable.getIntrinsicHeight();
+        final int halfW = w >= 0 ? w / 2 : 1;
+        final int halfH = h >= 0 ? h / 2 : 1;
+        ticksDrawable.setBounds(-halfW, -halfH, halfW, halfH);
+
+        float spacing = (getMeasuredWidth() - getPaddingLeft() - getPaddingRight()) / ((float) getMax());
+        final int saveCount = canvas.save();
+        canvas.translate(getPaddingLeft(), (float) getHeight() / 2F);
+
+        for (int position : tickPositions) {
+            canvas.translate(position * spacing, 0);
+            ticksDrawable.draw(canvas);
         }
+
+        canvas.restoreToCount(saveCount);
     }
 }
