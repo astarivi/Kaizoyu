@@ -83,19 +83,24 @@ public class TickSeekBar extends AppCompatSeekBar {
     private void drawTicks(Canvas canvas) {
         if (tickPositions == null || tickPositions.length == 0 || ticksDrawable == null) return;
 
+        final int newHeight = getProgressDrawable().getIntrinsicHeight() + 2;
         final int w = ticksDrawable.getIntrinsicWidth();
         final int h = ticksDrawable.getIntrinsicHeight();
-        final int halfW = w >= 0 ? w / 2 : 1;
-        final int halfH = h >= 0 ? h / 2 : 1;
+        final int newWidth = (int) (w * ((float) newHeight / h)) + 8;
+        final int halfW = newWidth >= 0 ? newWidth / 2 : 1;
+        final int halfH = newHeight >= 0 ? newHeight / 2 : 1;
         ticksDrawable.setBounds(-halfW, -halfH, halfW, halfH);
 
         float spacing = (getMeasuredWidth() - getPaddingLeft() - getPaddingRight()) / ((float) getMax());
         final int saveCount = canvas.save();
         canvas.translate(getPaddingLeft(), (float) getHeight() / 2F);
 
+        int positionSum = 0;
+
         for (int position : tickPositions) {
-            canvas.translate(position * spacing, 0);
+            canvas.translate((position - positionSum) * spacing, 0);
             ticksDrawable.draw(canvas);
+            positionSum += position;
         }
 
         canvas.restoreToCount(saveCount);
