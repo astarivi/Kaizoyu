@@ -17,8 +17,11 @@ import com.astarivi.kaizoyu.R;
 
 import java.util.Arrays;
 
+import lombok.Getter;
+
 
 public class TickSeekBar extends AppCompatSeekBar {
+    @Getter
     private int[] tickPositions = null;
     private Drawable ticksDrawable = null;
 

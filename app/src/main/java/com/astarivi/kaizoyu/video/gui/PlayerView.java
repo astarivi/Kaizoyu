@@ -150,12 +150,8 @@ public class PlayerView extends LinearLayout {
         mediaPlayer = null;
     }
 
-    public void showPlayerBar() {
-        binding.playerBar.show();
-    }
-
-    public void forceHidePlayerBar() {
-        binding.playerBar.forceHide();
+    public PlayerBarView getPlayerBar() {
+        return binding.playerBar;
     }
 
     public PlayerSkipView getSkipManager() {

@@ -309,6 +309,9 @@ public class PlayerBarView extends LinearLayout {
 
         binding.hideBar.setOnClickListener(v -> forceHide());
 
+        binding.videoProgressBar.setTicks(new int[]{500});
+        binding.videoProgressBar.setTicksDrawable(R.drawable.player_timestamp);
+
         mediaPlayer.play();
     }
 
@@ -324,6 +327,15 @@ public class PlayerBarView extends LinearLayout {
         }
 
         mediaPlayer.setTime(time, fast);
+    }
+
+    public void setTickFromPosition(int position) {
+        float length = mediaPlayer.getLength();
+        float progress = (float) (((float) position / length) * 1000.0);
+
+        binding.videoProgressBar.setTicks(new int[]{
+                Math.round(Math.min(1000F, Math.max(0F, progress)))
+        });
     }
 
     public void skipAmount(long amountMs, boolean fast) {

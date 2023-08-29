@@ -16,9 +16,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import lombok.Getter;
+
 
 public class AnimeEpisodeManager {
+    @Getter
     private final Anime anime;
+    @Getter
     private final Episode episode;
 
     public AnimeEpisodeManager(Anime anime, Episode episode) {
@@ -70,8 +74,7 @@ public class AnimeEpisodeManager {
             animeType = ModelType.Anime.valueOf(type);
 
             Episode episode = BundleUtils.getEpisodeFromBundle(bundle);
-            // Guaranteed to cast
-            Anime anime = (Anime) Utils.getAnimeFromBundle(bundle, animeType);
+            Anime anime = Utils.getAnimeFromBundle(bundle, animeType);
 
             if (anime == null || episode == null) {
                 throw new IllegalArgumentException("No anime and episode were given");
