@@ -28,6 +28,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import in.basulabs.audiofocuscontroller.AudioFocusController;
+import lombok.Setter;
 
 
 public class PlayerBarView extends LinearLayout {
@@ -40,6 +41,8 @@ public class PlayerBarView extends LinearLayout {
     private String totalDuration;
     private PlayerView.PlayerEventListener playerEventListener;
     private AudioFocusController audioController;
+    @Setter
+    private int tickTimestamp = -1;
 
     // region Constructors
 
@@ -199,6 +202,7 @@ public class PlayerBarView extends LinearLayout {
                     totalDuration = verboseMillisecondsToDuration(
                             event.getLengthChanged()
                     );
+                    invalidateTicks();
                     break;
             }
         });
@@ -329,9 +333,12 @@ public class PlayerBarView extends LinearLayout {
         mediaPlayer.setTime(time, fast);
     }
 
-    public void setTickFromPosition(int position) {
+    public void invalidateTicks() {
         float length = mediaPlayer.getLength();
-        float progress = (float) (((float) position / length) * 1000.0);
+
+        if (length == 0 || tickTimestamp == -1) return;
+
+        float progress = (float) (((float) tickTimestamp / length) * 1000.0);
 
         binding.videoProgressBar.setTicks(new int[]{
                 Math.round(Math.min(1000F, Math.max(0F, progress)))

@@ -125,6 +125,7 @@ public class PlayerView extends LinearLayout {
         binding.videoFrame.setVisibility(View.VISIBLE);
         playerBar.initialize(binding.darkOverlay, listener, audioController);
         playerBar.show();
+        playerBar.invalidateTicks();
     }
 
     public void destroy() {

@@ -379,7 +379,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                     currentSeenEpisode.episode.kitsuId
             );
 
-            binding.mainPlayer.getPlayerBar().setTickFromPosition(currentPosition);
+            binding.mainPlayer.getPlayerBar().setTickTimestamp(currentPosition);
         });
 
         viewModel.startDownload(this, result);
