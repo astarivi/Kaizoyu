@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.core.adapters.gui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -49,11 +50,10 @@ public class TickSeekBar extends AppCompatSeekBar {
                 dotDrawableId = attributesArray.getResourceId(R.styleable.TickSeekBar_dots_drawable, 0);
             }
         } else {
-            TypedArray attributesArray = getContext().obtainStyledAttributes(attrs, R.styleable.TickSeekBar, 0, 0);
+            @SuppressLint("Recycle") TypedArray attributesArray = getContext().obtainStyledAttributes(attrs, R.styleable.TickSeekBar, 0, 0);
             dotsArrayResource = attributesArray.getResourceId(R.styleable.TickSeekBar_dots_positions, 0);
             dotDrawableId = attributesArray.getResourceId(R.styleable.TickSeekBar_dots_drawable, 0);
             attributesArray.close();
-            attributesArray.recycle();
         }
 
         if (dotsArrayResource != 0) {

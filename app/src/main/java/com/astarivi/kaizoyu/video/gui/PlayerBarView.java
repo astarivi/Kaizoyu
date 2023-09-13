@@ -28,6 +28,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import in.basulabs.audiofocuscontroller.AudioFocusController;
+import lombok.Getter;
 import lombok.Setter;
 
 
@@ -194,7 +195,6 @@ public class PlayerBarView extends LinearLayout {
                     if (playerEventListener != null) playerEventListener.onPlayingStateChanged(false);
                     syncPlayButton(false);
                     break;
-                // TODO: Introduce some kind of message to go back, or show a button to replay
                 case MediaPlayer.Event.TimeChanged:
                     this.setProgressFromTime(event.getTimeChanged());
                     break;
@@ -405,6 +405,7 @@ public class PlayerBarView extends LinearLayout {
 
     protected static class State extends BaseSavedState {
         protected static final String STATE = "PlayerBarView.STATE";
+        @Getter
         private final MediaPlayer mediaPlayer;
         private final LinearLayout playerInfoView;
 
@@ -412,10 +413,6 @@ public class PlayerBarView extends LinearLayout {
             super(superState);
             this.mediaPlayer = mediaPlayer;
             this.playerInfoView = playerInfoView;
-        }
-
-        public MediaPlayer getMediaPlayer(){
-            return this.mediaPlayer;
         }
 
         public LinearLayout getPlayerInfoBar() {

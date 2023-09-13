@@ -26,30 +26,20 @@ import org.tinylog.Logger;
 import java.io.File;
 import java.util.concurrent.Future;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 
+
+@Getter
 public class VideoPlayerViewModel extends ViewModel {
     private final MutableLiveData<File> downloadFile = new MutableLiveData<>();
     private final MutableLiveData<Pair<Integer, String>> progress = new MutableLiveData<>();
     private final MutableLiveData<IrcExceptionManager.FailureCode> ircFailure = new MutableLiveData<>();
     private final MutableLiveData<XDCCFailure> xdccFailure = new MutableLiveData<>();
+    @Getter(AccessLevel.NONE)
     private Future<?> downloadFuture;
+    @Getter(AccessLevel.NONE)
     private boolean hasStartedDownload = false;
-
-    public MutableLiveData<File> getDownloadFile() {
-        return downloadFile;
-    }
-
-    public MutableLiveData<Pair<Integer, String>> getProgress() {
-        return progress;
-    }
-
-    public MutableLiveData<IrcExceptionManager.FailureCode> getIrcFailure() {
-        return ircFailure;
-    }
-
-    public MutableLiveData<XDCCFailure> getXdccFailure() {
-        return xdccFailure;
-    }
 
     public void startDownload(Context context, Result result) {
         if (hasStartedDownload) return;

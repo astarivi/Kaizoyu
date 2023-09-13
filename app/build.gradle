@@ -107,9 +107,9 @@ dependencies {
     // External libraries (third party)
     // Guava solves a dependency issue between ACRA.ch and work-runtime
     implementation 'com.google.guava:guava:32.1.2-android'
-    implementation 'com.github.WrichikBasu:AudioFocusController:v2.1'
+    implementation 'com.github.WrichikBasu:AudioFocusController:3.0.2'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
-    implementation 'com.github.astarivi:Zparc:4a06b815c4'
+    implementation 'com.github.astarivi:Zparc:1.1'
     //noinspection GradleDependency
     implementation ('org.videolan.android:libvlc-all:4.0.0-eap11') {
         because 'EAP12 HWA chroma blending is broken (RGBA -> ANOP). Subtitles will not work'

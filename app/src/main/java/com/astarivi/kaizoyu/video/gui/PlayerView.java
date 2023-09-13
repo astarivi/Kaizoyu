@@ -24,12 +24,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import in.basulabs.audiofocuscontroller.AudioFocusController;
+import lombok.Getter;
 
 
 public class PlayerView extends LinearLayout {
     private PlayerBinding binding;
     private PlayerEventListener listener;
     private AudioFocusController audioController;
+    @Getter
     private MediaPlayer mediaPlayer;
 
     public PlayerView(Context context) {
@@ -62,10 +64,6 @@ public class PlayerView extends LinearLayout {
         );
     }
 
-    public PlayerBinding getBinding() {
-        return binding;
-    }
-
     public void initialize(
             String animeTitle,
             String episodeTitle,
@@ -87,10 +85,6 @@ public class PlayerView extends LinearLayout {
         binding.topBackButton.setOnClickListener(v -> listener.onBackPressed());
 
         binding.skipManager.initialize(binding.playerBar);
-    }
-
-    public MediaPlayer getMediaPlayer() {
-        return mediaPlayer;
     }
 
     public void setCacheProgress(int progress) {
@@ -125,7 +119,6 @@ public class PlayerView extends LinearLayout {
         binding.videoFrame.setVisibility(View.VISIBLE);
         playerBar.initialize(binding.darkOverlay, listener, audioController);
         playerBar.show();
-        playerBar.invalidateTicks();
     }
 
     public void destroy() {

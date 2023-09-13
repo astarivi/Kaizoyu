@@ -108,7 +108,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityVideoPlayerBinding.inflate(this.getLayoutInflater());
+        binding = ActivityVideoPlayerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         viewModel = new ViewModelProvider(this).get(VideoPlayerViewModel.class);
 
