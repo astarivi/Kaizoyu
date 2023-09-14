@@ -105,6 +105,10 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
             appConfig.save();
         });
 
+        binding.backToTopFab.setOnClickListener(v ->
+            binding.animeEpisodesRecycler.smoothScrollToPosition(0)
+        );
+
         // Mixed
 
         binding.episodeSelectorScroll.setVisibility(View.GONE);
