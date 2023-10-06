@@ -189,7 +189,10 @@ public class PlayerBarView extends LinearLayout {
                     syncPlayButton(true);
                     break;
                 case MediaPlayer.Event.EndReached:
-                    this.setProgressFromTime(mediaPlayer.getLength());
+                    mediaPlayer.pause();
+                    mediaPlayer.setTime(mediaPlayer.getTime() - 1, true);
+                    if (playerEventListener != null) playerEventListener.onVideoFinished();
+//                    this.setProgressFromTime(mediaPlayer.getLength());
                 case MediaPlayer.Event.Paused:
                 case MediaPlayer.Event.Stopped:
                     if (playerEventListener != null) playerEventListener.onPlayingStateChanged(false);
@@ -313,7 +316,6 @@ public class PlayerBarView extends LinearLayout {
 
         binding.hideBar.setOnClickListener(v -> forceHide());
 
-        binding.videoProgressBar.setTicks(new int[]{500});
         binding.videoProgressBar.setTicksDrawable(R.drawable.player_timestamp);
 
         mediaPlayer.play();

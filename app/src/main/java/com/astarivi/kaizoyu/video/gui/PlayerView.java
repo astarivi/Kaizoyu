@@ -155,5 +155,6 @@ public class PlayerView extends LinearLayout {
     public interface PlayerEventListener {
         void onBackPressed();
         void onPlayingStateChanged(boolean isPlaying);
+        void onVideoFinished();
     }
 }

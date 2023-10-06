@@ -207,6 +207,11 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                             setPictureInPictureParams(makeParams(isPlaying));
                         }
                     }
+
+                    @Override
+                    public void onVideoFinished() {
+                        finish();
+                    }
                 },
                 audioFocusController
         );
