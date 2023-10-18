@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.database.data.search.SearchHistory;
@@ -56,7 +57,8 @@ public class FullSearchActivity extends AppCompatActivityTheme {
         recyclerView.setHasFixedSize(true);
 
         adapter = new AdvancedRecyclerAdapter(result -> {
-            Intent intent = new Intent(this, VideoPlayerActivity.class);
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, VideoPlayerActivity.class.getName());
             intent.putExtra("result", result);
             intent.putExtra("isAdvancedMode", true);
             startActivity(intent);
@@ -158,7 +160,7 @@ public class FullSearchActivity extends AppCompatActivityTheme {
                     .setTitle(getString(R.string.advanced_search_dialog_title))
                     .setMessage(getString(R.string.advanced_search_dialog_description))
                     .setPositiveButton(getString(R.string.advanced_search_dialog_accept), (dialog, which) -> {
-                        AnalyticsClient.logEvent("advanced_search_first_time");
+                        AnalyticsClient.logBreadcrumb("advanced_search_first_time");
 
                         Toast.makeText(
                                 this,

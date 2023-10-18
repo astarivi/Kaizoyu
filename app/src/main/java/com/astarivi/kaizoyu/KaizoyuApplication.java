@@ -3,9 +3,16 @@ package com.astarivi.kaizoyu;
 import android.app.Application;
 import android.content.Context;
 
-import com.astarivi.kaizoyu.core.updater.UpdateManager;
-import com.flurry.android.FlurryAgent;
+import com.astarivi.kaizoyu.core.common.NotificationsHub;
+import com.astarivi.kaizoyu.core.threading.workers.WorkerInitializers;
 import com.google.android.material.color.DynamicColors;
+
+import org.acra.ACRA;
+import org.acra.ReportField;
+import org.acra.config.CoreConfigurationBuilder;
+import org.acra.config.HttpSenderConfigurationBuilder;
+import org.acra.data.StringFormat;
+import org.acra.sender.HttpSender;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -28,22 +35,33 @@ public class KaizoyuApplication extends Application {
         application = new WeakReference<>(KaizoyuApplication.this);
         checkDynamicColors();
 
-        if (BuildConfig.DEBUG) {
-            FlurryAgent.setVersionName(UpdateManager.VERSION_NAME + "_debug");
-        } else {
-            FlurryAgent.setVersionName(UpdateManager.VERSION_NAME);
-        }
+        ACRA.init(this, new CoreConfigurationBuilder()
+                .withBuildConfigClass(BuildConfig.class)
+                .withReportFormat(StringFormat.JSON)
+                .withReportContent(
+                        ReportField.APP_VERSION_CODE,
+                        ReportField.APP_VERSION_NAME,
+                        ReportField.PHONE_MODEL,
+                        ReportField.STACK_TRACE,
+                        ReportField.THREAD_DETAILS,
+                        ReportField.USER_CRASH_DATE,
+                        ReportField.USER_APP_START_DATE,
+                        ReportField.REPORT_ID,
+                        ReportField.ANDROID_VERSION,
+                        ReportField.BRAND
+                )
+                .withPluginConfigurations(
+                        new HttpSenderConfigurationBuilder()
+                                .withUri("https://acra.kaizoyu.ovh/report")
+                                .withHttpMethod(HttpSender.Method.POST)
+                                .withBasicAuthLogin(getString(R.string.acra_user))
+                                .withBasicAuthPassword(getString(R.string.acra_pass))
+                                .build()
+                )
+        );
 
-        new FlurryAgent.Builder()
-                .withReportLocation(false)
-                .withLogEnabled(true)
-                .build(this, getString(R.string.flurry_key));
-
-        FlurryAgent.addSessionProperty("version", UpdateManager.VERSION);
-
-        if (BuildConfig.DEBUG) {
-            FlurryAgent.addSessionProperty("development", "true");
-        }
+        NotificationsHub.initialize();
+        WorkerInitializers.queueWorkers(this);
     }
 
     private void checkDynamicColors() {

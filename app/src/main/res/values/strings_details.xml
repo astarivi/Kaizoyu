@@ -32,4 +32,5 @@
     <string name="d_remove_toast_n">We couldn\'t remove this show due to an error.</string>
     <string name="d_general_toast_p">Saved successfully</string>
     <string name="d_general_toast_n">We couldn\'t modify your lists due to an error.</string>
+    <string name="d_title_categories">Categories</string>
 </resources>

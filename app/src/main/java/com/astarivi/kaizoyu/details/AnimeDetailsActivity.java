@@ -303,6 +303,8 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     }
 
     private void continueInitialization() {
+        if (isDestroyed() || isFinishing()) return;
+
         binding.posterImage.setVisibility(View.VISIBLE);
 
         TabLayout tabLayout = binding.informationTabLayout;

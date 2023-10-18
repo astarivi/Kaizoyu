@@ -28,6 +28,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import in.basulabs.audiofocuscontroller.AudioFocusController;
+import lombok.Getter;
+import lombok.Setter;
 
 
 public class PlayerBarView extends LinearLayout {
@@ -40,6 +42,8 @@ public class PlayerBarView extends LinearLayout {
     private String totalDuration;
     private PlayerView.PlayerEventListener playerEventListener;
     private AudioFocusController audioController;
+    @Setter
+    private int tickTimestamp = -1;
 
     // region Constructors
 
@@ -185,13 +189,15 @@ public class PlayerBarView extends LinearLayout {
                     syncPlayButton(true);
                     break;
                 case MediaPlayer.Event.EndReached:
-                    this.setProgressFromTime(mediaPlayer.getLength());
+                    mediaPlayer.pause();
+                    mediaPlayer.setTime(mediaPlayer.getTime() - 1, true);
+                    if (playerEventListener != null) playerEventListener.onVideoFinished();
+//                    this.setProgressFromTime(mediaPlayer.getLength());
                 case MediaPlayer.Event.Paused:
                 case MediaPlayer.Event.Stopped:
                     if (playerEventListener != null) playerEventListener.onPlayingStateChanged(false);
                     syncPlayButton(false);
                     break;
-                // TODO: Introduce some kind of message to go back, or show a button to replay
                 case MediaPlayer.Event.TimeChanged:
                     this.setProgressFromTime(event.getTimeChanged());
                     break;
@@ -199,6 +205,7 @@ public class PlayerBarView extends LinearLayout {
                     totalDuration = verboseMillisecondsToDuration(
                             event.getLengthChanged()
                     );
+                    invalidateTicks();
                     break;
             }
         });
@@ -235,7 +242,7 @@ public class PlayerBarView extends LinearLayout {
 
         skipIntro.setOnClickListener(v -> {
             isInteractive = true;
-            skipAmount(90000, true);
+            skipAmount(85000, true);
             // Update immediately
             binding.currentTime.setText(
                     verboseMillisecondsToDuration(
@@ -309,6 +316,8 @@ public class PlayerBarView extends LinearLayout {
 
         binding.hideBar.setOnClickListener(v -> forceHide());
 
+        binding.videoProgressBar.setTicksDrawable(R.drawable.player_timestamp);
+
         mediaPlayer.play();
     }
 
@@ -324,6 +333,18 @@ public class PlayerBarView extends LinearLayout {
         }
 
         mediaPlayer.setTime(time, fast);
+    }
+
+    public void invalidateTicks() {
+        float length = mediaPlayer.getLength();
+
+        if (length == 0 || tickTimestamp == -1) return;
+
+        float progress = (float) (((float) tickTimestamp / length) * 1000.0);
+
+        binding.videoProgressBar.setTicks(new int[]{
+                Math.round(Math.min(1000F, Math.max(0F, progress)))
+        });
     }
 
     public void skipAmount(long amountMs, boolean fast) {
@@ -386,6 +407,7 @@ public class PlayerBarView extends LinearLayout {
 
     protected static class State extends BaseSavedState {
         protected static final String STATE = "PlayerBarView.STATE";
+        @Getter
         private final MediaPlayer mediaPlayer;
         private final LinearLayout playerInfoView;
 
@@ -393,10 +415,6 @@ public class PlayerBarView extends LinearLayout {
             super(superState);
             this.mediaPlayer = mediaPlayer;
             this.playerInfoView = playerInfoView;
-        }
-
-        public MediaPlayer getMediaPlayer(){
-            return this.mediaPlayer;
         }
 
         public LinearLayout getPlayerInfoBar() {

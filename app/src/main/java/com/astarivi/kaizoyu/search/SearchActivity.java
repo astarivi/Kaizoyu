@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
@@ -59,7 +60,8 @@ public class SearchActivity extends AppCompatActivityTheme {
         recyclerView.setHasFixedSize(true);
 
         adapter = new SearchRecyclerAdapter(anime -> {
-            Intent intent = new Intent(this, AnimeDetailsActivity.class);
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
             intent.putExtra("anime", anime);
             intent.putExtra("type", ModelType.Anime.BASE.name());
             startActivity(intent);
@@ -167,7 +169,7 @@ public class SearchActivity extends AppCompatActivityTheme {
         searchSuggestions.removeAllViews();
 
         if (KaizoyuApplication.application == null) {
-            AnalyticsClient.logEvent("application_null_search_history");
+            AnalyticsClient.logBreadcrumb("application_null_search_history");
             return;
         }
 

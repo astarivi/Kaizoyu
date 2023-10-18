@@ -16,7 +16,6 @@ import com.astarivi.kaizoyu.core.theme.Theme;
 import com.astarivi.kaizoyu.databinding.BottomSheetAppThemeBinding;
 import com.astarivi.kaizoyu.databinding.ItemThemeBinding;
 import com.astarivi.kaizoyu.utils.Threading;
-import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
@@ -104,7 +103,7 @@ public class ThemeSelectionModalBottomSheet extends BottomSheetDialogFragment {
                     }
                 });
             } else {
-                Utils.runOnUiThread(() -> {
+                Threading.runOnUiThread(() -> {
                     binding.loadingBar.setVisibility(View.GONE);
 
                     for (View resultingView : resultingViews) {

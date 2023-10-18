@@ -8,6 +8,9 @@ import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 
 import org.jetbrains.annotations.NotNull;
 
+import lombok.Getter;
+import lombok.Setter;
+
 
 public class Data {
     private static final TemporarySwitches temporarySwitches = new TemporarySwitches();
@@ -50,24 +53,10 @@ public class Data {
         APP, BOTS
     }
 
+    @Getter
+    @Setter
     public static class TemporarySwitches {
         private boolean pendingFavoritesRefresh = false;
         private boolean pendingSeenEpisodeStateRefresh = false;
-
-        public boolean isPendingFavoritesRefresh() {
-            return pendingFavoritesRefresh;
-        }
-
-        public void setPendingFavoritesRefresh(boolean value) {
-            pendingFavoritesRefresh = value;
-        }
-
-        public boolean isPendingSeenEpisodeStateRefresh() {
-            return pendingSeenEpisodeStateRefresh;
-        }
-
-        public void setPendingSeenEpisodeStateRefresh(boolean pendingSeenEpisodeStateRefresh) {
-            this.pendingSeenEpisodeStateRefresh = pendingSeenEpisodeStateRefresh;
-        }
     }
 }

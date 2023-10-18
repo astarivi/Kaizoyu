@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.core.graphics.Insets;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
@@ -58,7 +59,8 @@ public class LibraryFragment extends TabFragment {
     private void openSharedLibrary(ModelType.LocalAnime type) {
         if (getActivity() == null) return;
 
-        Intent intent = new Intent(requireActivity(), SharedLibraryActivity.class);
+        Intent intent = new Intent();
+        intent.setClassName(BuildConfig.APPLICATION_ID, SharedLibraryActivity.class.getName());
         intent.putExtra("local_type", type.name());
         startActivity(intent);
     }

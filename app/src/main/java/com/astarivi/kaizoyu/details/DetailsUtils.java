@@ -13,6 +13,7 @@ import org.tinylog.Logger;
 import java.io.File;
 import java.io.IOException;
 
+
 public class DetailsUtils {
     @ThreadedOnly
     public static File downloadImage(Context context, Anime anime, boolean isCover) throws NetworkConnectionException, IOException {

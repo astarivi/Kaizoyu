@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 
 import com.astarivi.kaizoyu.databinding.PlayerBinding;
+import com.astarivi.kaizoyu.utils.Threading;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
@@ -17,14 +18,20 @@ import org.videolan.libvlc.MediaPlayer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import in.basulabs.audiofocuscontroller.AudioFocusController;
+import lombok.Getter;
 
 
 public class PlayerView extends LinearLayout {
     private PlayerBinding binding;
     private PlayerEventListener listener;
     private AudioFocusController audioController;
+    @Getter
     private MediaPlayer mediaPlayer;
 
     public PlayerView(Context context) {
@@ -57,10 +64,6 @@ public class PlayerView extends LinearLayout {
         );
     }
 
-    public PlayerBinding getBinding() {
-        return binding;
-    }
-
     public void initialize(
             String animeTitle,
             String episodeTitle,
@@ -82,10 +85,6 @@ public class PlayerView extends LinearLayout {
         binding.topBackButton.setOnClickListener(v -> listener.onBackPressed());
 
         binding.skipManager.initialize(binding.playerBar);
-    }
-
-    public MediaPlayer getMediaPlayer() {
-        return mediaPlayer;
     }
 
     public void setCacheProgress(int progress) {
@@ -129,16 +128,24 @@ public class PlayerView extends LinearLayout {
 
         mediaPlayer.pause();
         mediaPlayer.setMedia(null);
-        mediaPlayer.release();
+//        mediaPlayer.detachViews();
+
+        Future<?> releaseFuture = Threading.submitTask(Threading.TASK.INSTANT, () ->
+                mediaPlayer.release()
+        );
+
+        // FIXME: Investigate further
+        try {
+            releaseFuture.get(5, TimeUnit.SECONDS);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            releaseFuture.cancel(true);
+        }
+
         mediaPlayer = null;
     }
 
-    public void showPlayerBar() {
-        binding.playerBar.show();
-    }
-
-    public void forceHidePlayerBar() {
-        binding.playerBar.forceHide();
+    public PlayerBarView getPlayerBar() {
+        return binding.playerBar;
     }
 
     public PlayerSkipView getSkipManager() {
@@ -148,5 +155,6 @@ public class PlayerView extends LinearLayout {
     public interface PlayerEventListener {
         void onBackPressed();
         void onPlayingStateChanged(boolean isPlaying);
+        void onVideoFinished();
     }
 }

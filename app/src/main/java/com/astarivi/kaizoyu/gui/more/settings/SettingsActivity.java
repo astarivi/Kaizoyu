@@ -11,6 +11,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.modal.GenericModalBottomSheet;
@@ -19,6 +22,8 @@ import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Theme;
+import com.astarivi.kaizoyu.core.threading.workers.EpisodePeriodicWorker;
+import com.astarivi.kaizoyu.core.threading.workers.UpdatePeriodicWorker;
 import com.astarivi.kaizoyu.databinding.ActivitySettingsBinding;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
@@ -88,8 +93,7 @@ public class SettingsActivity extends AppCompatActivityTheme {
         // Set click listeners
         binding.nightThemeTrigger.setOnClickListener(this::showNightThemePopup);
 
-        MaterialSwitch analytics = binding.analyticsValue;
-        analytics.setOnCheckedChangeListener(this::triggerSave);
+        binding.analyticsValue.setOnCheckedChangeListener(this::triggerSave);
 
         MaterialSwitch ipv6Sources = binding.ipv6SorcesValue;
         ipv6Sources.setOnCheckedChangeListener(this::triggerSave);
@@ -97,6 +101,7 @@ public class SettingsActivity extends AppCompatActivityTheme {
         MaterialSwitch preferEnglishTitles = binding.preferEnglishValue;
         preferEnglishTitles.setOnCheckedChangeListener(this::triggerSave);
 
+        binding.autoUpdateValue.setOnCheckedChangeListener(this::triggerSave);
         binding.autoFavoriteValue.setOnCheckedChangeListener(this::triggerSave);
         binding.advancedSearch.setOnCheckedChangeListener(this::triggerSave);
         binding.strictModeValue.setOnCheckedChangeListener(this::triggerSave);
@@ -105,7 +110,7 @@ public class SettingsActivity extends AppCompatActivityTheme {
 
         binding.themeTrigger.setOnClickListener(v -> {
             ThemeSelectionModalBottomSheet modalBottomSheet = new ThemeSelectionModalBottomSheet(theme -> {
-                AnalyticsClient.logEvent("theme_changed", theme.getTitle(this));
+                AnalyticsClient.logBreadcrumb("Theme changed to " + theme.getTitle(this));
 
                 Theme.setTheme(theme, this);
 
@@ -120,6 +125,49 @@ public class SettingsActivity extends AppCompatActivityTheme {
                 Runtime.getRuntime().exit(0);
             });
             modalBottomSheet.show(getSupportFragmentManager(), ThemeSelectionModalBottomSheet.TAG);
+        });
+
+        binding.testTask.setOnClickListener(v -> {
+            GenericModalBottomSheet modalBottomSheet = new GenericModalBottomSheet(
+                    getString(R.string.dev_test_task_title),
+                    new ModalOption[]{
+                            new ModalOption(
+                                    UpdatePeriodicWorker.class.getSimpleName(),
+                                    UpdatePeriodicWorker.class.getName()
+                            ),
+                            new ModalOption(
+                                    EpisodePeriodicWorker.class.getSimpleName(),
+                                    EpisodePeriodicWorker.class.getName()
+                            )
+                    },
+                    (index, wasHighlighted) -> {
+                        OneTimeWorkRequest request;
+
+                        switch (index) {
+                            case 0:
+                                request = new OneTimeWorkRequest.Builder(
+                                        UpdatePeriodicWorker.class
+                                ).build();
+                                break;
+                            case 1:
+                            default:
+                                request = new OneTimeWorkRequest.Builder(
+                                        EpisodePeriodicWorker.class
+                                ).build();
+                                break;
+                        }
+
+                        WorkManager.getInstance(
+                                getApplicationContext()
+                        ).enqueueUniqueWork(
+                                "testing_worker",
+                                ExistingWorkPolicy.REPLACE,
+                                request
+                        );
+                    }
+            );
+
+            modalBottomSheet.show(getSupportFragmentManager(), GenericModalBottomSheet.TAG);
         });
     }
 
@@ -188,6 +236,11 @@ public class SettingsActivity extends AppCompatActivityTheme {
         );
 
         config.setBooleanProperty(
+                "autoupdate",
+                binding.autoUpdateValue.isChecked()
+        );
+
+        config.setBooleanProperty(
                 "use_xdcc",
                 binding.xdccValue.isChecked()
         );
@@ -251,8 +304,12 @@ public class SettingsActivity extends AppCompatActivityTheme {
                 config.getBooleanProperty("use_xdcc", false)
         );
 
+        binding.autoUpdateValue.setChecked(
+                config.getBooleanProperty("autoupdate", true)
+        );
+
         binding.analyticsValue.setChecked(
-                config.getBooleanProperty("analytics", true)
+                config.getBooleanProperty("analytics", false)
         );
 
         binding.strictModeValue.setChecked(

@@ -18,16 +18,15 @@ import com.astarivi.kaizoyu.utils.Threading;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
+import lombok.Getter;
+
 
 public class AnimeStorageRepository {
+    @Getter
     private final FavoriteAnimeDao favoriteAnimeDao;
 
     public AnimeStorageRepository(@NotNull AppDatabase database) {
         favoriteAnimeDao = database.favoriteAnimeDao();
-    }
-
-    public FavoriteAnimeDao getFavoriteAnimeDao() {
-        return favoriteAnimeDao;
     }
 
     @ThreadedOnly

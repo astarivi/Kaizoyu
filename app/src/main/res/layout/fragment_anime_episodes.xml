@@ -138,4 +138,14 @@
             />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/back_to_top_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        app:srcCompat="@drawable/ic_top"
+        android:contentDescription="@string/back_to_top"
+    />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

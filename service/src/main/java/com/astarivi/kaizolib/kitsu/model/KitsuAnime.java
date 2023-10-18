@@ -12,6 +12,7 @@ public class KitsuAnime {
     public String id;
     public String type;
     public KitsuAnimeAttributes attributes;
+    public KitsuRelationships relationships;
 
     public KitsuAnime() {
 
@@ -91,6 +92,28 @@ public class KitsuAnime {
         public static class KitsuAnimeDimension {
             public int width;
             public int height;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class KitsuRelationships {
+        public KitsuRelationship genres;
+        public KitsuRelationship categories;
+        public KitsuRelationship castings;
+        public KitsuRelationship reviews;
+        public KitsuRelationship mediaRelationships;
+        public KitsuRelationship characters;
+        public KitsuRelationship staff;
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public static class KitsuRelationship {
+            public KitsuRelation links;
+        }
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public static class KitsuRelation {
+            public String self;
+            public String related;
         }
     }
 

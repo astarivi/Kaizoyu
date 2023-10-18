@@ -8,6 +8,8 @@
     <string name="analytics_description">Send anonymous usage and performance reports to help improve the app</string>
     <string name="ipv6_sources">Show IPv6 Sources</string>
     <string name="ipv6_sources_description">Include IPv6 download sources. This will display IPv6 sources, but won\'t make them your default</string>
+    <string name="autoupdate">Automatic Updates</string>
+    <string name="autoupdate_description">Check for updates automatically and notify when a new update is found</string>
     <string name="clear_cache">Clear Cache</string>
     <string name="clear_cache_repository">Erase the stored cache files manually</string>
     <string name="clear_search_history">Clear Search History</string>
@@ -55,6 +57,9 @@
     <string name="dev_hide_title">Hide Developer Menu</string>
     <string name="dev_hide_description">Hides the developer section again</string>
     <string name="dev_section_toast">Welcome to developer mode, fellow weeb</string>
+    <string name="dev_test_task">Test Worker</string>
+    <string name="dev_test_task_desc">Run a one-shot worker of your choosing immediately. Useful for debugging issues related to notifications</string>
+    <string name="dev_test_task_title">Select a worker</string>
     <string name="xdcc_title">Use XDCC</string>
     <string name="xdcc_description">When enabled, XDCC will be used instead of DCC; this may result in faster downloads. May cause complete download failure</string>
 </resources>

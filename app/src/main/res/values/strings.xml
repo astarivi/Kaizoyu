@@ -50,4 +50,5 @@
     <string name="us_flag_desc">English title icon</string>
     <string name="romaji_title_icon_desc">Romaji title icon</string>
     <string name="jp_title_icon_desc">Japanese title icon</string>
+    <string name="back_to_top">Back to top</string>
 </resources>

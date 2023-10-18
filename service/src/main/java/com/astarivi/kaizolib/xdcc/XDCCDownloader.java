@@ -111,6 +111,11 @@ public class XDCCDownloader {
             write(output, 0);
 
             while (downloadedLength < fileLength && !stop) {
+                if (Thread.interrupted()) {
+                    Logger.info("XDCC download thread interrupted");
+                    return;
+                }
+
                 // Has the download not even started?
                 if (downloadedLength == 0 && inputStream.available() == 0) {
                     // Tell the server that we're waiting for data.

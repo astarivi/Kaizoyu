@@ -35,8 +35,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.Result;
+import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenEpisode;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.databinding.ActivityVideoPlayerBinding;
+import com.astarivi.kaizoyu.utils.Data;
+import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.video.gui.PlayerSkipView;
 import com.astarivi.kaizoyu.video.gui.PlayerView;
 import com.astarivi.kaizoyu.video.utils.AnimeEpisodeManager;
@@ -105,7 +108,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityVideoPlayerBinding.inflate(this.getLayoutInflater());
+        binding = ActivityVideoPlayerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         viewModel = new ViewModelProvider(this).get(VideoPlayerViewModel.class);
 
@@ -203,6 +206,11 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isInPictureInPictureMode()) {
                             setPictureInPictureParams(makeParams(isPlaying));
                         }
+                    }
+
+                    @Override
+                    public void onVideoFinished() {
+                        finish();
                     }
                 },
                 audioFocusController
@@ -312,6 +320,8 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                     message,
                     Snackbar.LENGTH_LONG
             ).show();
+
+            if (!isPlaying) delayedExit();
         });
 
         // Handle state
@@ -356,6 +366,27 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             ContextCompat.registerReceiver(this, broadcastReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
         }
 
+        Threading.submitTask(Threading.TASK.DATABASE, () -> {
+            SeenEpisode currentSeenEpisode = Data.getRepositories()
+                    .getSeenAnimeRepository()
+                    .getSeenEpisodeDao()
+                    .getEpisodeBy(
+                            Integer.parseInt(animeEpisodeManager.getEpisode().getKitsuEpisode().id)
+                    );
+
+            int currentPosition = currentSeenEpisode.episode.currentPosition;
+
+            if (currentPosition == 0 || currentPosition == -1) return;
+
+            Logger.info(
+                    "Setting tick from seen episode, timestamp {}, episodeKitsuId {}",
+                    currentSeenEpisode.episode.currentPosition,
+                    currentSeenEpisode.episode.kitsuId
+            );
+
+            binding.mainPlayer.getPlayerBar().setTickTimestamp(currentPosition);
+        });
+
         viewModel.startDownload(this, result);
         Logger.info("Download started, now it's all up to the ViewModel.");
     }
@@ -376,7 +407,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                 && mMediaPlayer.isPlaying()
                 && !isInPictureInPictureMode()
         ) {
-            binding.mainPlayer.forceHidePlayerBar();
+            binding.mainPlayer.getPlayerBar().forceHide();
             enterPictureInPictureMode(makeParams(true));
         } else {
             mMediaPlayer.pause();
@@ -388,6 +419,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         List<RemoteAction> remoteActions = new ArrayList<>();
 
         Intent rewindIntent = new Intent("PIP_PLAY_PAUSE_PLAYER");
+        rewindIntent.setPackage(getPackageName());
         rewindIntent.putExtra("action", BundleUtils.PictureInPictureAction.REWIND_TEN.name());
 
         // Rewind
@@ -407,6 +439,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
         // Pause - Resume action
         Intent repauseIntent = new Intent("PIP_PLAY_PAUSE_PLAYER");
+        repauseIntent.setPackage(getPackageName());
         repauseIntent.putExtra("action", BundleUtils.PictureInPictureAction.PAUSE_OR_RESUME.name());
 
         remoteActions.add(
@@ -425,6 +458,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
         // Forward
         Intent forwardIntent = new Intent("PIP_PLAY_PAUSE_PLAYER");
+        forwardIntent.setPackage(getPackageName());
         forwardIntent.putExtra("action", BundleUtils.PictureInPictureAction.FORWARD_TEN.name());
 
         remoteActions.add(
@@ -434,7 +468,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                         "Forward by 10s",
                         PendingIntent.getBroadcast(
                                 this,
-                                2,
+                                3,
                                 forwardIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
                         )
@@ -508,16 +542,6 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
     }
 
     @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-    }
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (gestureDetector.onTouchEvent(event)) {
             return true;
@@ -539,7 +563,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode()) return true;
 
-            binding.mainPlayer.showPlayerBar();
+            binding.mainPlayer.getPlayerBar().show();
 
             return super.onSingleTapConfirmed(event);
         }

@@ -2,7 +2,6 @@ package com.astarivi.kaizoyu.gui.schedule;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
@@ -111,12 +111,6 @@ public class ScheduleFragment extends TabFragment {
             viewModel.reloadSchedule(binding);
         });
 
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int screenHalfHeightDp = (int) (displayMetrics.heightPixels / displayMetrics.density);
-
-        // Make swipe refresh half of the screen height
-        binding.swipeRefresh.setDistanceToTriggerSync(screenHalfHeightDp);
-
         binding.dowTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -148,7 +142,8 @@ public class ScheduleFragment extends TabFragment {
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
         adapter = new ScheduleRecyclerAdapter(anime -> {
-            Intent intent = new Intent(getActivity(), AnimeDetailsActivity.class);
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
             intent.putExtra("anime", anime);
             intent.putExtra("type", ModelType.Anime.SEASONAL.name());
             startActivity(intent);

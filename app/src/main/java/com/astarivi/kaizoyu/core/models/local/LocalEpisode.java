@@ -13,7 +13,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
+import lombok.Getter;
 
+
+@Getter
 public class LocalEpisode extends Episode {
     protected final Date watchDate;
     protected final int currentPosition;
@@ -23,14 +26,6 @@ public class LocalEpisode extends Episode {
         super(episode, animeId);
         this.watchDate = watchDate;
         this.currentPosition = currentPosition;
-    }
-
-    public Date getWatchDate() {
-        return watchDate;
-    }
-
-    public int getCurrentPosition() {
-        return currentPosition;
     }
 
     // region Parcelable implementation

@@ -26,4 +26,8 @@ public interface SeenEpisodeDao {
     List<SeenEpisode> getAll();
     @Query("SELECT * FROM seen_episode WHERE id=:id")
     SeenEpisode get(int id);
+    @Query("SELECT * FROM seen_episode WHERE kitsuId=:episodeKitsuId")
+    SeenEpisode getEpisodeBy(int episodeKitsuId);
+    @Query("UPDATE seen_episode SET notified=:notified WHERE id IN (:ids)")
+    void setNotified(boolean notified, List<Integer> ids);
 }

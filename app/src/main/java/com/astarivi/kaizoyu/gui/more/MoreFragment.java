@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.core.graphics.Insets;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
@@ -86,21 +87,24 @@ public class MoreFragment extends TabFragment {
         binding.openSettings.setOnClickListener(v -> {
             if (getActivity() == null) return;
 
-            Intent intent = new Intent(requireActivity(), SettingsActivity.class);
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, SettingsActivity.class.getName());
             startActivity(intent);
         });
 
         binding.openLicensesActivity.setOnClickListener(v -> {
             if (getActivity() == null) return;
 
-            Intent intent = new Intent(requireActivity(), OssLicensesMenuActivity.class);
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, OssLicensesMenuActivity.class.getName());
             startActivity(intent);
         });
 
         binding.openDataSettings.setOnClickListener(v -> {
             if (getActivity() == null) return;
 
-            Intent intent = new Intent(requireActivity(), StorageActivity.class);
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, StorageActivity.class.getName());
             startActivity(intent);
         });
 
@@ -133,7 +137,8 @@ public class MoreFragment extends TabFragment {
 
                             if (result == UpdaterModalBottomSheet.Result.UPDATE_NOW) {
                                 appProperties.setBooleanProperty("skip_version", false);
-                                Intent intent = new Intent(getContext(), UpdaterActivity.class);
+                                Intent intent = new Intent();
+                                intent.setClassName(BuildConfig.APPLICATION_ID, UpdaterActivity.class.getName());
                                 intent.putExtra("latestUpdate", update);
                                 startActivity(intent);
                             }

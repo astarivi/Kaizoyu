@@ -13,31 +13,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.TreeSet;
 
+import lombok.Getter;
 
+
+@Getter
 public class Episode implements Parcelable, Comparable<Episode> {
-    protected final KitsuEpisode episode;
+    protected final KitsuEpisode kitsuEpisode;
     protected final int animeId;
 
-    public Episode(@NonNull KitsuEpisode episode, int animeId) {
-        this.episode = episode;
+    public Episode(@NonNull KitsuEpisode kitsuEpisode, int animeId) {
+        this.kitsuEpisode = kitsuEpisode;
         this.animeId = animeId;
     }
 
-    public KitsuEpisode getKitsuEpisode() {
-        return episode;
-    }
-
     public String getDefaultTitle() {
-        KitsuEpisode.KitsuEpisodeTitles titles = episode.attributes.titles;
+        KitsuEpisode.KitsuEpisodeTitles titles = kitsuEpisode.attributes.titles;
 
         if (titles.en != null) return titles.en;
         if (titles.en_us != null) return titles.en_us;
         if (titles.en_jp != null) return titles.en_jp;
         return titles.ja_jp;
-    }
-
-    public int getAnimeId() {
-        return animeId;
     }
 
     public EmbeddedEpisode toEmbeddedDatabaseObject(int currentPosition) {
@@ -60,7 +55,7 @@ public class Episode implements Parcelable, Comparable<Episode> {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            episode = mapper.readValue(parcel.readString(), KitsuEpisode.class);
+            kitsuEpisode = mapper.readValue(parcel.readString(), KitsuEpisode.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -92,7 +87,7 @@ public class Episode implements Parcelable, Comparable<Episode> {
         String serializedEpisode;
 
         try {
-            serializedEpisode = mapper.writeValueAsString(episode);
+            serializedEpisode = mapper.writeValueAsString(kitsuEpisode);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -103,7 +98,7 @@ public class Episode implements Parcelable, Comparable<Episode> {
 
     @Override
     public int compareTo(Episode episode) {
-        return this.episode.attributes.number - episode.episode.attributes.number;
+        return this.kitsuEpisode.attributes.number - episode.kitsuEpisode.attributes.number;
     }
 
     // endregion

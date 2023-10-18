@@ -3,4 +3,8 @@
         <attr name="fullscreenBackgroundColor" format="color"/>
         <attr name="fullscreenTextColor" format="color"/>
     </declare-styleable>
+    <declare-styleable name="TickSeekBar">
+        <attr name="dots_positions" format="reference"/>
+        <attr name="dots_drawable" format="reference"/>
+    </declare-styleable>
 </resources>

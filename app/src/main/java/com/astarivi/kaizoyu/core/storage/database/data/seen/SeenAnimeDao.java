@@ -44,4 +44,7 @@ public interface SeenAnimeDao {
     @Transaction
     @Query("SELECT * FROM seen_anime WHERE kitsuId=:id")
     SeenAnimeWithEpisodes getRelationFromKitsuId(int id);
+    @Transaction
+    @Query("SELECT * FROM seen_anime sa INNER JOIN favorite_anime fa ON sa.favoriteId=fa.id WHERE fa.type=:type")
+    List<SeenAnimeWithEpisodes> getRelationWithRelationType(int type);
 }

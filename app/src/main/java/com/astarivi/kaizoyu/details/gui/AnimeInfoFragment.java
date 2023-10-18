@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.details.gui;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,21 +9,31 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizolib.kitsu.model.KitsuCategory;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
+import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeInfoBinding;
+import com.astarivi.kaizoyu.databinding.ItemChipCategoryBinding;
+import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class AnimeInfoFragment extends Fragment {
     private FragmentAnimeInfoBinding binding;
+    private AnimeInfoViewModel viewModel;
     private Anime anime;
 
     public AnimeInfoFragment() {
@@ -38,11 +49,11 @@ public class AnimeInfoFragment extends Fragment {
         binding = FragmentAnimeInfoBinding.inflate(inflater, container, false);
 
         if (getArguments() != null) {
-            anime = (Anime) Utils.getAnimeFromBundle(getArguments(), ModelType.Anime.BASE);
+            anime = Utils.getAnimeFromBundle(getArguments(), ModelType.Anime.BASE);
         }
 
         if (savedInstanceState != null && anime == null){
-            anime = (Anime) Utils.getAnimeFromBundle(savedInstanceState, ModelType.Anime.BASE);
+            anime = Utils.getAnimeFromBundle(savedInstanceState, ModelType.Anime.BASE);
         }
 
         return binding.getRoot();
@@ -50,7 +61,11 @@ public class AnimeInfoFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        viewModel = new ViewModelProvider(this).get(AnimeInfoViewModel.class);
+
         KitsuAnime kitsuAnime = anime.getKitsuAnime();
+
+        binding.categoriesContainer.setVisibility(View.GONE);
 
         binding.animeSynopsis.setText(kitsuAnime.attributes.synopsis);
 
@@ -94,17 +109,54 @@ public class AnimeInfoFragment extends Fragment {
             binding.trailerCard.setVisibility(View.GONE);
         }
 
-        // TODO Add extra metadata here
-//        if (!(anime instanceof LocalAnime)) {
-//
-//        } else {
-//            binding.infoCard.setVisibility(View.GONE);
-//        }
+        viewModel.getCategories().observe(getViewLifecycleOwner(), this::makeCategoryChips);
+
+        viewModel.initialize(anime);
+    }
+
+    private void makeCategoryChips(List<KitsuCategory> categories) {
+        Threading.submitTask(Threading.TASK.INSTANT, () -> {
+            ArrayList<View> chipViews = new ArrayList<>();
+
+            LayoutInflater layoutInflater = getLayoutInflater();
+
+            for (KitsuCategory category : categories) {
+                ItemChipCategoryBinding chipBinding = ItemChipCategoryBinding.inflate(
+                        layoutInflater,
+                        null,
+                        false
+                );
+
+                chipBinding.getRoot().setChipBackgroundColor(ColorStateList.valueOf(
+                        Colors.getColorFromString(category.attributes.slug, 0.6F, 0.3F)
+                ));
+
+                chipBinding.getRoot().setText(category.attributes.title);
+
+                chipViews.add(chipBinding.getRoot());
+            }
+
+            if (chipViews.isEmpty()) return;
+
+            binding.getRoot().post(() -> {
+                try {
+                    for (View chip : chipViews) {
+                        binding.categoriesContainer.setVisibility(View.VISIBLE);
+
+                        binding.categoriesChips.addView(chip);
+                    }
+                } catch(Exception e) {
+                    Logger.error("Error while posting categories at show details");
+                    Logger.error(e);
+                }
+            });
+        });
     }
 
     @Override
     public void onDestroy() {
         binding.youtubePlayer.release();
+        if (viewModel != null) viewModel.destroy();
         super.onDestroy();
     }
 

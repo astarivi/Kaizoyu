@@ -1,5 +1,7 @@
 package com.astarivi.kaizoyu.core.models.base;
 
+import lombok.Getter;
+
 
 public class ModelType {
     public enum Anime {
@@ -18,14 +20,12 @@ public class ModelType {
         FAVORITE(1),
         WATCHED(2),
         PENDING(3);
+
+        @Getter
         private final int value;
 
         LocalAnime(int value) {
             this.value = value;
-        }
-
-        public int getValue() {
-            return this.value;
         }
 
         public static LocalAnime getLocalAnime(int value) {

@@ -1,0 +1,6 @@
+jdk:
+  - oraclejdk17
+before_install:
+  - chmod +x gradlew
+install:
+  - ./gradlew service:publishToMavenLocal

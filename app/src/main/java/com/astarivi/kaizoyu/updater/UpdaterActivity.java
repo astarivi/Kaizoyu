@@ -17,6 +17,7 @@ import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.ActivityUpdaterBinding;
+import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.zparc.Zparc;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -40,6 +41,8 @@ public class UpdaterActivity extends AppCompatActivityTheme {
 
         binding = ActivityUpdaterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        Data.getProperties(Data.CONFIGURATION.APP).setProperty("skip_version", "false");
 
         Zparc spark = new Zparc.Builder(this)
                 .setView(binding.getRoot())
@@ -95,6 +98,8 @@ public class UpdaterActivity extends AppCompatActivityTheme {
     }
 
     private void installUpdate(File updateFile) {
+        AnalyticsClient.logBreadcrumb("About to install update...");
+
         // It better work. I don't want to use that dumb PackageInstaller thing
         startActivity(
                 new Intent(Intent.ACTION_VIEW)
@@ -120,7 +125,7 @@ public class UpdaterActivity extends AppCompatActivityTheme {
     }
 
     private void cancelUpdate() {
-        AnalyticsClient.logEvent("canceled_update");
+        AnalyticsClient.logBreadcrumb("Update has been canceled (unwillingly)");
         Toast.makeText(
                 this,
                 getString(R.string.update_error),
@@ -143,7 +148,7 @@ public class UpdaterActivity extends AppCompatActivityTheme {
                 .setMessage(getString(R.string.update_cancel_description))
                 .setPositiveButton(getString(R.string.update_cancel_accept), (dialog, which) -> {
                     downloadingFuture.cancel(true);
-                    AnalyticsClient.logEvent("canceled_update_willingly");
+                    AnalyticsClient.logBreadcrumb("Update has been canceled willingly");
                     finish();
                 }).setNegativeButton(getString(R.string.update_cancel_deny), null).show();
     }

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.astarivi.kaizolib'
-version '1.8'
+version '1.9'
 
 java {
     sourceCompatibility 1.8
@@ -16,9 +16,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.tinylog:tinylog-api:2.6.1'
-    runtimeOnly 'org.tinylog:tinylog-impl:2.6.1'
-    runtimeOnly 'org.tinylog:slf4j-tinylog:2.6.1'
+    implementation 'org.tinylog:tinylog-api:2.6.2'
+    runtimeOnly 'org.tinylog:tinylog-impl:2.6.2'
+    runtimeOnly 'org.tinylog:slf4j-tinylog:2.6.2'
 
     implementation 'org.jetbrains:annotations:24.0.1'
 
@@ -32,9 +32,9 @@ dependencies {
     //noinspection GradleDependency
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.5'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
 }
 
 test {
@@ -45,19 +45,22 @@ test {
 }
 
 publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/astarivi/Kaizoyu")
-            credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
-            }
-        }
-    }
     publications {
-        gpr(MavenPublication) {
-            from(components.java)
+        release(MavenPublication) {
+            groupId = 'com.github.astarivi'
+            artifactId = 'kaizolib'
+            version = '1.1'
+
+            from components.java
+
+            pom {
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://github.com/astarivi/Kaizoyu/blob/975c436925e2f5e00b554bd667c52c2057c1fd08/service/LICENSE'
+                    }
+                }
+            }
         }
     }
 }

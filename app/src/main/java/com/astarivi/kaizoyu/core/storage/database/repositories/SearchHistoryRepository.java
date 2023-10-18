@@ -9,16 +9,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import lombok.Getter;
+
 
 public class SearchHistoryRepository {
+    @Getter
     private final SearchHistoryDao searchHistoryDao;
 
     public SearchHistoryRepository(@NotNull AppDatabase database) {
         searchHistoryDao = database.searchHistoryDao();
-    }
-
-    public SearchHistoryDao getDao() {
-        return searchHistoryDao;
     }
 
     public List<SearchHistory> getAll() {

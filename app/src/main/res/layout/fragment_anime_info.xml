@@ -6,12 +6,62 @@
     tools:context=".details.gui.AnimeInfoFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
 >
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+    >
+<!--        <com.google.android.material.card.MaterialCardView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            style="?attr/materialCardViewFilledStyle"-->
+<!--            android:id="@+id/categories_card"-->
+<!--            android:layout_marginLeft="8dp"-->
+<!--            android:layout_marginRight="8dp"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:layout_marginBottom="16dp"-->
+<!--            app:cardBackgroundColor="?attr/colorSecondaryContainer"-->
+<!--            >-->
+<!--            <LinearLayout-->
+<!--                android:orientation="vertical"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:padding="18dp"-->
+<!--                >-->
+<!--                <TextView-->
+<!--                    android:text="@string/d_title_categories"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="20dp"-->
+<!--                    android:fontFamily="@font/lato_bold"-->
+<!--                    android:textSize="20sp"-->
+<!--                />-->
+
+<!--            </LinearLayout>-->
+<!--        </com.google.android.material.card.MaterialCardView>-->
+
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-    >
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="16dp"
+            android:id="@+id/categories_container"
+        >
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/categories_chips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true"
+            >
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
         <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -19,7 +69,6 @@
                 android:id="@+id/episode_card_button"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="?attr/colorSecondaryContainer"
         >
@@ -156,7 +205,6 @@
             android:id="@+id/trailer_card"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="16dp"
             app:cardBackgroundColor="?attr/colorSecondaryContainer"
             >
             <LinearLayout

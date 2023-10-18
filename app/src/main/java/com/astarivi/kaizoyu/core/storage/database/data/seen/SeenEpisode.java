@@ -29,6 +29,7 @@ public class SeenEpisode {
     @Embedded public EmbeddedEpisode episode;
     public int animeId;
     public long date;
+    public boolean notified = false;
 
     public SeenEpisode() {
     }
