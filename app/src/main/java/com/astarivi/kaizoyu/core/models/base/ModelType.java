@@ -21,8 +21,13 @@ public class ModelType {
         WATCHED(2),
         PENDING(3);
 
-        @Getter
+
+
         private final int value;
+
+        public int getValue() {
+            return value;
+        }
 
         LocalAnime(int value) {
             this.value = value;

@@ -80,6 +80,10 @@ public class StorageActivity extends AppCompatActivityTheme {
 
         setContentView(binding.getRoot());
 
+        //adding ToolBar
+        binding.StorageInternalToolbar.setNavigationOnClickListener(v -> {finish();});
+
+
         binding.storageMainContainer.getLayoutTransition().setAnimateParentHierarchy(false);
         binding.loadingBar.setProgressCompat(0, false);
         binding.currentOperationContainer.setVisibility(View.GONE);

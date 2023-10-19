@@ -8,6 +8,7 @@
     android:paddingTop="16dp"
     android:paddingBottom="16dp"
 >
+
     <LinearLayout
         android:id="@+id/settingsMainContainer"
         android:orientation="vertical"
@@ -15,12 +16,29 @@
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
     >
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Settings_externalToolbar">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:navigationIcon="@drawable/ic_back_new_small"
+            android:id="@+id/settings_internalToolbar"
+            app:titleTextColor="?attr/colorOnSurfaceVariant"
+            app:title="Settings"
+            android:background="?attr/colorSurfaceVariant"
+            />
+        </com.google.android.material.appbar.AppBarLayout>
         <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="?attr/materialCardViewFilledStyle"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp"
                 app:cardBackgroundColor="?attr/colorSecondaryContainer"
         >
             <LinearLayout

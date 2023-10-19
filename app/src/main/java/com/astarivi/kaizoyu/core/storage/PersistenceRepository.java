@@ -102,6 +102,30 @@ public class PersistenceRepository {
         return _instance;
     }
 
+    public ExtendedProperties getAppConfiguration() {
+        return appConfiguration;
+    }
+
+    public ExtendedProperties getBotsConfiguration() {
+        return botsConfiguration;
+    }
+
+    public AppDatabase getDatabase() {
+        return database;
+    }
+
+    public RepositoryDirectory getRepositoryDirectory() {
+        return repositoryDirectory;
+    }
+
+    public UserHttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public boolean isDeviceLowSpec() {
+        return isDeviceLowSpec;
+    }
+
     public void applyConfigurationChanges() {
         Logger.info("Applying configuration changes");
         switch (appConfiguration.getIntProperty("night_theme", 0)) {

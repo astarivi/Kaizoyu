@@ -58,5 +58,21 @@ public class Data {
     public static class TemporarySwitches {
         private boolean pendingFavoritesRefresh = false;
         private boolean pendingSeenEpisodeStateRefresh = false;
+
+        public boolean isPendingFavoritesRefresh() {
+            return pendingFavoritesRefresh;
+        }
+
+        public void setPendingFavoritesRefresh(boolean pendingFavoritesRefresh) {
+            this.pendingFavoritesRefresh = pendingFavoritesRefresh;
+        }
+
+        public boolean isPendingSeenEpisodeStateRefresh() {
+            return pendingSeenEpisodeStateRefresh;
+        }
+
+        public void setPendingSeenEpisodeStateRefresh(boolean pendingSeenEpisodeStateRefresh) {
+            this.pendingSeenEpisodeStateRefresh = pendingSeenEpisodeStateRefresh;
+        }
     }
 }
