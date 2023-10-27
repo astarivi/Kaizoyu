@@ -46,6 +46,8 @@ public class SettingsActivity extends AppCompatActivityTheme {
 
         setContentView(binding.getRoot());
 
+        binding.settingsInternalToolbar.setNavigationOnClickListener(v -> finish());
+
         binding.settingsMainContainer.getLayoutTransition().setAnimateParentHierarchy(false);
         binding.developerSection.setVisibility(View.GONE);
 

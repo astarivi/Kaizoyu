@@ -29,6 +29,10 @@ public class AnimeStorageRepository {
         favoriteAnimeDao = database.favoriteAnimeDao();
     }
 
+    public FavoriteAnimeDao getFavoriteAnimeDao() {
+        return favoriteAnimeDao;
+    }
+
     @ThreadedOnly
     public ModelType.LocalAnime getLocalType(Anime anime) {
         // Get the LocalAnime type of this Anime, if available

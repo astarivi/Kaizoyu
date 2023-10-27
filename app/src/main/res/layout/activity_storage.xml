@@ -5,7 +5,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clipToPadding="false"
-    android:paddingTop="16dp"
+
     android:paddingBottom="16dp"
 >
     <LinearLayout
@@ -15,6 +15,22 @@
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
     >
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Storage_externalToolbar"
+            >
+            <com.google.android.material.appbar.MaterialToolbar
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:navigationIcon="@drawable/ic_back_new_small"
+                android:id="@+id/Storage_internalToolbar"
+                app:titleTextColor="?attr/colorOnSurfaceVariant"
+                app:title="Storage"
+                android:background="?attr/colorSurfaceVariant"
+                />
+        </com.google.android.material.appbar.AppBarLayout>
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/currentOperationContainer"
             android:layout_width="match_parent"
@@ -23,6 +39,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
             app:cardBackgroundColor="?attr/colorSecondaryContainer"
         >
             <LinearLayout
@@ -297,5 +314,6 @@
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
 </ScrollView>
