@@ -2,10 +2,14 @@ package com.astarivi.kaizolib.common.network;
 
 import com.astarivi.kaizolib.common.util.StringPair;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import okhttp3.Request;
 
 
 public class CommonHeaders {
@@ -25,4 +29,10 @@ public class CommonHeaders {
                     )
             )
     );
+
+    public static void addTo(@NotNull Request.Builder requestBuilder, @NotNull List<StringPair> headers) {
+        for (StringPair header : headers) {
+            requestBuilder.addHeader(header.getName(), header.getValue());
+        }
+    }
 }

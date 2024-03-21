@@ -26,7 +26,7 @@ public class SubsPlease {
     }
 
     public SubsPlease() {
-        client = new UserHttpClient();
+        client = UserHttpClient.getInstance();
     }
 
     public @Nullable List<SubsPleaseAnime> getAnimeAiringToday(@NotNull TimeZone tz) {

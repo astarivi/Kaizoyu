@@ -35,7 +35,7 @@ public class PersistenceRepository {
     private final ExtendedProperties botsConfiguration;
     private final AppDatabase database;
     private final RepositoryDirectory repositoryDirectory;
-    private final UserHttpClient httpClient = new UserHttpClient();
+    private final UserHttpClient httpClient = UserHttpClient.getInstance();
     private final boolean isDeviceLowSpec;
 
     private PersistenceRepository() {
@@ -100,26 +100,6 @@ public class PersistenceRepository {
             }
         }
         return _instance;
-    }
-
-    public ExtendedProperties getAppConfiguration() {
-        return appConfiguration;
-    }
-
-    public ExtendedProperties getBotsConfiguration() {
-        return botsConfiguration;
-    }
-
-    public AppDatabase getDatabase() {
-        return database;
-    }
-
-    public RepositoryDirectory getRepositoryDirectory() {
-        return repositoryDirectory;
-    }
-
-    public UserHttpClient getHttpClient() {
-        return httpClient;
     }
 
     public boolean isDeviceLowSpec() {

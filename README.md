@@ -11,19 +11,6 @@ without any torrents, web-scraping, or highly compressed online video files.
 
 [Want to jump right in?, download here](https://github.com/astarivi/Kaizoyu/releases)
 
-# Kaizoyu! Development Discontinuation
-
-I have decided to halt the development of Kaizoyu! for several reasons. The IRC client contained within the application 
-has faced repeated bans from multiple Rizon channels, making development challenging. Additionally, a lack of personal motivation
-further contributed to this decision.
-
-I acknowledge and respect the decisions of all the Rizon channels that decided to ban Kaizoyu! from their platforms, as 
-they have every right to do so.
-
-Nonetheless, I thank everyone who was intereted in the project, and that contributed to testing the application.
-
-If you're interested in continuing this project, please reach out.
-
 # Features
 
 - Simple interface, with high, and low contrast themes included

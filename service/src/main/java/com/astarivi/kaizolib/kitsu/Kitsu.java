@@ -33,7 +33,7 @@ public class Kitsu {
     }
 
     public Kitsu() {
-        client = new UserHttpClient();
+        client = UserHttpClient.getInstance();
     }
 
     public @NotNull List<KitsuAnime> searchAnime(@NotNull KitsuSearchParams params) throws NoResultsException, NetworkConnectionException, ParsingException, NoResponseException {

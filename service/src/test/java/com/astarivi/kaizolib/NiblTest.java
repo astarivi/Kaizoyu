@@ -21,7 +21,7 @@ public class NiblTest {
 
     @BeforeAll
     static void setup() {
-        userHttpClient = new UserHttpClient();
+        userHttpClient = UserHttpClient.getInstance();
         nibl = new Nibl(userHttpClient);
     }
 

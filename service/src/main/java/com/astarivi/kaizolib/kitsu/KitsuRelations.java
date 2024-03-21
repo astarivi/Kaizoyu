@@ -24,7 +24,7 @@ public class KitsuRelations {
     }
 
     public KitsuRelations() {
-        client = new UserHttpClient();
+        client = UserHttpClient.getInstance();
     }
 
     public List<KitsuCategory> getKitsuCategories(int kitsuId) throws

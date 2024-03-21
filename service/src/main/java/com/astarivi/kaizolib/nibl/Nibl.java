@@ -24,8 +24,9 @@ public class Nibl {
     public Nibl(UserHttpClient client) {
         this.client = client;
     }
+
     public Nibl() {
-        client = new UserHttpClient();
+        client = UserHttpClient.getInstance();
     }
 
     public @Nullable List<NiblResult> searchAnimeEpisode(int limit, String anime, int episode) {

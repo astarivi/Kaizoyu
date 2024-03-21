@@ -21,7 +21,7 @@ public class SubsPleaseTest {
 
     @BeforeAll
     static void setup() {
-        userHttpClient = new UserHttpClient();
+        userHttpClient = UserHttpClient.getInstance();
         subsPlease = new SubsPlease(userHttpClient);
     }
     @Test

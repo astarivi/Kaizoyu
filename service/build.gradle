@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.astarivi.kaizolib'
-version '1.9'
+version '2.0'
 
 java {
     sourceCompatibility 1.8
@@ -16,11 +16,11 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.tinylog:tinylog-api:2.6.2'
-    runtimeOnly 'org.tinylog:tinylog-impl:2.6.2'
-    runtimeOnly 'org.tinylog:slf4j-tinylog:2.6.2'
+    implementation 'org.tinylog:tinylog-api:2.7.0'
+    runtimeOnly 'org.tinylog:tinylog-impl:2.7.0'
+    runtimeOnly 'org.tinylog:slf4j-tinylog:2.7.0'
 
-    implementation 'org.jetbrains:annotations:24.0.1'
+    implementation 'org.jetbrains:annotations:24.1.0'
 
     // Jackson
     //noinspection GradleDependency
@@ -32,9 +32,9 @@ dependencies {
     //noinspection GradleDependency
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.5'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 }
 
 test {
