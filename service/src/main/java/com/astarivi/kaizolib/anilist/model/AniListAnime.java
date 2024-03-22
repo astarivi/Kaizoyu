@@ -2,8 +2,12 @@ package com.astarivi.kaizolib.anilist.model;
 
 import com.astarivi.kaizolib.anilist.exception.ParsingError;
 import com.astarivi.kaizolib.common.util.JsonMapper;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.jetbrains.annotations.Nullable;
+import org.jsoup.Jsoup;
 
 import java.io.IOException;
 import java.util.List;
@@ -11,7 +15,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AniListAnime {
-    public long id;
+    public Long id;
     public Long idMal;
     public String description;
     public Titles title;
@@ -28,6 +32,20 @@ public class AniListAnime {
     public List<String> genres;
     public Trailer trailer;
 
+    public AniListAnime() {
+
+    }
+
+    @JsonProperty("description")
+    public void setDescription(String value) {
+        if (value == null) {
+            description = null;
+            return;
+        }
+
+        description = Jsoup.parse(value).text();
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Titles {
         public String romaji;
@@ -42,6 +60,27 @@ public class AniListAnime {
         public Integer year;
         public Integer month;
         public Integer day;
+
+        @JsonIgnore
+        public @Nullable String getDate() {
+            if (year == null) {
+                return null;
+            }
+
+            StringBuilder dateString = new StringBuilder();
+
+            if (day != null) {
+                dateString.append(String.format("%02d", day)).append("/");
+            }
+
+            if (month != null) {
+                dateString.append(String.format("%02d", month)).append("/");
+            }
+
+            dateString.append(year);
+
+            return dateString.toString();
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -94,5 +133,13 @@ public class AniListAnime {
         } catch (IOException | NullPointerException e) {
             throw new ParsingError(e);
         }
+    }
+
+    public static AniListAnime withDefaults(long id) {
+        AniListAnime anime = new AniListAnime();
+
+        anime.id = id;
+
+        return anime;
     }
 }
