@@ -32,6 +32,13 @@ public abstract class AniListBase {
             "{year month day}coverImage{extraLarge large medium color}bannerImage siteUrl episodes" +
             " duration genres trailer{id site}}}}";
 
+    protected static final String AIRING_SCHEDULE_QUERY = "query($page:Int,$week_start:Int,$week_" +
+            "end:Int){Page(page:$page){pageInfo{hasNextPage}airingSchedules(airingAt_greater:$wee" +
+            "k_start,airingAt_lesser:$week_end){id episode airingAt media{id idMal description ti" +
+            "tle{romaji english native userPreferred}averageScore format status startDate{year mo" +
+            "nth day}coverImage{extraLarge large medium color}bannerImage siteUrl episodes durati" +
+            "on genres trailer{id site}}}}}";
+
     protected static <T> Request getRequestFor(GraphQLRequest<T> request) throws ParsingError {
         return getBaseBuilder().post(getBaseBody(request)).build();
     }

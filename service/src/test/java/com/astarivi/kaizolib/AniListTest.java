@@ -2,7 +2,9 @@ package com.astarivi.kaizolib;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.astarivi.kaizolib.anilist.AniList;
+import com.astarivi.kaizolib.anilist.model.AiringSchedule;
 import com.astarivi.kaizolib.anilist.model.AniListAnime;
 
 import org.junit.jupiter.api.DisplayName;
@@ -34,5 +36,13 @@ public class AniListTest {
         assertEquals(result.get(0).title.english, "Mobile Suit Gundam: The Witch from Mercury");
 
         assertTrue(result.size() > 1);
+    }
+
+    @Test
+    @DisplayName("AniList get airing schedule")
+    void testAiring() throws Exception {
+        AniList aniList = new AniList();
+
+        AiringSchedule airingSchedule = aniList.airingSchedule();
     }
 }
