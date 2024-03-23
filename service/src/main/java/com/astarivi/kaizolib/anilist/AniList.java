@@ -2,11 +2,14 @@ package com.astarivi.kaizolib.anilist;
 
 import com.astarivi.kaizolib.anilist.base.AniListBase;
 import com.astarivi.kaizolib.anilist.exception.AniListException;
+import com.astarivi.kaizolib.anilist.exception.ParsingError;
 import com.astarivi.kaizolib.anilist.model.AiringSchedule;
 import com.astarivi.kaizolib.anilist.model.AniListAnime;
+import com.astarivi.kaizolib.common.exception.NoResponseException;
 import com.astarivi.kaizolib.common.network.HttpMethodsV2;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -102,5 +105,36 @@ public class AniList extends AniListBase {
         }
 
         return airingSchedule;
+    }
+
+    public @Nullable AiringSchedule.Detached airingNextEpisode(long aniListId) throws ParsingError, IOException {
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        long timestampNow = calendar.getTimeInMillis() / 1000;
+
+        TreeMap<String, Long> variables = new TreeMap<>();
+        variables.put("media_id", aniListId);
+        variables.put("start", timestampNow);
+
+        GraphQLRequest<Map<String, Long>> graphQlContent = new GraphQLRequest<>(
+                AIRING_ANIME_QUERY,
+                variables
+        );
+
+        String response;
+        try {
+            response = HttpMethodsV2.executeRequest(
+                    getRequestFor(graphQlContent)
+            );
+        } catch(NoResponseException e) {
+            if (e.getMessage().equals("404")) {
+                return null;
+            }
+
+            throw e;
+        }
+
+        return AiringSchedule.Detached.deserialize(response);
     }
 }

@@ -39,6 +39,9 @@ public abstract class AniListBase {
             "nth day}coverImage{extraLarge large medium color}bannerImage siteUrl episodes durati" +
             "on genres trailer{id site}}}}}";
 
+    protected static final String AIRING_ANIME_QUERY = "query($media_id:Int,$start:Int){AiringSch" +
+            "edule(airingAt_greater:$start,mediaId:$media_id){id episode airingAt}}";
+
     protected static <T> Request getRequestFor(GraphQLRequest<T> request) throws ParsingError {
         return getBaseBuilder().post(getBaseBody(request)).build();
     }

@@ -45,4 +45,12 @@ public class AniListTest {
 
         AiringSchedule airingSchedule = aniList.airingSchedule();
     }
+
+    @Test
+    @DisplayName("AniList get next episode airing")
+    void testEpisodeAiring() throws Exception {
+        AniList aniList = new AniList();
+
+        AiringSchedule.Detached airingSchedule = aniList.airingNextEpisode(166610);
+    }
 }

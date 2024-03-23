@@ -33,6 +33,28 @@ public class AiringSchedule {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Detached {
+        public Integer episode;
+        public Long airingAt;
+
+        private static class DetachedData {
+            public DetachedSchedule data;
+        }
+
+        private static class DetachedSchedule {
+            public Detached AiringSchedule;
+        }
+
+        public static Detached deserialize(String serialized) throws ParsingError {
+            try {
+                return JsonMapper.deserializeGeneric(serialized, DetachedData.class).data.AiringSchedule;
+            } catch (IOException e) {
+                throw new ParsingError(e);
+            }
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private static class Result {
         public Group data;
         @JsonIgnoreProperties(ignoreUnknown = true)
