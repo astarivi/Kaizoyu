@@ -51,6 +51,6 @@ public class AniListTest {
     void testEpisodeAiring() throws Exception {
         AniList aniList = new AniList();
 
-        AiringSchedule.Detached airingSchedule = aniList.airingNextEpisode(166610);
+        AiringSchedule.Episode airingSchedule = aniList.airingNextEpisode(166610);
     }
 }

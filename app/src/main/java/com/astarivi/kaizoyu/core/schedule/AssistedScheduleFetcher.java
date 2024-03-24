@@ -1,44 +1,43 @@
 package com.astarivi.kaizoyu.core.schedule;
 
-import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
-import com.astarivi.kaizoyu.core.adapters.WebAdapter;
-import com.astarivi.kaizoyu.core.common.AnalyticsClient;
+import com.astarivi.kaizolib.anilist.AniList;
+import com.astarivi.kaizolib.anilist.exception.AniListException;
+import com.astarivi.kaizolib.anilist.model.AiringSchedule;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
+import java.io.IOException;
 import java.time.DayOfWeek;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 import java.util.TreeMap;
-
-import okhttp3.HttpUrl;
 
 
 @ThreadedOnly
 public class AssistedScheduleFetcher {
-    public @Nullable TreeMap<DayOfWeek, @NotNull ArrayList<SeasonalAnime>> getSchedule() {
-        ScheduledAnime[] scheduledAnime = getScheduledAnime();
+    public static @Nullable SeasonalAnime getSingle(int animeId) throws AniListException, IOException {
+        AniList aniList = new AniList();
+        AiringSchedule.Episode airingEpisode = aniList.airingNextEpisode(animeId);
 
-        if (scheduledAnime == null) return null;
+        if (airingEpisode == null) return null;
 
-        return parse(scheduledAnime);
+        return SeasonalAnime.fromAiringEpisode(airingEpisode);
     }
 
-    private @Nullable TreeMap<DayOfWeek, @NotNull ArrayList<SeasonalAnime>> parse(ScheduledAnime[] scheduledAnime) {
+    public static TreeMap<DayOfWeek, ArrayList<SeasonalAnime>> getSchedule() throws AniListException, IOException {
+        AniList aniList = new AniList();
+        AiringSchedule airingSchedule = aniList.airingSchedule();
+
+        return parse(airingSchedule);
+    }
+
+    private static @Nullable TreeMap<DayOfWeek, @NotNull ArrayList<SeasonalAnime>> parse(AiringSchedule scheduledAnime) {
         TreeMap<DayOfWeek, @NotNull ArrayList<SeasonalAnime>> result = new TreeMap<>();
 
-        for (ScheduledAnime anime :  scheduledAnime) {
-            final SeasonalAnime seasonalAnime = anime.toSeasonalAnime();
+        for (AiringSchedule.Episode airingEpisode :  scheduledAnime.episodes) {
+            final SeasonalAnime seasonalAnime = SeasonalAnime.fromAiringEpisode(airingEpisode);
 
             if (seasonalAnime == null) continue;
 
@@ -54,66 +53,8 @@ public class AssistedScheduleFetcher {
             sAnime.add(seasonalAnime);
         }
 
-        if (result.size() == 0) return null;
+        if (result.isEmpty()) return null;
 
         return result;
-    }
-
-    public static @Nullable ScheduledAnime[] getScheduledAnime() {
-        String body = WebAdapter.getJSON(
-                new HttpUrl.Builder()
-                        .scheme("https")
-                        .host("cdn.kaizoyu.ovh")
-                        .addPathSegment("schedule.json")
-                        .build()
-        );
-
-        if (body == null) return null;
-
-        ScheduledAnime[] scheduledAnime;
-
-        try {
-            scheduledAnime = new ObjectMapper().readValue(body, ScheduledAnime[].class);
-        } catch (JsonProcessingException e) {
-            Logger.error("Failed to decode schedule.json from cdn.kaizoyu.ovh");
-            AnalyticsClient.onError("schedule_decode", "Failed to decode schedule.json from cdn.kaizoyu.ovh", e);
-            return null;
-        }
-
-        return scheduledAnime;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class ScheduledAnime {
-        public int id;
-        public String title;
-        public long timestamp;
-        public int episode;
-        public boolean aired;
-        public KitsuAnime kitsu;
-
-        public ScheduledAnime() {
-        }
-
-        public @Nullable SeasonalAnime toSeasonalAnime() {
-            Calendar calendarOfDate = Calendar.getInstance(new Locale("en","UK"));
-            calendarOfDate.setTimeInMillis(timestamp * 1000);
-            // Holy spaghetti
-            DayOfWeek dow = calendarOfDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getDayOfWeek();
-
-            return new SeasonalAnime.SeasonalAnimeBuilder(kitsu)
-                    .setEmissionDay(dow)
-                    .setHasAired(aired)
-                    .setCurrentEpisode(episode)
-                    .setEmissionTime(
-                            calendarOfDate
-                                    .toInstant()
-                                    .atZone(ZoneId.systemDefault())
-                                    .toLocalTime()
-                                    .format(
-                                            DateTimeFormatter.ofPattern("hh:mm a")
-                                    )
-                    ).build();
-        }
     }
 }

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 
+@Deprecated
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KitsuAnime {
     public String id;

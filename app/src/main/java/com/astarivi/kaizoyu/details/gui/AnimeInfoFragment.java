@@ -11,8 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
-import com.astarivi.kaizolib.kitsu.model.KitsuCategory;
+import com.astarivi.kaizolib.anilist.model.AniListAnime;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.theme.Colors;
@@ -63,64 +62,73 @@ public class AnimeInfoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(AnimeInfoViewModel.class);
 
-        KitsuAnime kitsuAnime = anime.getKitsuAnime();
+        AniListAnime aniListAnime = anime.getAniListAnime();
 
         binding.categoriesContainer.setVisibility(View.GONE);
 
-        binding.animeSynopsis.setText(kitsuAnime.attributes.synopsis);
+        binding.animeSynopsis.setText(aniListAnime.description);
 
-        KitsuAnime.KitsuAnimeTitles titles = kitsuAnime.attributes.titles;
+        AniListAnime.Titles titles = aniListAnime.title;
 
-        if (titles.en != null) {
+        if (titles.english != null) {
             binding.titleUs.setVisibility(View.VISIBLE);
-            binding.animeTitleUs.setText(titles.en);
+            binding.animeTitleUs.setText(titles.english);
             binding.titleUs.setOnLongClickListener(v ->
-                    Utils.copyToClipboard(getActivity(), "Anime title", titles.en)
+                    Utils.copyToClipboard(getActivity(), "Anime title", titles.english)
             );
         }
 
-        if (titles.en_jp != null) {
+        if (titles.romaji != null) {
             binding.titleEnJp.setVisibility(View.VISIBLE);
-            binding.animeTitleEnjp.setText(titles.en_jp);
+            binding.animeTitleEnjp.setText(titles.romaji);
             binding.titleEnJp.setOnLongClickListener(v ->
-                    Utils.copyToClipboard(getActivity(), "Anime title", titles.en_jp)
+                    Utils.copyToClipboard(getActivity(), "Anime title", titles.romaji)
             );
         }
 
-        if (titles.ja_jp != null) {
+        if (titles.japanese != null) {
             binding.titleJp.setVisibility(View.VISIBLE);
-            binding.animeTitleJp.setText(titles.ja_jp);
+            binding.animeTitleJp.setText(titles.japanese);
             binding.titleJp.setOnLongClickListener(v ->
-                    Utils.copyToClipboard(getActivity(), "Anime title", titles.ja_jp)
+                    Utils.copyToClipboard(getActivity(), "Anime title", titles.japanese)
             );
         }
 
-        if (kitsuAnime.attributes.youtubeVideoId != null) {
+        if (
+                aniListAnime.trailer != null &&
+                aniListAnime.trailer.id != null &&
+                (aniListAnime.trailer.site == null || aniListAnime.trailer.site.equals("youtube"))
+        ) {
             YouTubePlayerView youTubePlayerView = binding.youtubePlayer;
             getLifecycle().addObserver(youTubePlayerView);
 
             youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
                 @Override
                 public void onReady(@NonNull YouTubePlayer youTubePlayer) {
-                    youTubePlayer.cueVideo(kitsuAnime.attributes.youtubeVideoId, 0);
+                    youTubePlayer.cueVideo(
+                            String.format("https://www.youtube.com/watch?v=%s", aniListAnime.trailer.id),
+                            0
+                    );
                 }
             });
         } else {
             binding.trailerCard.setVisibility(View.GONE);
         }
 
-        viewModel.getCategories().observe(getViewLifecycleOwner(), this::makeCategoryChips);
+        if (aniListAnime.genres != null && !aniListAnime.genres.isEmpty()) {
+            this.makeCategoryChips(aniListAnime.genres);
+        }
 
         viewModel.initialize(anime);
     }
 
-    private void makeCategoryChips(List<KitsuCategory> categories) {
+    private void makeCategoryChips(List<String> categories) {
         Threading.submitTask(Threading.TASK.INSTANT, () -> {
             ArrayList<View> chipViews = new ArrayList<>();
 
             LayoutInflater layoutInflater = getLayoutInflater();
 
-            for (KitsuCategory category : categories) {
+            for (String category : categories) {
                 ItemChipCategoryBinding chipBinding = ItemChipCategoryBinding.inflate(
                         layoutInflater,
                         null,
@@ -128,10 +136,10 @@ public class AnimeInfoFragment extends Fragment {
                 );
 
                 chipBinding.getRoot().setChipBackgroundColor(ColorStateList.valueOf(
-                        Colors.getColorFromString(category.attributes.slug, 0.6F, 0.3F)
+                        Colors.getColorFromString(category, 0.6F, 0.3F)
                 ));
 
-                chipBinding.getRoot().setText(category.attributes.title);
+                chipBinding.getRoot().setText(category);
 
                 chipViews.add(chipBinding.getRoot());
             }

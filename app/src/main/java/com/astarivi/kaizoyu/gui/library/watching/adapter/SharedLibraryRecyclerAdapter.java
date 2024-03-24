@@ -9,7 +9,6 @@ import com.astarivi.kaizoyu.core.adapters.AnimeRecyclerAdapter;
 import com.astarivi.kaizoyu.core.adapters.AnimeViewHolder;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
 import com.astarivi.kaizoyu.utils.Translation;
-import com.astarivi.kaizoyu.utils.Utils;
 
 
 public class SharedLibraryRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<LocalAnime>, LocalAnime> {
@@ -25,11 +24,11 @@ public class SharedLibraryRecyclerAdapter extends AnimeRecyclerAdapter<AnimeView
 
     @Override
     public void onBindViewHolderStarted(@NonNull AnimeViewHolder<LocalAnime> holder, int position, LocalAnime localAnime) {
-        String animeStartDate = localAnime.getKitsuAnime().attributes.startDate;
+        String animeStartDate = localAnime.getAniListAnime().startDate.getDateAsQuarters();
 
-        if (animeStartDate != null && !animeStartDate.equals("")) {
+        if (animeStartDate != null && !animeStartDate.isEmpty()) {
             holder.binding.launchDate.setText(
-                    Utils.getDateAsQuarters(animeStartDate)
+                    animeStartDate
             );
         } else {
             holder.binding.launchDate.setVisibility(View.GONE);
@@ -37,7 +36,7 @@ public class SharedLibraryRecyclerAdapter extends AnimeRecyclerAdapter<AnimeView
 
         holder.binding.subtype.setText(
                 Translation.getSubTypeTranslation(
-                        localAnime.getKitsuAnime().attributes.subtype,
+                        localAnime.getAniListAnime().subtype,
                         holder.binding.getRoot().getContext()
                 )
         );

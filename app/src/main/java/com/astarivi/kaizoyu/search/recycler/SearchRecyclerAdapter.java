@@ -9,7 +9,6 @@ import com.astarivi.kaizoyu.core.adapters.AnimeRecyclerAdapter;
 import com.astarivi.kaizoyu.core.adapters.AnimeViewHolder;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.utils.Translation;
-import com.astarivi.kaizoyu.utils.Utils;
 
 
 public class SearchRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<Anime>, Anime> {
@@ -25,11 +24,11 @@ public class SearchRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<
 
     @Override
     public void onBindViewHolderStarted(@NonNull AnimeViewHolder<Anime> holder, int position, Anime anime) {
-        String animeStartDate = anime.getKitsuAnime().attributes.startDate;
+        String animeStartDate = anime.getAniListAnime().startDate.getDateAsQuarters();
 
-        if (animeStartDate != null && !animeStartDate.equals("")) {
+        if (animeStartDate != null && !animeStartDate.isEmpty()) {
             holder.binding.launchDate.setText(
-                    Utils.getDateAsQuarters(animeStartDate)
+                    animeStartDate
             );
         } else {
             holder.binding.launchDate.setVisibility(View.GONE);
@@ -37,7 +36,7 @@ public class SearchRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<
 
         holder.binding.subtype.setText(
                 Translation.getSubTypeTranslation(
-                        anime.getKitsuAnime().attributes.subtype,
+                        anime.getAniListAnime().subtype,
                         holder.binding.getRoot().getContext()
                 )
         );

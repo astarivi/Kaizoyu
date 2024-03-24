@@ -19,11 +19,11 @@ public class Translation {
                 return context.getResources().getString(R.string.type_ova);
             case "TV":
                 return context.getResources().getString(R.string.type_tv);
-            case "movie":
+            case "MOVIE":
                 return context.getResources().getString(R.string.type_movie);
-            case "special":
+            case "SPECIAL":
                 return context.getResources().getString(R.string.type_special);
-            case "music":
+            case "MUSIC":
             default:
                 return context.getResources().getString(R.string.type_music);
         }

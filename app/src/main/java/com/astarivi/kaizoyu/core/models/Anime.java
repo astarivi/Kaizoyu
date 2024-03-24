@@ -5,64 +5,61 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizolib.anilist.model.AniListAnime;
+import com.astarivi.kaizolib.common.util.JsonMapper;
 import com.astarivi.kaizoyu.core.models.base.AnimeBase;
 import com.astarivi.kaizoyu.utils.Data;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class Anime extends AnimeBase implements Parcelable {
-    protected final KitsuAnime anime;
+    protected final AniListAnime anime;
 
-    public Anime(@NonNull KitsuAnime anime) {
+    public Anime(@NonNull AniListAnime anime) {
         this.anime = anime;
     }
 
     @Override
-    public KitsuAnime getKitsuAnime() {
+    public AniListAnime getAniListAnime() {
         return this.anime;
     }
 
     public String getDefaultTitle() {
-        KitsuAnime.KitsuAnimeTitles titles = anime.attributes.titles;
+        AniListAnime.Titles titles = anime.title;
 
-        if (titles.en_jp != null) return titles.en_jp;
-        if (titles.en != null) return titles.en;
-        if (titles.en_us != null) return titles.en_us;
-        return titles.ja_jp;
+        if (titles.romaji != null) return titles.romaji;
+        if (titles.english != null) return titles.english;
+        return titles.japanese;
     }
 
     public String getDisplayTitle() {
-        KitsuAnime.KitsuAnimeTitles titles = anime.attributes.titles;
+        AniListAnime.Titles titles = anime.title;
 
         boolean preferEnglish = Data.getProperties(Data.CONFIGURATION.APP)
                 .getBooleanProperty("prefer_english", true);
 
-
         if (preferEnglish) {
-            if (titles.en != null) return titles.en;
-            if (titles.en_us != null) return titles.en_us;
-            if (titles.en_jp != null) return titles.en_jp;
-            return titles.ja_jp;
+            if (titles.english != null) return titles.english;
+            return titles.japanese;
         }
 
-        if (titles.en_jp != null) return titles.en_jp;
-        if (titles.en != null) return titles.en;
-        if (titles.en_us != null) return titles.en_us;
-        return titles.ja_jp;
+        return getDefaultTitle();
     }
 
     // region Parcelable implementation
 
     protected Anime(@NonNull Parcel parcel) {
-        ObjectMapper mapper = new ObjectMapper();
         try {
-            anime = mapper.readValue(parcel.readString(), KitsuAnime.class);
-        } catch (JsonProcessingException e) {
+            anime = JsonMapper.deserializeGeneric(
+                    Objects.requireNonNull(parcel.readString()),
+                    AniListAnime.class
+            );
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -86,12 +83,10 @@ public class Anime extends AnimeBase implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-        ObjectMapper mapper = new ObjectMapper();
-
         String serializedAnime;
 
         try {
-            serializedAnime = mapper.writeValueAsString(anime);
+            serializedAnime = JsonMapper.getObjectWriter().writeValueAsString(anime);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -104,13 +99,13 @@ public class Anime extends AnimeBase implements Parcelable {
     // region Builders
 
     public static class BulkAnimeBuilder {
-        private final List<KitsuAnime> anime;
+        private final List<AniListAnime> anime;
 
-        public BulkAnimeBuilder(List<KitsuAnime> anime) {
+        public BulkAnimeBuilder(List<AniListAnime> anime) {
             this.anime = anime;
         }
 
-        public BulkAnimeBuilder addAnime(KitsuAnime anime) {
+        public BulkAnimeBuilder addAnime(AniListAnime anime) {
             this.anime.add(anime);
             return this;
         }
@@ -118,9 +113,9 @@ public class Anime extends AnimeBase implements Parcelable {
         public ArrayList<Anime> build() {
             ArrayList<Anime> result = new ArrayList<>();
 
-            for (KitsuAnime kitsuAnime : this.anime) {
+            for (AniListAnime aniListAnime : this.anime) {
                 result.add(
-                        new Anime(kitsuAnime)
+                        new Anime(aniListAnime)
                 );
             }
 

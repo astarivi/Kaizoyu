@@ -8,9 +8,12 @@ import com.astarivi.kaizoyu.core.models.Anime;
 
 import java.util.List;
 
+import lombok.Getter;
+
 
 public class MainCategoryContainer {
     private final @StringRes int title;
+    @Getter
     private final List<Anime> anime;
 
     public MainCategoryContainer(@StringRes int title, List<Anime> anime) {
@@ -26,7 +29,4 @@ public class MainCategoryContainer {
         return context.getString(title);
     }
 
-    public List<Anime> getAnime() {
-        return anime;
-    }
 }

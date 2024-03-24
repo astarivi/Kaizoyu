@@ -41,8 +41,9 @@ public class SeenEpisode {
 
     public LocalEpisode toLocalEpisode() {
         return new LocalEpisode(
-                episode.toKitsuEpisode(),
                 episode.parentKitsuId,
+                episode.episodeNumber,
+                episode.length,
                 episode.currentPosition,
                 new Date(date)
         );

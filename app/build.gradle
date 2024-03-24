@@ -24,8 +24,8 @@ android {
         applicationId "com.astarivi.kaizoyu"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 10
-        versionName "0.9"
+        versionCode 11
+        versionName "1.0"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -145,9 +145,9 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.5.2'
 
     // Logger
-    implementation 'org.tinylog:tinylog-api:2.6.2'
-    implementation 'org.tinylog:tinylog-impl:2.6.2'
-    runtimeOnly 'org.tinylog:slf4j-tinylog:2.6.2'
+    implementation 'org.tinylog:tinylog-api:2.7.0'
+    implementation 'org.tinylog:tinylog-impl:2.7.0'
+    runtimeOnly 'org.tinylog:slf4j-tinylog:2.7.0'
 
     // Jackson
     // Don't update to 2.14 as Android minSdk support changes.
@@ -160,7 +160,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.5'
 
     // HTTP
-    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 
     // Google others
     implementation 'com.google.android.material:material:1.9.0'

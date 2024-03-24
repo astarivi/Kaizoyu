@@ -7,7 +7,6 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.Episode;
@@ -27,11 +26,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import lombok.Setter;
+
 
 public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     public final FragmentAnimeEpisodesItemBinding binding;
+    @Setter
     private SharedEpisodeItemClickListener listener;
     private Episode episode;
+    @Setter
     private Anime anime;
     private List<SeenEpisode> seenEpisodes;
 
@@ -55,14 +58,6 @@ public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements 
         );
 
         binding.episodeProgress.setVisibility(View.INVISIBLE);
-    }
-
-    public void setAnime(Anime anime) {
-        this.anime = anime;
-    }
-
-    public void setListener(SharedEpisodeItemClickListener listener) {
-        this.listener = listener;
     }
 
     @Override
@@ -94,16 +89,14 @@ public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements 
                 String.format(
                         Locale.ENGLISH,
                         context.getString(R.string.episode_long_press_title),
-                        episode.getKitsuEpisode().attributes.number
+                        episode.getNumber()
                 )
         );
 
         builder.setItems(options, (dialog, index) -> {
             if (index == 0) {
-                KitsuEpisode.KitsuEpisodeAttributes attributes = episode.getKitsuEpisode().attributes;
-
-                if (attributes.length == null || attributes.length <= 0) {
-                    attributes.length = 24;
+                if (episode.getLength() <= 0) {
+                    episode.setLength(24);
                 }
 
                 Data.getRepositories()
@@ -112,7 +105,7 @@ public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements 
                                 anime,
                                 episode,
                                 (int) TimeUnit.MINUTES.toMillis(
-                                        attributes.length != null ? attributes.length : 24
+                                        episode.getLength()
                                 ),
                                 this::triggerSeenRefresh
                         );
@@ -172,7 +165,7 @@ public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements 
 
         Threading.submitTask(Threading.TASK.INSTANT, () -> {
             for (SeenEpisode seenEpisode : seenEpisodes) {
-                if (seenEpisode.episode.episodeNumber == episode.getKitsuEpisode().attributes.number) {
+                if (seenEpisode.episode.episodeNumber == episode.getNumber()) {
                     binding.getRoot().post(() -> markSeen(seenEpisode));
                 }
             }

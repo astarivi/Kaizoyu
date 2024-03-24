@@ -7,9 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.astarivi.kaizolib.kitsu.Kitsu;
 import com.astarivi.kaizolib.kitsu.exception.KitsuExceptionManager;
-import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.Episode;
@@ -19,7 +17,6 @@ import com.astarivi.kaizoyu.core.search.Organizer;
 import com.astarivi.kaizoyu.core.search.SearchEnhancer;
 import com.astarivi.kaizoyu.core.video.VideoQuality;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeEpisodesBinding;
-import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 
@@ -28,38 +25,31 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.Future;
 
+import lombok.Getter;
+
 
 public class AnimeEpisodesViewModelV2 extends ViewModel {
+    @Getter
     private final MutableLiveData<TreeSet<Episode>> episodes = new MutableLiveData<>(null);
+    @Getter
     private final MutableLiveData<KitsuExceptionManager.FailureCode> exceptionHandler = new MutableLiveData<>();
+    @Getter
     private int currentPage = -1;
     private Future<?> fetchingFuture = null;
-    private int animeId = -1;
+    private Anime anime = null;
     private int episodeCount = -1;
     private boolean isSearching = false;
 
-    public MutableLiveData<TreeSet<Episode>> getEpisodes() {
-        return episodes;
-    }
-
-    public MutableLiveData<KitsuExceptionManager.FailureCode> getExceptionHandler() {
-        return exceptionHandler;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void initialize(int animeId, int episodeCount) {
+    public void initialize(Anime anime, int episodeCount) {
         if (currentPage != -1 || (fetchingFuture != null && !fetchingFuture.isDone())) return;
         this.episodeCount = episodeCount;
-        this.animeId = animeId;
+        this.anime = anime;
 
         fetchPage(1);
     }
 
     public void reload() {
-        if (episodeCount == -1 || animeId == -1 || isFetching()) {
+        if (episodeCount == -1 || anime == null || isFetching()) {
             return;
         }
 
@@ -70,7 +60,7 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
 
     public void setPage(int page) {
         // Already there, or not initialized yet.
-        if (currentPage == page || episodeCount == -1 || animeId == -1) {
+        if (currentPage == page || episodeCount == -1 || anime == null) {
             return;
         }
 
@@ -85,36 +75,56 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
 
     private void fetchPage(int page) {
         fetchingFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            Kitsu kitsu = new Kitsu(
-                    Data.getUserHttpClient()
-            );
-
             int[] pagination = Utils.paginateNumber(page, episodeCount, 20);
 
-            List<KitsuEpisode> kitsuEpisodes;
-            try {
-                kitsuEpisodes = kitsu.getEpisodesRange(
-                        this.animeId,
-                        pagination[0],
-                        pagination[1],
-                        episodeCount
-                );
-            } catch (Exception e) {
-                exceptionHandler.postValue(KitsuExceptionManager.getFailureCode(e));
-                episodes.postValue(null);
+            if (Thread.interrupted()) {
                 return;
             }
 
-            if (episodeCount <= 20) {
-                if (episodeCount > kitsuEpisodes.size()) episodeCount = kitsuEpisodes.size();
-                if (episodeCount < kitsuEpisodes.size()) kitsuEpisodes = kitsuEpisodes.subList(0, episodeCount);
+            // TODO: Implement this with AniList
+//            List<KitsuEpisode> kitsuEpisodes;
+//            try {
+//                kitsuEpisodes = kitsu.getEpisodesRange(
+//                        this.animeId,
+//                        pagination[0],
+//                        pagination[1],
+//                        episodeCount
+//                );
+//            } catch (Exception e) {
+//                exceptionHandler.postValue(KitsuExceptionManager.getFailureCode(e));
+//                episodes.postValue(null);
+//                return;
+//            }
+//
+//            if (episodeCount <= 20) {
+//                if (episodeCount > kitsuEpisodes.size()) episodeCount = kitsuEpisodes.size();
+//                if (episodeCount < kitsuEpisodes.size()) kitsuEpisodes = kitsuEpisodes.subList(0, episodeCount);
+//            }
+//
+//            currentPage = page;
+//
+//            episodes.postValue(
+//                    new Episode.BulkEpisodeBuilder(kitsuEpisodes, this.animeId).build()
+//            );
+
+            // Build dummy episodes
+            TreeSet<Episode> eps = new TreeSet<>();
+
+            for (int i = pagination[0]; i < pagination[1]; i++) {
+                if (Thread.interrupted()) return;
+
+                eps.add(
+                        new Episode(
+                                Math.toIntExact(anime.getAniListAnime().id),
+                                i,
+                                0
+                        )
+                );
             }
 
             currentPage = page;
 
-            episodes.postValue(
-                    new Episode.BulkEpisodeBuilder(kitsuEpisodes, this.animeId).build()
-            );
+            episodes.postValue(eps);
         });
     }
 
@@ -141,7 +151,7 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
                         searchEnhancer,
                         episode.getAnimeId(),
                         anime.getDefaultTitle(),
-                        episode.getKitsuEpisode().attributes.number
+                        episode.getNumber()
                 );
 
                 if (results == null) {

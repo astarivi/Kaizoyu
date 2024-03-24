@@ -12,8 +12,8 @@ import java.util.List;
 import lombok.Getter;
 
 
+@Getter
 public class SearchHistoryRepository {
-    @Getter
     private final SearchHistoryDao searchHistoryDao;
 
     public SearchHistoryRepository(@NotNull AppDatabase database) {

@@ -21,16 +21,12 @@ import org.tinylog.Logger;
 import lombok.Getter;
 
 
+@Getter
 public class AnimeStorageRepository {
-    @Getter
     private final FavoriteAnimeDao favoriteAnimeDao;
 
     public AnimeStorageRepository(@NotNull AppDatabase database) {
         favoriteAnimeDao = database.favoriteAnimeDao();
-    }
-
-    public FavoriteAnimeDao getFavoriteAnimeDao() {
-        return favoriteAnimeDao;
     }
 
     @ThreadedOnly
@@ -67,7 +63,7 @@ public class AnimeStorageRepository {
             try {
                 createOrUpdate(anime, type);
             } catch(Exception e) {
-                Logger.error("Error saving anime with ID {} to database", anime.getKitsuAnime().id);
+                Logger.error("Error saving anime with ID {} to database", anime.getAniListAnime().id);
                 Logger.error(e);
                 AnalyticsClient.onError(
                         "database_save_anime",
@@ -118,7 +114,7 @@ public class AnimeStorageRepository {
             try {
                 delete(anime);
             } catch(Exception e) {
-                Logger.error("Error removing anime with ID {} from database", anime.getKitsuAnime().id);
+                Logger.error("Error removing anime with ID {} from database", anime.getAniListAnime().id);
                 Logger.error(e);
                 AnalyticsClient.onError(
                         "database_save_anime",

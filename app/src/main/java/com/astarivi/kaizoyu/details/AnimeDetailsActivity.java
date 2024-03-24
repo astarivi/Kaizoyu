@@ -18,12 +18,11 @@ import androidx.lifecycle.Lifecycle;
 import androidx.palette.graphics.Palette;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.astarivi.kaizolib.kitsu.Kitsu;
-import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
-import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
-import com.astarivi.kaizolib.kitsu.exception.NoResultsException;
-import com.astarivi.kaizolib.kitsu.exception.ParsingException;
-import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizolib.anilist.AniList;
+import com.astarivi.kaizolib.anilist.exception.AniListException;
+import com.astarivi.kaizolib.anilist.exception.ParsingError;
+import com.astarivi.kaizolib.anilist.model.AniListAnime;
+import com.astarivi.kaizolib.common.exception.NoResponseException;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.modal.GenericModalBottomSheet;
 import com.astarivi.kaizoyu.core.adapters.modal.ModalOption;
@@ -33,8 +32,7 @@ import com.astarivi.kaizoyu.core.models.SeasonalAnime;
 import com.astarivi.kaizoyu.core.models.base.ImageSize;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
-import com.astarivi.kaizoyu.core.schedule.AnimeScheduleChecker;
-import com.astarivi.kaizoyu.core.search.AssistedResultSearcher;
+import com.astarivi.kaizoyu.core.schedule.AssistedScheduleFetcher;
 import com.astarivi.kaizoyu.core.search.SearchEnhancer;
 import com.astarivi.kaizoyu.core.storage.database.repositories.AnimeStorageRepository;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
@@ -62,6 +60,8 @@ import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 
@@ -107,7 +107,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         } else if (bundle != null) {
             String type = bundle.getString("type");
 
-            if (type == null || type.equals("")) {
+            if (type == null || type.isEmpty()) {
                 finish();
                 return;
             }
@@ -168,11 +168,17 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         // If this var isn't null, we are dealing with a deep link
         Integer finalKitsuId = kitsuId;
         Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            final int currentShowId = finalKitsuId != null ? finalKitsuId : Integer.parseInt(anime.getKitsuAnime().id);
+            final int currentShowId = finalKitsuId != null ? finalKitsuId : Math.toIntExact(anime.getAniListAnime().id);
 
-            SeasonalAnime seasonalAnime = AnimeScheduleChecker.getSeasonalAnime(
-                    currentShowId
-            );
+            SeasonalAnime seasonalAnime = null;
+
+            try {
+                seasonalAnime = AssistedScheduleFetcher.getSingle(
+                        currentShowId
+                );
+            } catch (AniListException | IOException e) {
+                // TODO: Handle this.
+            }
 
             // Seasonal anime
             if (seasonalAnime != null) {
@@ -186,34 +192,27 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                 localType = ((LocalAnime) anime).getLocalAnimeType();
             }
 
-            // Local anime or deep link
+            // Local anime or deep link, so fetch it
             if (animeType == ModelType.Anime.LOCAL || finalKitsuId != null) {
-                Kitsu kitsu = new Kitsu(
-                        Data.getUserHttpClient()
-                );
-
-                KitsuAnime ktAnime = null;
+                AniListAnime ktAnime = null;
                 try {
-                    ktAnime = kitsu.getAnimeById(
+                    ktAnime = new AniList().get(
                             currentShowId
                     );
-                } catch (NetworkConnectionException | NoResultsException e) {
+                } catch (AniListException | IOException e) {
                     if (finalKitsuId != null) {
-                        Logger.error("No internet connection to initialize this deep link");
-                        binding.getRoot().post(this::finish);
-                        return;
-                    }
-                } catch (NoResponseException | ParsingException e) {
-                    if (finalKitsuId != null) {
-                        Logger.error("Failed to initialize this deep link, response couldn't be decoded");
+                        Logger.error("No internet connection to initialize this deep link, or an error occurred");
                         Logger.error(e);
                         binding.getRoot().post(this::finish);
                         return;
                     }
-                    Logger.error("Weird exception after trying to initialize a locally saved anime.");
-                    Logger.error(e);
-                    Logger.error("This incident has been reported to analytics.");
-                    AnalyticsClient.onError("offline_anime_fetch", "Offline anime weird error", e);
+
+                    if (e instanceof ParsingError || e instanceof NoResponseException){
+                        Logger.error("Weird exception after trying to initialize a locally saved anime.");
+                        Logger.error(e);
+                        Logger.error("This incident has been reported to analytics.");
+                        AnalyticsClient.onError("offline_anime_fetch", "Offline anime weird error", e);
+                    }
                 }
 
                 if (ktAnime != null) {
@@ -292,9 +291,11 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         Threading.submitTask(Threading.TASK.INSTANT, () -> {
             Logger.info("Reaching KaizoSearch for search enhancement...");
 
-            searchEnhancer = AssistedResultSearcher.getSearchEnhancer(
-                    Integer.parseInt(anime.getKitsuAnime().id)
-            );
+            // TODO: Replace this.
+            searchEnhancer = null;
+//            searchEnhancer = AssistedResultSearcher.getSearchEnhancer(
+//                    Math.toIntExact(anime.getAniListAnime().id)
+//            );
 
             Logger.info("Got search enhancer response {}", searchEnhancer);
 
@@ -333,12 +334,12 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                     .placeholder(R.drawable.ic_general_placeholder)
                     .listener(new RequestListener<Drawable>() {
                         @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
                             if (coverUrl != null || !(resource instanceof BitmapDrawable)) return false;
 
                             Palette.from(
@@ -470,13 +471,13 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                             new ShareCompat.IntentBuilder(this)
                                     .setType("text/plain")
                                     .setChooserTitle(R.string.d_share_kitsu)
-                                    .setText(String.format("https://kitsu.io/anime/%s", anime.getKitsuAnime().id))
+                                    .setText(String.format(Locale.UK, "https://anilist.co/anime/%d", anime.getAniListAnime().id))
                                     .startChooser();
                         } else {
                             new ShareCompat.IntentBuilder(this)
                                     .setType("text/plain")
                                     .setChooserTitle(R.string.d_share_app)
-                                    .setText(String.format("https://kaizoyu.ovh/app/show/%s", anime.getKitsuAnime().id))
+                                    .setText(String.format(Locale.UK, "https://kaizoyu.ovh/app/show/%d", anime.getAniListAnime().id))
                                     .startChooser();
                         }
                     }
@@ -485,20 +486,20 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             modalDialog.show(getSupportFragmentManager(), GenericModalBottomSheet.TAG);
         });
 
-        final String rating = anime.getKitsuAnime().attributes.averageRating;
+        final Integer rating = anime.getAniListAnime().averageScore;
 
         if (rating != null) {
-            binding.animeRating.setText(rating);
+            binding.animeRating.setText(String.format(Locale.UK, "%d", rating));
         } else {
             binding.animeRating.setVisibility(View.GONE);
         }
 
-        final String subType = anime.getKitsuAnime().attributes.subtype;
+        final String subType = anime.getAniListAnime().subtype;
 
         if (subType != null) {
             binding.animeSubtype.setText(
                     Translation.getSubTypeTranslation(
-                            anime.getKitsuAnime().attributes.subtype,
+                            subType,
                             this
                     )
             );

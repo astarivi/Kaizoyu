@@ -107,7 +107,7 @@ public class AniList extends AniListBase {
         return airingSchedule;
     }
 
-    public @Nullable AiringSchedule.Detached airingNextEpisode(long aniListId) throws ParsingError, IOException {
+    public @Nullable AiringSchedule.Episode airingNextEpisode(long aniListId) throws ParsingError, IOException {
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -135,6 +135,6 @@ public class AniList extends AniListBase {
             throw e;
         }
 
-        return AiringSchedule.Detached.deserialize(response);
+        return AiringSchedule.Episode.deserialize(response);
     }
 }

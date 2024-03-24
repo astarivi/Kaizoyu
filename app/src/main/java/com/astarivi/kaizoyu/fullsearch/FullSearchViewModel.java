@@ -19,15 +19,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.concurrent.Future;
 
+import lombok.Getter;
+
 
 public class FullSearchViewModel extends ViewModel {
+    @Getter
     private final MutableLiveData<ArrayList<Result>> results = new MutableLiveData<>();
     private Future<?> searchingFuture = null;
     private boolean isSearchActive = false;
-
-    public MutableLiveData<ArrayList<Result>> getResults() {
-        return results;
-    }
 
     public boolean hasSearch() {
         return results.getValue() != null;

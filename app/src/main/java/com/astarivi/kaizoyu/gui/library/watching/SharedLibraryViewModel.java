@@ -18,13 +18,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
 
+
+@Getter
 public class SharedLibraryViewModel extends ViewModel {
     private final MutableLiveData<ArrayList<LocalAnime>> animeList = new MutableLiveData<>();
-
-    public MutableLiveData<ArrayList<LocalAnime>> getAnimeList() {
-        return animeList;
-    }
 
     public void fetchFavorites(@NotNull ActivitySharedLibraryBinding binding, ModelType.LocalAnime type) {
         binding.emptyLibraryPopup.setVisibility(View.GONE);

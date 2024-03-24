@@ -20,8 +20,11 @@ import com.astarivi.kaizoyu.databinding.PlayerTrackMenuBinding;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.interfaces.IMedia;
 
+import lombok.Getter;
+
 
 public class PlayerTrackMenuView extends LinearLayout {
+    @Getter
     private PlayerTrackMenuBinding binding;
     private PlayerTrackItemBinding selectedAudio;
     private String selectedAudioId;
@@ -220,10 +223,6 @@ public class PlayerTrackMenuView extends LinearLayout {
         selectedSubtitles = null;
         selectedSubtitlesId = null;
         inflater = null;
-    }
-
-    public PlayerTrackMenuBinding getBinding() {
-        return this.binding;
     }
 
     public static void show(

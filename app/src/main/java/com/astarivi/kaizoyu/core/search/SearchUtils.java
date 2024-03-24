@@ -29,7 +29,7 @@ public class SearchUtils {
 
         for (NiblResult result : results) {
             // Don't show empty results
-            if (result.name == null || result.name.equals("")) continue;
+            if (result.name == null || result.name.isEmpty()) continue;
 
             // Filters
             String botName = botsMap.getProperty(

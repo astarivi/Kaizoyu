@@ -59,7 +59,7 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
 
         final String type = bundle.getString("local_type");
 
-        if (type == null || type.equals("")) {
+        if (type == null || type.isEmpty()) {
             finish();
             return;
         }

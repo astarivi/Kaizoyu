@@ -13,6 +13,7 @@ import lombok.Setter;
 
 
 public class Data {
+    @Getter
     private static final TemporarySwitches temporarySwitches = new TemporarySwitches();
 
     public static UserHttpClient getUserHttpClient() {
@@ -41,10 +42,6 @@ public class Data {
         return PersistenceRepository.getInstance().getRepositoryDirectory();
     }
 
-    public static TemporarySwitches getTemporarySwitches() {
-        return temporarySwitches;
-    }
-
     public static boolean isDeviceLowSpec() {
         return PersistenceRepository.getInstance().isDeviceLowSpec();
     }
@@ -58,21 +55,5 @@ public class Data {
     public static class TemporarySwitches {
         private boolean pendingFavoritesRefresh = false;
         private boolean pendingSeenEpisodeStateRefresh = false;
-
-        public boolean isPendingFavoritesRefresh() {
-            return pendingFavoritesRefresh;
-        }
-
-        public void setPendingFavoritesRefresh(boolean pendingFavoritesRefresh) {
-            this.pendingFavoritesRefresh = pendingFavoritesRefresh;
-        }
-
-        public boolean isPendingSeenEpisodeStateRefresh() {
-            return pendingSeenEpisodeStateRefresh;
-        }
-
-        public void setPendingSeenEpisodeStateRefresh(boolean pendingSeenEpisodeStateRefresh) {
-            this.pendingSeenEpisodeStateRefresh = pendingSeenEpisodeStateRefresh;
-        }
     }
 }

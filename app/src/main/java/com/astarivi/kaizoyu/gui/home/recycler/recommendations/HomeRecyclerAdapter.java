@@ -22,8 +22,11 @@ import org.tinylog.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Setter;
+
 
 public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapter.HomeAnimeViewHolder> {
+    @Setter
     private ItemClickListener itemClickListener;
     private final List<Anime> items = new ArrayList<>();
 
@@ -73,10 +76,6 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
     public void replaceData(List<Anime> anime) {
         items.clear();
         items.addAll(anime);
-    }
-
-    public void setItemClickListener(ItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
     }
 
     @Override

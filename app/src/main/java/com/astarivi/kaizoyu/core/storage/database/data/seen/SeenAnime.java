@@ -51,7 +51,7 @@ public class SeenAnime {
 
     public LocalAnime toLocalAnime(ModelType.LocalAnime type) {
         return new LocalAnime(
-                anime.toKitsuAnime(),
+                anime.toAniListAnime(),
                 id,
                 new Date(date),
                 type

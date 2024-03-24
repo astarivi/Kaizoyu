@@ -12,7 +12,7 @@ import okhttp3.Response;
 
 
 public class HttpMethodsV2 {
-    public static String executeRequest(Request request) throws IOException, NoResponseException {
+    public static String executeRequest(Request request) throws IOException {
         Response response;
         try {
             response = UserHttpClient.getInstance().executeRequest(
@@ -36,7 +36,7 @@ public class HttpMethodsV2 {
                 return responseContent;
             default:
                 Logger.error("Remote response code was incorrect, it was {}. (Only 200 and 304 allowed)", responseCode);
-                throw new NoResponseException("Remote destination response code wasn't 200 (or 304).");
+                throw new NoResponseException(String.valueOf(responseCode));
         }
     }
 }

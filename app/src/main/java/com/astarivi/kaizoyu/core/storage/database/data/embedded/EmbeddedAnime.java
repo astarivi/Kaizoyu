@@ -1,6 +1,6 @@
 package com.astarivi.kaizoyu.core.storage.database.data.embedded;
 
-import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizolib.anilist.model.AniListAnime;
 
 
 public class EmbeddedAnime {
@@ -25,22 +25,19 @@ public class EmbeddedAnime {
         this.posterImageLink = posterImageLink;
     }
 
-    public KitsuAnime toKitsuAnime() {
-        return new KitsuAnime.KitsuAnimeBuilder(
-                Integer.toString(kitsuId)
-        ).setSubtype(
-                subtype
-        ).setSynopsis(
-                synopsis
-        ).setTitles(
-                titleJp,
-                titleEn,
-                titleEnJp
-        ).setCoverImage(
-                coverImgLink
-        ).setPosterImage(
-                posterImageLink
-        ).build(
-        );
+    public AniListAnime toAniListAnime() {
+        AniListAnime aniListAnime = AniListAnime.withDefaults(kitsuId);
+
+        aniListAnime.subtype = subtype;
+        aniListAnime.description = synopsis;
+        aniListAnime.title.english = titleEn;
+        aniListAnime.title.japanese = titleJp;
+        aniListAnime.title.romaji = titleEnJp;
+
+        // The naming scheme may be confusing, as Kitsu was used here before
+        aniListAnime.bannerImage = coverImgLink;
+        aniListAnime.coverImage.medium = posterImageLink;
+
+        return aniListAnime;
     }
 }

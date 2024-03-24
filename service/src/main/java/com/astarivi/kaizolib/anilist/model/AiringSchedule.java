@@ -30,22 +30,16 @@ public class AiringSchedule {
         public Integer episode;
         public Long airingAt;
         public AniListAnime media;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Detached {
-        public Integer episode;
-        public Long airingAt;
 
         private static class DetachedData {
             public DetachedSchedule data;
         }
 
         private static class DetachedSchedule {
-            public Detached AiringSchedule;
+            public Episode AiringSchedule;
         }
 
-        public static Detached deserialize(String serialized) throws ParsingError {
+        public static Episode deserialize(String serialized) throws ParsingError {
             try {
                 return JsonMapper.deserializeGeneric(serialized, DetachedData.class).data.AiringSchedule;
             } catch (IOException e) {

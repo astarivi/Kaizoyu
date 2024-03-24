@@ -10,12 +10,14 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.astarivi.kaizolib.anilist.AniList;
+import com.astarivi.kaizolib.anilist.exception.AniListException;
+import com.astarivi.kaizolib.anilist.model.AiringSchedule;
 import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.common.NotificationsHub;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.models.local.LocalAnime;
-import com.astarivi.kaizoyu.core.schedule.AssistedScheduleFetcher;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnimeWithEpisodes;
 import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenEpisode;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
@@ -25,9 +27,11 @@ import com.astarivi.kaizoyu.utils.Threading;
 
 import org.tinylog.Logger;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -55,9 +59,12 @@ public class EpisodePeriodicWorker extends Worker {
                         .getRelationWithRelationType(ModelType.LocalAnime.FAVORITE.getValue())
         );
 
-        AssistedScheduleFetcher.ScheduledAnime[] scheduledAnime = AssistedScheduleFetcher.getScheduledAnime();
+        ArrayList<AiringSchedule.Episode> airingEpisodes;
 
-        if (scheduledAnime == null) {
+        try {
+            airingEpisodes = new AniList().airingSchedule().episodes;
+            Objects.requireNonNull(airingEpisodes);
+        } catch (AniListException | IOException | NullPointerException e) {
             future.cancel(false);
             return Result.success();
         }
@@ -87,10 +94,12 @@ public class EpisodePeriodicWorker extends Worker {
         ArrayList<NewEpisodeNotification> notifications = new ArrayList<>();
         ArrayList<Integer> episodeIds = new ArrayList<>();
 
-        for (AssistedScheduleFetcher.ScheduledAnime anime : scheduledAnime) {
-            if (anime.episode == 0 || anime.episode == -1) continue;
+        for (AiringSchedule.Episode airingEpisode : airingEpisodes) {
+            if (airingEpisode.episode == 0 || airingEpisode.episode == -1) continue;
 
-            SeenAnimeWithEpisodes animeUserIsWatching = watchingHash.get(anime.id);
+            SeenAnimeWithEpisodes animeUserIsWatching = watchingHash.get(
+                    Math.toIntExact(airingEpisode.media.id)
+            );
 
             if (animeUserIsWatching == null) continue;
 
@@ -104,7 +113,7 @@ public class EpisodePeriodicWorker extends Worker {
                 }
             }
 
-            if (lastSeen == 0 || lastSeen + 1 != anime.episode || lastEpisode.notified) continue;
+            if (lastSeen == 0 || lastEpisode.notified || lastSeen + 1 != airingEpisode.episode) continue;
 
             episodeIds.add(lastEpisode.id);
 
@@ -113,7 +122,7 @@ public class EpisodePeriodicWorker extends Worker {
             notifications.add(
                     new NewEpisodeNotification(
                             localAnime,
-                            anime.episode
+                            airingEpisode.episode
                     )
             );
         }

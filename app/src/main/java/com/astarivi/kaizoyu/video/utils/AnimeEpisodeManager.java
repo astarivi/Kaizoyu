@@ -3,7 +3,6 @@ package com.astarivi.kaizoyu.video.utils;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.Episode;
@@ -19,10 +18,9 @@ import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 
 
+@Getter
 public class AnimeEpisodeManager {
-    @Getter
     private final Anime anime;
-    @Getter
     private final Episode episode;
 
     public AnimeEpisodeManager(Anime anime, Episode episode) {
@@ -39,15 +37,14 @@ public class AnimeEpisodeManager {
                 Locale.ENGLISH,
                 "%s %d %s",
                 context.getString(R.string.episode),
-                episode.getKitsuEpisode().attributes.number,
-                episode.getKitsuEpisode().attributes.canonicalTitle != null ? episode.getKitsuEpisode().attributes.canonicalTitle : ""
+                episode.getNumber(),
+                ""
         );
     }
 
     public void saveProgress(int playTime, int totalLength) {
-        KitsuEpisode.KitsuEpisodeAttributes attributes = episode.getKitsuEpisode().attributes;
-        if (totalLength > 0 && (attributes.length == null || attributes.length <= 0)) {
-            attributes.length = (int) TimeUnit.MILLISECONDS.toMinutes(totalLength);
+        if (totalLength > 0 && episode.getLength() <= 0) {
+            episode.setLength((int) TimeUnit.MILLISECONDS.toMinutes(totalLength));
         }
 
         Data.getRepositories()
@@ -65,7 +62,7 @@ public class AnimeEpisodeManager {
         public @NotNull AnimeEpisodeManager build() throws IllegalArgumentException {
             final String type = bundle.getString("type");
 
-            if (type == null || type.equals("")) {
+            if (type == null || type.isEmpty()) {
                 throw new IllegalArgumentException("The type bundle cannot be empty");
             }
 

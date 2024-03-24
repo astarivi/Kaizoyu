@@ -10,7 +10,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.IsoFields;
 import java.util.List;
+import java.util.Locale;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -62,6 +65,15 @@ public class AniListAnime {
         public Integer day;
 
         @JsonIgnore
+        public @Nullable String getDateAsQuarters() {
+            if (year == null || month == null) return null;
+
+            LocalDate date = LocalDate.of(year, month, 1);
+            int quarter = date.get(IsoFields.QUARTER_OF_YEAR);
+            return String.format(Locale.getDefault(), "%d Q%d", date.getYear(), quarter);
+        }
+
+        @JsonIgnore
         public @Nullable String getDate() {
             if (year == null) {
                 return null;
@@ -70,11 +82,11 @@ public class AniListAnime {
             StringBuilder dateString = new StringBuilder();
 
             if (day != null) {
-                dateString.append(String.format("%02d", day)).append("/");
+                dateString.append(String.format(Locale.UK, "%02d", day)).append("/");
             }
 
             if (month != null) {
-                dateString.append(String.format("%02d", month)).append("/");
+                dateString.append(String.format(Locale.UK, "%02d", month)).append("/");
             }
 
             dateString.append(year);

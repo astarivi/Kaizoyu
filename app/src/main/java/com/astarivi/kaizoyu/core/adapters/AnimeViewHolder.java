@@ -84,9 +84,7 @@ public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder im
                     .getSeenAnimeRepository()
                     .getSeenAnimeDao()
                     .getFromKitsuId(
-                            Integer.parseInt(
-                                    anime.getKitsuAnime().id
-                            )
+                            Math.toIntExact(anime.getAniListAnime().id)
                     );
 
             if (seenAnime == null || !seenAnime.isRelated()) {

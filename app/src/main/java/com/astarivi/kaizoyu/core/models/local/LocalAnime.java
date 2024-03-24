@@ -4,7 +4,7 @@ import android.os.Parcel;
 
 import androidx.annotation.NonNull;
 
-import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizolib.anilist.model.AniListAnime;
 import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.storage.database.data.favorite.FavoriteAnimeWithSeenAnime;
@@ -22,7 +22,7 @@ public class LocalAnime extends Anime {
     protected final Date watchDate;
     protected final ModelType.LocalAnime localAnimeType;
 
-    public LocalAnime(KitsuAnime anime, int databaseId, Date watchDate, ModelType.LocalAnime type) {
+    public LocalAnime(AniListAnime anime, int databaseId, Date watchDate, ModelType.LocalAnime type) {
         super(anime);
         this.databaseId = databaseId;
         this.watchDate = watchDate;

@@ -33,7 +33,6 @@ import okhttp3.HttpUrl;
 
 public class UpdateManager {
     public static String VERSION = BuildConfig.VERSION_NAME;
-    public static String VERSION_NAME = "judgement";
 
     public static boolean isBeta() {
         return VERSION.contains("-BETA");

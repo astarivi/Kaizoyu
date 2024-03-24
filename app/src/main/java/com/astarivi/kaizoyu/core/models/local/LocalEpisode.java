@@ -5,11 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
 import com.astarivi.kaizoyu.core.models.Episode;
 import com.astarivi.kaizoyu.core.storage.database.data.embedded.EmbeddedEpisode;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
@@ -21,11 +18,15 @@ public class LocalEpisode extends Episode {
     protected final Date watchDate;
     protected final int currentPosition;
 
-    public LocalEpisode(@NotNull KitsuEpisode episode, int animeId, int currentPosition,
-                        Date watchDate) {
-        super(episode, animeId);
+    public LocalEpisode(int animeId, int number, int length, int currentPosition, Date watchDate) {
+        super(animeId, number, length);
         this.watchDate = watchDate;
         this.currentPosition = currentPosition;
+    }
+
+    /** @noinspection unused*/
+    public EmbeddedEpisode toEmbeddedDatabaseObject() {
+        return super.toEmbeddedDatabaseObject(currentPosition);
     }
 
     // region Parcelable implementation
@@ -34,10 +35,6 @@ public class LocalEpisode extends Episode {
         super(parcel);
         watchDate = new Date(parcel.readLong());
         currentPosition = parcel.readInt();
-    }
-
-    public EmbeddedEpisode toEmbeddedDatabaseObject() {
-        return super.toEmbeddedDatabaseObject(currentPosition);
     }
 
     public static final Parcelable.Creator<LocalEpisode> CREATOR = new Parcelable.Creator<LocalEpisode>() {

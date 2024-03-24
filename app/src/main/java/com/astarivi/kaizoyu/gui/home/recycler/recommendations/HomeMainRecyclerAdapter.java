@@ -90,7 +90,7 @@ public class HomeMainRecyclerAdapter extends RecyclerView.Adapter<HomeMainRecycl
         notifyDataSetChanged();
     }
 
-    static class HomeMainViewHolder extends RecyclerView.ViewHolder {
+    public static class HomeMainViewHolder extends RecyclerView.ViewHolder {
         public FragmentHomeItemBinding binding;
 
         public HomeMainViewHolder(@NonNull FragmentHomeItemBinding binding) {

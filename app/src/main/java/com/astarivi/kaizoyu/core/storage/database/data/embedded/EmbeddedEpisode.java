@@ -23,6 +23,7 @@ public class EmbeddedEpisode {
         this.currentPosition = currentPosition;
     }
 
+    @Deprecated
     public KitsuEpisode toKitsuEpisode() {
         return new KitsuEpisode.KitsuEpisodeBuilder(
                 Integer.toString(kitsuId)

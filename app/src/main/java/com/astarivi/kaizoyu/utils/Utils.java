@@ -25,6 +25,7 @@ import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -82,6 +83,7 @@ public class Utils {
     }
 
     // Only accepts ISO-8601 date strings ("2023-03-10")
+    @Deprecated
     @NotNull
     public static String getDateAsQuarters(@NotNull String dateString) {
         LocalDate date = LocalDate.parse(dateString);
@@ -90,11 +92,13 @@ public class Utils {
     }
 
     // Very flawed, but ey, this is all I got
+    @ThreadedOnly
     public static boolean isIPv6Capable() {
         try{
             InetAddress address = InetAddress.getByName("2001:4860:4860::8888");
             return address.isReachable(10000);
         } catch (Exception e){
+            Logger.error(e);
             e.printStackTrace();
         }
 

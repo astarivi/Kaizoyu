@@ -16,12 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import lombok.Getter;
+import lombok.Setter;
+
 
 public class EpisodesRecyclerAdapter extends RecyclerView.Adapter<SharedEpisodeViewHolder> {
+    @Setter
     private SharedEpisodeItemClickListener itemClickListener;
     private final List<Episode> items = new ArrayList<>();
+    @Getter
     private final List<SharedEpisodeViewHolder> holders = new ArrayList<>();
 
+    @Setter
     private Anime anime;
 
     @NonNull
@@ -46,11 +52,11 @@ public class EpisodesRecyclerAdapter extends RecyclerView.Adapter<SharedEpisodeV
 
         holder.binding.episodeNumberCard.setText(
                 String.valueOf(
-                        episode.getKitsuEpisode().attributes.number
+                        episode.getNumber()
                 )
         );
 
-        holder.binding.episodeTitle.setText(episode.getDefaultTitle());
+//        holder.binding.episodeTitle.setText(episode.getDefaultTitle());
         holder.checkSeen();
 
         holders.add(holder);
@@ -59,10 +65,6 @@ public class EpisodesRecyclerAdapter extends RecyclerView.Adapter<SharedEpisodeV
     @Override
     public int getItemCount() {
         return items.size();
-    }
-
-    public void setItemClickListener(SharedEpisodeItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
     }
 
     public void checkSeenAgain() {
@@ -74,14 +76,6 @@ public class EpisodesRecyclerAdapter extends RecyclerView.Adapter<SharedEpisodeV
     public void replaceData(TreeSet<Episode> episodes) {
         items.clear();
         items.addAll(episodes);
-    }
-
-    public void setAnime(Anime anime) {
-        this.anime = anime;
-    }
-
-    public List<SharedEpisodeViewHolder> getHolders() {
-        return holders;
     }
 
     private Episode getEpisodeFromPosition(int position) {

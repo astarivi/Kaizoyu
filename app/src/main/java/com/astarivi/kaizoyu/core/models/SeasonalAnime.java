@@ -1,19 +1,21 @@
 package com.astarivi.kaizoyu.core.models;
 
 import android.os.Parcel;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
-import com.astarivi.kaizolib.subsplease.model.SubsPleaseAnime;
+import com.astarivi.kaizolib.anilist.model.AiringSchedule;
+import com.astarivi.kaizolib.anilist.model.AniListAnime;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.time.DayOfWeek;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import lombok.Getter;
 
@@ -68,22 +70,44 @@ public class SeasonalAnime extends Anime {
         this.currentEpisode = builder.currentEpisode;
     }
 
-    // Unused
-    private SeasonalAnime(@NotNull AdditionalSeasonalAnimeBuilder builder) {
-        super(builder.anime);
-        this.emissionTime = builder.subsPleaseAnime.time;
-        this.emissionDay = builder.emissionDay;
-        this.hasAired = builder.subsPleaseAnime.aired != null && builder.subsPleaseAnime.aired;
+    public static SeasonalAnime fromAiringEpisode(AiringSchedule.Episode airingEpisode) {
+        Calendar calendarOfDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        calendarOfDate.setTimeInMillis(airingEpisode.airingAt * 1000);
+
+        ZonedDateTime airingTime = calendarOfDate
+                .toInstant()
+                .atZone(ZoneId.systemDefault());
+
+        return new SeasonalAnime.SeasonalAnimeBuilder(airingEpisode.media)
+                .setCurrentEpisode(airingEpisode.episode)
+                .setEmissionDay(
+                        airingTime
+                                .toLocalDate()
+                                .getDayOfWeek()
+                )
+                .setEmissionTime(
+                        airingTime
+                                .toLocalTime()
+                                .format(
+                                        DateTimeFormatter.ofPattern("hh:mm a")
+                                )
+                )
+                .setHasAired(
+                        ZonedDateTime
+                                .now()
+                                .isAfter(airingTime)
+                )
+                .build();
     }
 
     public static class SeasonalAnimeBuilder {
-        private final KitsuAnime anime;
+        private final AniListAnime anime;
         private String emissionTime;
         private DayOfWeek emissionDay;
         private boolean hasAired;
         private int currentEpisode = -1;
 
-        public SeasonalAnimeBuilder(KitsuAnime anime) {
+        public SeasonalAnimeBuilder(AniListAnime anime) {
             this.anime = anime;
         }
 
@@ -113,66 +137,5 @@ public class SeasonalAnime extends Anime {
             return new SeasonalAnime(this);
         }
     }
-
-    // Unused
-    public static class AdditionalSeasonalAnimeBuilder {
-        private KitsuAnime anime;
-        private SubsPleaseAnime subsPleaseAnime;
-        private final DayOfWeek emissionDay;
-
-        public AdditionalSeasonalAnimeBuilder(DayOfWeek emissionDay) {
-            this.emissionDay = emissionDay;
-        }
-
-        public AdditionalSeasonalAnimeBuilder setKitsuAnime(KitsuAnime anime) {
-            this.anime = anime;
-            return this;
-        }
-
-        public AdditionalSeasonalAnimeBuilder setSubsPleaseAnime(SubsPleaseAnime subsPleaseAnime) {
-            this.subsPleaseAnime = subsPleaseAnime;
-            return this;
-        }
-
-        public @Nullable SeasonalAnime build() {
-            if (subsPleaseAnime == null || anime == null) return null;
-
-            return new SeasonalAnime(this);
-        }
-    }
-
-    // Unused
-    public static class BulkSeasonalAnimeBuilder {
-        private final DayOfWeek emissionDay;
-        private final List<Pair<KitsuAnime, SubsPleaseAnime>> anime = new ArrayList<>();
-
-        public BulkSeasonalAnimeBuilder(DayOfWeek day) {
-            emissionDay = day;
-        }
-
-        public void addPairs(KitsuAnime kitsuAnime, SubsPleaseAnime subsPleaseAnime) {
-            anime.add(
-                    new Pair<>(kitsuAnime, subsPleaseAnime)
-            );
-        }
-
-        public @Nullable List<SeasonalAnime> build() {
-            if (anime.isEmpty()) return null;
-
-            List<SeasonalAnime> results = new ArrayList<>();
-
-            for (Pair<KitsuAnime, SubsPleaseAnime> pair : anime) {
-                results.add(
-                        new AdditionalSeasonalAnimeBuilder(emissionDay)
-                                .setKitsuAnime(pair.first)
-                                .setSubsPleaseAnime(pair.second)
-                                .build()
-                );
-            }
-
-            return results;
-        }
-    }
-
     // endregion
 }

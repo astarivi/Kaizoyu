@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.jetbrains.annotations.NotNull;
 
 
+@Deprecated
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KitsuEpisode {
     public String id;

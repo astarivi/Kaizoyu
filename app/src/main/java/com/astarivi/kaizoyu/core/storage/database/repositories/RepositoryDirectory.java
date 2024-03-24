@@ -16,16 +16,4 @@ public class RepositoryDirectory {
         searchHistoryRepository = new SearchHistoryRepository(database);
         seenAnimeRepository = new SeenAnimeRepository(database);
     }
-
-    public AnimeStorageRepository getAnimeStorageRepository() {
-        return animeStorageRepository;
-    }
-
-    public SearchHistoryRepository getSearchHistoryRepository() {
-        return searchHistoryRepository;
-    }
-
-    public SeenAnimeRepository getSeenAnimeRepository() {
-        return seenAnimeRepository;
-    }
 }

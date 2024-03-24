@@ -16,11 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.astarivi.kaizolib.kitsu.Kitsu;
-import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
-import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
-import com.astarivi.kaizolib.kitsu.exception.ParsingException;
-import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizolib.anilist.model.AniListAnime;
 import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
@@ -180,9 +176,7 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
         });
 
         Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            KitsuAnime kitsuAnime = anime.getKitsuAnime();
-            int kitsuId = Integer.parseInt(kitsuAnime.id);
-
+            AniListAnime aniListAnime = anime.getAniListAnime();
             final int animeLength;
 
             // Get anime length
@@ -193,34 +187,7 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
             ) {
                 animeLength = ((SeasonalAnime) anime).getCurrentEpisode();
             } else {
-                Kitsu kitsu = new Kitsu(
-                        Data.getUserHttpClient()
-                );
-
-                // Dumb workaround lol
-                int fetchResult;
-
-                try {
-                    fetchResult = kitsu.getAnimeEpisodesLength(
-                            kitsuId
-                    );
-                } catch (NetworkConnectionException e) {
-                    Utils.makeToastRegardless(
-                            getContext(),
-                            R.string.network_connection_error,
-                            Toast.LENGTH_SHORT
-                    );
-                    fetchResult = 0;
-                } catch (ParsingException | NoResponseException e) {
-                    Utils.makeToastRegardless(
-                            getContext(),
-                            R.string.parsing_error,
-                            Toast.LENGTH_SHORT
-                    );
-                    fetchResult = 0;
-                }
-
-                animeLength = fetchResult;
+                animeLength = aniListAnime.episodes;
             }
 
             binding.getRoot().post(() -> {
@@ -229,7 +196,7 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
                 }
 
                 viewModel.initialize(
-                        kitsuId,
+                        anime,
                         animeLength
                 );
             });

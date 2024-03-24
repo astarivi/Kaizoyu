@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import lombok.Setter;
+
 
 public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.HomeNewsViewHolder>{
     private final ItemClickListener itemClickListener;
@@ -72,6 +74,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
 
     public class HomeNewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ItemNewsBinding binding;
+        @Setter
         private SyndEntry entry;
         private Future<?> imageUrlFetcher;
 
@@ -79,10 +82,6 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
             super(binding.getRoot());
             binding.getRoot().setOnClickListener(this);
             this.binding = binding;
-        }
-
-        public void setEntry(SyndEntry entry) {
-            this.entry = entry;
         }
 
         public void fetchImage() {

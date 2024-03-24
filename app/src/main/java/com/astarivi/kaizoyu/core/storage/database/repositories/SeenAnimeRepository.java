@@ -82,7 +82,7 @@ public class SeenAnimeRepository {
         SeenAnimeWithEpisodes seenAnimeWithEpisodes = seenAnimeDao.getRelation(parentAnime.id);
 
         for (SeenEpisode seenEpisode : seenAnimeWithEpisodes.episodes) {
-            if (seenEpisode.episode.episodeNumber == episode.getKitsuEpisode().attributes.number) {
+            if (seenEpisode.episode.episodeNumber == episode.getNumber()) {
                 seenEpisode.episode.currentPosition = currentPlayerTime;
                 seenEpisodeDao.update(seenEpisode);
 
@@ -107,7 +107,7 @@ public class SeenAnimeRepository {
 
     private void deleteSeenEpisodeAsync(Runnable runnable, Anime anime, Episode episode) {
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            final int animeId = Integer.parseInt(anime.getKitsuAnime().id);
+            final int animeId = Math.toIntExact(anime.getAniListAnime().id);
 
             SeenAnimeWithEpisodes seenAnimeWithEpisodes = seenAnimeDao.getRelationFromKitsuId(
                     animeId
@@ -116,7 +116,7 @@ public class SeenAnimeRepository {
             if (seenAnimeWithEpisodes == null) return;
 
             for (SeenEpisode seenEpisode : seenAnimeWithEpisodes.episodes) {
-                if (seenEpisode.episode.episodeNumber == episode.getKitsuEpisode().attributes.number) {
+                if (seenEpisode.episode.episodeNumber == episode.getNumber()) {
                     seenEpisodeDao.delete(seenEpisode);
                 }
             }
@@ -138,7 +138,7 @@ public class SeenAnimeRepository {
 
     public @Nullable SeenAnime get(Anime anime) {
         return seenAnimeDao.getFromKitsuId(
-                Integer.parseInt(anime.getKitsuAnime().id)
+                Math.toIntExact(anime.getAniListAnime().id)
         );
     }
 

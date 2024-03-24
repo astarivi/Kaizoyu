@@ -370,8 +370,9 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             SeenEpisode currentSeenEpisode = Data.getRepositories()
                     .getSeenAnimeRepository()
                     .getSeenEpisodeDao()
-                    .getEpisodeBy(
-                            Integer.parseInt(animeEpisodeManager.getEpisode().getKitsuEpisode().id)
+                    .getEpisodeWith(
+                            Math.toIntExact(animeEpisodeManager.getAnime().getAniListAnime().id),
+                            animeEpisodeManager.getEpisode().getNumber()
                     );
 
             int currentPosition = currentSeenEpisode.episode.currentPosition;
