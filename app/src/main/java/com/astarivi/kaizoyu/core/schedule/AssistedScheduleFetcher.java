@@ -11,8 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
-import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 
 @ThreadedOnly
@@ -26,27 +26,29 @@ public class AssistedScheduleFetcher {
         return SeasonalAnime.fromAiringEpisode(airingEpisode);
     }
 
-    public static TreeMap<DayOfWeek, ArrayList<SeasonalAnime>> getSchedule() throws AniListException, IOException {
+    public static TreeMap<DayOfWeek, TreeSet<SeasonalAnime>> getSchedule() throws AniListException, IOException {
         AniList aniList = new AniList();
         AiringSchedule airingSchedule = aniList.airingSchedule();
 
         return parse(airingSchedule);
     }
 
-    private static @Nullable TreeMap<DayOfWeek, @NotNull ArrayList<SeasonalAnime>> parse(AiringSchedule scheduledAnime) {
-        TreeMap<DayOfWeek, @NotNull ArrayList<SeasonalAnime>> result = new TreeMap<>();
+    private static @Nullable TreeMap<DayOfWeek, @NotNull TreeSet<SeasonalAnime>> parse(AiringSchedule scheduledAnime) {
+        TreeMap<DayOfWeek, @NotNull TreeSet<SeasonalAnime>> result = new TreeMap<>();
 
         for (AiringSchedule.Episode airingEpisode :  scheduledAnime.episodes) {
             final SeasonalAnime seasonalAnime = SeasonalAnime.fromAiringEpisode(airingEpisode);
 
             if (seasonalAnime == null) continue;
 
+            if (!seasonalAnime.getAniListAnime().subtype.equals("TV")) continue;
+
             DayOfWeek dow = seasonalAnime.getEmissionDay();
 
-            ArrayList<SeasonalAnime> sAnime = result.get(dow);
+            TreeSet<SeasonalAnime> sAnime = result.get(dow);
 
             if (sAnime == null) {
-                sAnime = new ArrayList<>();
+                sAnime = new TreeSet<>();
                 result.put(dow, sAnime);
             }
 

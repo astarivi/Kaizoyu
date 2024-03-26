@@ -178,7 +178,7 @@ public class ScheduleFragment extends TabFragment {
             binding.scheduleAnimeRecycler.setVisibility(View.VISIBLE);
 
             manager.scrollToPosition(0);
-            adapter.replaceData(seasonalAnimeList);
+            adapter.replaceData(new ArrayList<>(seasonalAnimeList));
             adapter.notifyDataSetChanged();
         });
 

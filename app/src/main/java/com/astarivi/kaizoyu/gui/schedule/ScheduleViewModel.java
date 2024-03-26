@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.Future;
 
 import lombok.Getter;
@@ -30,8 +31,8 @@ public class ScheduleViewModel extends ViewModel {
     @Getter
     private final MutableLiveData<ArrayList<DayOfWeek>> availableDaysOfWeek = new MutableLiveData<>();
     @Getter
-    private final MutableLiveData<ArrayList<SeasonalAnime>> animeFromSchedule = new MutableLiveData<>();
-    private final MutableLiveData<TreeMap<DayOfWeek, ArrayList<SeasonalAnime>>> schedule = new MutableLiveData<>(null);
+    private final MutableLiveData<TreeSet<SeasonalAnime>> animeFromSchedule = new MutableLiveData<>();
+    private final MutableLiveData<TreeMap<DayOfWeek, TreeSet<SeasonalAnime>>> schedule = new MutableLiveData<>(null);
     private Future<?> reloadFuture = null;
 
     public void reloadSchedule(@NotNull FragmentScheduleBinding binding) {
@@ -43,7 +44,7 @@ public class ScheduleViewModel extends ViewModel {
         binding.dowTabs.setVisibility(View.GONE);
 
         reloadFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            TreeMap<DayOfWeek, ArrayList<SeasonalAnime>> fetchedSchedule;
+            TreeMap<DayOfWeek, TreeSet<SeasonalAnime>> fetchedSchedule;
             try {
                 fetchedSchedule = AssistedScheduleFetcher.getSchedule();
             } catch (AniListException | IOException e) {
@@ -57,7 +58,7 @@ public class ScheduleViewModel extends ViewModel {
     }
 
     @ThreadedOnly
-    private void updateDayOfWeekChips(@Nullable TreeMap<DayOfWeek, ArrayList<SeasonalAnime>> fetchedSchedule) {
+    private void updateDayOfWeekChips(@Nullable TreeMap<DayOfWeek, TreeSet<SeasonalAnime>> fetchedSchedule) {
         if (fetchedSchedule == null) {
             availableDaysOfWeek.postValue(null);
             return;

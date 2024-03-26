@@ -106,7 +106,7 @@ public class AnimeInfoFragment extends Fragment {
                 @Override
                 public void onReady(@NonNull YouTubePlayer youTubePlayer) {
                     youTubePlayer.cueVideo(
-                            String.format("https://www.youtube.com/watch?v=%s", aniListAnime.trailer.id),
+                            aniListAnime.trailer.id,
                             0
                     );
                 }

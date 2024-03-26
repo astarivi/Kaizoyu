@@ -21,20 +21,28 @@ import lombok.Getter;
 
 
 @Getter
-public class SeasonalAnime extends Anime {
-    private final String emissionTime;
-    private final DayOfWeek emissionDay;
-    private final boolean hasAired;
+public class SeasonalAnime extends Anime implements Comparable<SeasonalAnime> {
+    private final ZonedDateTime airingDateTime;
     private int currentEpisode = -1;
 
     // region Parcelable implementation
 
     protected SeasonalAnime(Parcel parcel) {
         super(parcel);
-        emissionTime = parcel.readString();
-        emissionDay = DayOfWeek.of(parcel.readInt());
-        hasAired = parcel.readByte() != 0;
+        airingDateTime = ZonedDateTime.parse(parcel.readString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
         currentEpisode = parcel.readInt();
+    }
+
+    public String getEmissionTime() {
+        return airingDateTime.format(DateTimeFormatter.ofPattern("hh:mm a"));
+    }
+
+    public DayOfWeek getEmissionDay() {
+        return airingDateTime.getDayOfWeek();
+    }
+
+    public boolean hasAired() {
+        return ZonedDateTime.now().isAfter(airingDateTime);
     }
 
     public static final Creator<SeasonalAnime> CREATOR = new Creator<SeasonalAnime>() {
@@ -52,9 +60,7 @@ public class SeasonalAnime extends Anime {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeString(emissionTime);
-        dest.writeInt(emissionDay.getValue());
-        dest.writeByte((byte) (hasAired ? 1 : 0));
+        dest.writeString(airingDateTime.format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
         dest.writeInt(currentEpisode);
     }
 
@@ -64,9 +70,7 @@ public class SeasonalAnime extends Anime {
 
     private SeasonalAnime(@NotNull SeasonalAnimeBuilder builder) {
         super(builder.anime);
-        this.emissionTime = builder.emissionTime;
-        this.emissionDay = builder.emissionDay;
-        this.hasAired = builder.hasAired;
+        this.airingDateTime = builder.airingDateTime;
         this.currentEpisode = builder.currentEpisode;
     }
 
@@ -80,50 +84,24 @@ public class SeasonalAnime extends Anime {
 
         return new SeasonalAnime.SeasonalAnimeBuilder(airingEpisode.media)
                 .setCurrentEpisode(airingEpisode.episode)
-                .setEmissionDay(
-                        airingTime
-                                .toLocalDate()
-                                .getDayOfWeek()
-                )
-                .setEmissionTime(
-                        airingTime
-                                .toLocalTime()
-                                .format(
-                                        DateTimeFormatter.ofPattern("hh:mm a")
-                                )
-                )
-                .setHasAired(
-                        ZonedDateTime
-                                .now()
-                                .isAfter(airingTime)
-                )
+                .setAiringDateTime(airingTime)
                 .build();
+    }
+
+    @Override
+    public int compareTo(SeasonalAnime seasonalAnime) {
+        return this.airingDateTime.toLocalTime().compareTo(
+                seasonalAnime.getAiringDateTime().toLocalTime()
+        );
     }
 
     public static class SeasonalAnimeBuilder {
         private final AniListAnime anime;
-        private String emissionTime;
-        private DayOfWeek emissionDay;
-        private boolean hasAired;
+        private ZonedDateTime airingDateTime;
         private int currentEpisode = -1;
 
         public SeasonalAnimeBuilder(AniListAnime anime) {
             this.anime = anime;
-        }
-
-        public SeasonalAnimeBuilder setEmissionTime(String emissionTime) {
-            this.emissionTime = emissionTime;
-            return this;
-        }
-
-        public SeasonalAnimeBuilder setEmissionDay(DayOfWeek emissionDay) {
-            this.emissionDay = emissionDay;
-            return this;
-        }
-
-        public SeasonalAnimeBuilder setHasAired(boolean hasAired) {
-            this.hasAired = hasAired;
-            return this;
         }
 
         public SeasonalAnimeBuilder setCurrentEpisode(int episodeNumber) {
@@ -131,11 +109,17 @@ public class SeasonalAnime extends Anime {
             return this;
         }
 
+        public SeasonalAnimeBuilder setAiringDateTime(ZonedDateTime airingDateTime) {
+            this.airingDateTime = airingDateTime;
+            return this;
+        }
+
         public @Nullable SeasonalAnime build() {
-            if (emissionTime == null || emissionDay == null) return null;
+            if (airingDateTime == null) return null;
 
             return new SeasonalAnime(this);
         }
+
     }
     // endregion
 }
