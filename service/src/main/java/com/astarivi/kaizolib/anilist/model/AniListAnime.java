@@ -26,6 +26,7 @@ public class AniListAnime {
     public FuzzyDate startDate;
     @JsonProperty("format")
     public String subtype;
+    public String type;
     public String status;
     public CoverImage coverImage;
     public String bannerImage;

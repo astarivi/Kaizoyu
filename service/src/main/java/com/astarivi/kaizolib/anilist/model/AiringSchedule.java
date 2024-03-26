@@ -17,7 +17,12 @@ public class AiringSchedule {
         try {
             Result result = JsonMapper.deserializeGeneric(serialized, Result.class);
 
-            episodes.addAll(result.data.Page.airingSchedules);
+            for (Episode episode : result.data.Page.airingSchedules) {
+                if (episode.media.type == null) continue;
+                if (!episode.media.type.equals("ANIME")) continue;
+
+                episodes.add(episode);
+            }
 
             return result.data.Page.pageInfo.hasNextPage;
         } catch (IOException | NullPointerException e) {

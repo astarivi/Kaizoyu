@@ -35,13 +35,13 @@ public abstract class AniListBase {
     protected static final String AIRING_SCHEDULE_QUERY = "query($page:Int,$week_start:Int,$week_" +
             "end:Int){Page(page:$page){pageInfo{hasNextPage}airingSchedules(airingAt_greater:$wee" +
             "k_start,airingAt_lesser:$week_end){id episode airingAt media{id idMal description ti" +
-            "tle{romaji english native userPreferred}averageScore format status startDate{year mo" +
+            "tle{romaji english native userPreferred}averageScore type format status startDate{year mo" +
             "nth day}coverImage{extraLarge large medium color}bannerImage siteUrl episodes durati" +
             "on genres trailer{id site}}}}}";
 
     protected static final String AIRING_ANIME_QUERY = "query($media_id:Int,$start:Int){AiringSch" +
             "edule(airingAt_greater:$start,mediaId:$media_id){id episode airingAt media{id idMal " +
-            "description title{romaji english native userPreferred}averageScore format status sta" +
+            "description title{romaji english native userPreferred}averageScore type format status sta" +
             "rtDate{year month day}coverImage{extraLarge large medium color}bannerImage siteUrl e" +
             "pisodes duration genres trailer{id site}}}}";
 
