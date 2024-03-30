@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,7 +34,6 @@ import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.astarivi.kaizoyu.video.VideoPlayerActivity;
-import com.google.android.material.chip.Chip;
 
 import java.util.Locale;
 
@@ -240,15 +238,6 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
         ((AnimeDetailsActivity) requireActivity()).changePagerInteractivity(!menuVisible);
     }
 
-    private void disableChips(CompoundButton activeButton) {
-        for (int i = 0; i < binding.episodeSelectorChips.getChildCount(); i++) {
-            Chip chip = (Chip) binding.episodeSelectorChips.getChildAt(i);
-            chip.setChecked(false);
-        }
-
-        activeButton.setChecked(true);
-    }
-
     private void populateChips(int animeLength) {
         binding.episodeSelectorScroll.setVisibility(View.VISIBLE);
 
@@ -281,17 +270,10 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
                 }
 
                 if (isChecked) {
-                    showPage(finalI);
-                    disableChips(buttonView);
-                } else {
-                    buttonView.setChecked(true);
+                    viewModel.setPage(finalI);
                 }
             });
         }
-    }
-
-    private void showPage(int page) {
-        viewModel.setPage(page);
     }
 
     private void searchEpisode(@Nullable Episode episode) {
