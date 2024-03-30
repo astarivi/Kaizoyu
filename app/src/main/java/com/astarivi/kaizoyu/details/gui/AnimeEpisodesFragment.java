@@ -182,10 +182,15 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
             // Get anime length
             if (
                     (searchEnhancer == null || searchEnhancer.episode == null)
-                    && anime instanceof SeasonalAnime
+                    && anime instanceof SeasonalAnime seasonalAnime
                     && ((SeasonalAnime) anime).getCurrentEpisode() > 0
             ) {
-                animeLength = ((SeasonalAnime) anime).getCurrentEpisode();
+
+                if (seasonalAnime.hasAired()) {
+                    animeLength = seasonalAnime.getCurrentEpisode();
+                } else {
+                    animeLength = seasonalAnime.getCurrentEpisode() - 1;
+                }
             } else {
                 animeLength = aniListAnime.episodes;
             }

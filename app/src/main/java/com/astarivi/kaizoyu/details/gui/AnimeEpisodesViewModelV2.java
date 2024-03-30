@@ -110,7 +110,7 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
             // Build dummy episodes
             TreeSet<Episode> eps = new TreeSet<>();
 
-            for (int i = pagination[0]; i < pagination[1]; i++) {
+            for (int i = pagination[0]; i < pagination[1] + 1; i++) {
                 if (Thread.interrupted()) return;
 
                 eps.add(
