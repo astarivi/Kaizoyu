@@ -6,19 +6,20 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.astarivi.kaizolib.common.network.CommonHeaders;
+import com.astarivi.kaizolib.common.network.HttpMethodsV2;
+import com.astarivi.kaizolib.common.util.JsonMapper;
 import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.adapters.WebAdapter;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
@@ -29,6 +30,7 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 import okhttp3.HttpUrl;
+import okhttp3.Request;
 
 
 public class UpdateManager {
@@ -98,7 +100,9 @@ public class UpdateManager {
 
     @ThreadedOnly
     private @Nullable LatestCDNReleases getLatestReleases() {
-        String body = WebAdapter.getJSON(
+        Request.Builder getRequestBuilder = new Request.Builder();
+
+        getRequestBuilder.url(
                 new HttpUrl.Builder()
                         .scheme("https")
                         .host("raw.githubusercontent.com")
@@ -106,13 +110,25 @@ public class UpdateManager {
                         .build()
         );
 
+        CommonHeaders.addTo(getRequestBuilder, CommonHeaders.JSON_HEADERS);
+
+        String body;
+
+        try {
+            body = HttpMethodsV2.executeRequest(getRequestBuilder.build());
+        } catch (IOException e) {
+            Logger.error("UpdateManager.getLatestReleases error at executing request");
+            Logger.error(e);
+            return null;
+        }
+
         if (body == null) return null;
 
         LatestCDNReleases latestCDNReleases;
 
         try {
-            latestCDNReleases = new ObjectMapper().readValue(body, LatestCDNReleases.class);
-        } catch (JsonProcessingException e) {
+            latestCDNReleases = JsonMapper.getObjectReader().readValue(body, LatestCDNReleases.class);
+        } catch (IOException e) {
             Logger.error("Failed to decode Github KaizoDelivery latest releases");
             return null;
         }
@@ -122,7 +138,9 @@ public class UpdateManager {
 
     @ThreadedOnly
     private @Nullable GithubRelease getVersion(@NotNull final String tag) {
-        String body = WebAdapter.getJSON(
+        Request.Builder getRequestBuilder = new Request.Builder();
+
+        getRequestBuilder.url(
                 new HttpUrl.Builder()
                         .scheme("https")
                         .host("api.github.com")
@@ -131,13 +149,24 @@ public class UpdateManager {
                         .build()
         );
 
+        CommonHeaders.addTo(getRequestBuilder, CommonHeaders.JSON_HEADERS);
+
+        String body;
+        try {
+            body = HttpMethodsV2.executeRequest(getRequestBuilder.build());
+        } catch (IOException e) {
+            Logger.error("UpdateManager.getVersion error at executing request");
+            Logger.error(e);
+            return null;
+        }
+
         if (body == null) return null;
 
         GithubRelease latestRelease;
 
         try {
-            latestRelease = new ObjectMapper().readValue(body, GithubRelease.class);
-        } catch (JsonProcessingException e) {
+            latestRelease = JsonMapper.getObjectReader().readValue(body, GithubRelease.class);
+        } catch (IOException e) {
             Logger.error("Failed to decode Github latest release");
             return null;
         }
@@ -215,7 +244,7 @@ public class UpdateManager {
             body = parcel.readString();
         }
 
-        public static final Parcelable.Creator<LatestUpdate> CREATOR = new Parcelable.Creator<LatestUpdate>() {
+        public static final Parcelable.Creator<LatestUpdate> CREATOR = new Parcelable.Creator<>() {
             @Override
             public LatestUpdate createFromParcel(Parcel parcel) {
                 return new LatestUpdate(parcel);

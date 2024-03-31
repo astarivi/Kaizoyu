@@ -1,8 +1,9 @@
 package com.astarivi.kaizoyu.core.search;
 
+import com.astarivi.kaizolib.common.network.CommonHeaders;
+import com.astarivi.kaizolib.common.network.HttpMethodsV2;
 import com.astarivi.kaizolib.nibl.Nibl;
 import com.astarivi.kaizolib.nibl.model.NiblResult;
-import com.astarivi.kaizoyu.core.adapters.WebAdapter;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.astarivi.kaizoyu.core.models.Result;
 import com.astarivi.kaizoyu.utils.Data;
@@ -10,9 +11,11 @@ import com.astarivi.kaizoyu.utils.Data;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
+import java.io.IOException;
 import java.util.List;
 
 import okhttp3.HttpUrl;
+import okhttp3.Request;
 
 
 public class AssistedResultSearcher {
@@ -48,7 +51,9 @@ public class AssistedResultSearcher {
     public static @Nullable SearchEnhancer getSearchEnhancer(int kitsuId) {
         if (kitsuId == -1) return null;
 
-        String body = WebAdapter.getJSON(
+        Request.Builder getRequestBuilder = new Request.Builder();
+
+        getRequestBuilder.url(
                 new HttpUrl.Builder()
                         .scheme("https")
                         .host("search.kaizoyu.ovh")
@@ -56,6 +61,18 @@ public class AssistedResultSearcher {
                         .addPathSegment(String.valueOf(kitsuId))
                         .build()
         );
+
+        CommonHeaders.addTo(getRequestBuilder, CommonHeaders.JSON_HEADERS);
+
+        String body;
+
+        try {
+            body = HttpMethodsV2.executeRequest(getRequestBuilder.build());
+        } catch (IOException e) {
+            Logger.error("UpdateManager.getLatestReleases error at executing request");
+            Logger.error(e);
+            return null;
+        }
 
         if (body == null) return null;
 
