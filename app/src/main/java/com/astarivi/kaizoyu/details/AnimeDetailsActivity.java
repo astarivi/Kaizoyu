@@ -176,8 +176,18 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                 seasonalAnime = AssistedScheduleFetcher.getSingle(
                         currentShowId
                 );
-            } catch (AniListException | IOException e) {
-                // TODO: Handle this.
+            } catch (IOException e) {
+                Toast.makeText(
+                        this,
+                        R.string.network_connection_error,
+                        Toast.LENGTH_SHORT
+                ).show();
+            } catch (AniListException e) {
+                Toast.makeText(
+                        this,
+                        R.string.parsing_error,
+                        Toast.LENGTH_SHORT
+                ).show();
             }
 
             // Seasonal anime
@@ -332,7 +342,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             Glide.with(this)
                     .load(posterUrl)
                     .placeholder(R.drawable.ic_general_placeholder)
-                    .listener(new RequestListener<Drawable>() {
+                    .listener(new RequestListener<>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
                             return false;
@@ -340,11 +350,12 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
                         @Override
                         public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
-                            if (coverUrl != null || !(resource instanceof BitmapDrawable)) return false;
+                            if (coverUrl != null || !(resource instanceof BitmapDrawable))
+                                return false;
 
                             Palette.from(
-                                // Welcome to casting hell
-                                ((BitmapDrawable) resource).getBitmap()
+                                    // Welcome to casting hell
+                                    ((BitmapDrawable) resource).getBitmap()
                             ).generate(palette -> {
                                 if (isFinishing() || isDestroyed() || palette == null) return;
 
@@ -569,19 +580,11 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                             return;
                         }
 
-                        ModelType.LocalAnime newLocalType;
-
-                        switch(index){
-                            case 0:
-                                newLocalType = ModelType.LocalAnime.PENDING;
-                                break;
-                            case 1:
-                                newLocalType = ModelType.LocalAnime.FAVORITE;
-                                break;
-                            case 2:
-                            default:
-                                newLocalType = ModelType.LocalAnime.WATCHED;
-                        }
+                        ModelType.LocalAnime newLocalType = switch (index) {
+                            case 0 -> ModelType.LocalAnime.PENDING;
+                            case 1 -> ModelType.LocalAnime.FAVORITE;
+                            default -> ModelType.LocalAnime.WATCHED;
+                        };
 
                         Data.getRepositories().getAnimeStorageRepository().asyncCreateOrUpdate(anime, newLocalType, new AnimeStorageRepository.Callback() {
                             @Override

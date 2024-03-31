@@ -29,6 +29,8 @@ import lombok.Getter;
 
 public class ScheduleViewModel extends ViewModel {
     @Getter
+    private final MutableLiveData<Exception> processException = new MutableLiveData<>();
+    @Getter
     private final MutableLiveData<ArrayList<DayOfWeek>> availableDaysOfWeek = new MutableLiveData<>();
     @Getter
     private final MutableLiveData<TreeSet<SeasonalAnime>> animeFromSchedule = new MutableLiveData<>();
@@ -48,7 +50,7 @@ public class ScheduleViewModel extends ViewModel {
             try {
                 fetchedSchedule = AssistedScheduleFetcher.getSchedule();
             } catch (AniListException | IOException e) {
-                // TODO: Handle this
+                processException.postValue(e);
                 return;
             }
 
