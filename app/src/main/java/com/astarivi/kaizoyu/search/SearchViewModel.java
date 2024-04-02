@@ -76,7 +76,7 @@ public class SearchViewModel extends ViewModel {
         searchingFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
             List<AniListAnime> searchResults;
             try {
-                searchResults = new AniList().search(search, 1, 20);
+                searchResults = AniList.search(search).next();
             } catch (IOException | AniListException e) {
                 if (e instanceof ParsingError) {
                     Utils.makeToastRegardless(

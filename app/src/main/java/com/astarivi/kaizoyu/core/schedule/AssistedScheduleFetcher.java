@@ -1,6 +1,6 @@
 package com.astarivi.kaizoyu.core.schedule;
 
-import com.astarivi.kaizolib.anilist.AniList;
+import com.astarivi.kaizolib.anilist.AniListSchedule;
 import com.astarivi.kaizolib.anilist.exception.AniListException;
 import com.astarivi.kaizolib.anilist.model.AiringSchedule;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
@@ -18,8 +18,7 @@ import java.util.TreeSet;
 @ThreadedOnly
 public class AssistedScheduleFetcher {
     public static @Nullable SeasonalAnime getSingle(int animeId) throws AniListException, IOException {
-        AniList aniList = new AniList();
-        AiringSchedule.Episode airingEpisode = aniList.airingNextEpisode(animeId);
+        AiringSchedule.Episode airingEpisode = AniListSchedule.nextAiringEpisodeFor(animeId);
 
         if (airingEpisode == null) return null;
 
@@ -27,8 +26,7 @@ public class AssistedScheduleFetcher {
     }
 
     public static TreeMap<DayOfWeek, TreeSet<SeasonalAnime>> getSchedule() throws AniListException, IOException {
-        AniList aniList = new AniList();
-        AiringSchedule airingSchedule = aniList.airingSchedule();
+        AiringSchedule airingSchedule = AniListSchedule.airingSchedule();
 
         return parse(airingSchedule);
     }

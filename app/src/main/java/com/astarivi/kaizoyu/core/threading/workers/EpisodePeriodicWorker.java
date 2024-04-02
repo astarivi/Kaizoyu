@@ -10,7 +10,7 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.astarivi.kaizolib.anilist.AniList;
+import com.astarivi.kaizolib.anilist.AniListSchedule;
 import com.astarivi.kaizolib.anilist.exception.AniListException;
 import com.astarivi.kaizolib.anilist.model.AiringSchedule;
 import com.astarivi.kaizoyu.BuildConfig;
@@ -62,7 +62,7 @@ public class EpisodePeriodicWorker extends Worker {
         ArrayList<AiringSchedule.Episode> airingEpisodes;
 
         try {
-            airingEpisodes = new AniList().airingSchedule().episodes;
+            airingEpisodes = AniListSchedule.airingSchedule().episodes;
             Objects.requireNonNull(airingEpisodes);
         } catch (AniListException | IOException | NullPointerException e) {
             future.cancel(false);

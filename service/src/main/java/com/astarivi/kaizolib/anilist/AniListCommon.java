@@ -1,4 +1,4 @@
-package com.astarivi.kaizolib.anilist.base;
+package com.astarivi.kaizolib.anilist;
 
 import com.astarivi.kaizolib.anilist.exception.ParsingError;
 import com.astarivi.kaizolib.common.network.CommonHeaders;
@@ -7,7 +7,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -15,7 +18,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 
-public abstract class AniListBase {
+abstract class AniListCommon {
     public static final HttpUrl ANILIST_URL = new HttpUrl.Builder()
             .scheme("https")
             .host("graphql.anilist.co")
@@ -26,8 +29,8 @@ public abstract class AniListBase {
             " startDate{year month day}coverImage{extraLarge large medium color}bannerImage siteUrl" +
             " episodes duration genres trailer{id site}}}";
 
-    protected static final String ANIME_QUERY_SEARCH_TITLE = "query($name:String,$page:Int,$limit" +
-            ":Int){Page(page:$page,perPage:$limit){media(search:$name,type:ANIME){id idMal descri" +
+    protected static final String ANIME_QUERY_SEARCH_TITLE = "query($name:String,$page:Int" +
+            "){Page(page:$page){pageInfo{hasNextPage}media(search:$name,type:ANIME){id idMal descri" +
             "ption title{romaji english native userPreferred}averageScore format status startDate" +
             "{year month day}coverImage{extraLarge large medium color}bannerImage siteUrl episodes" +
             " duration genres trailer{id site}}}}";
@@ -45,7 +48,13 @@ public abstract class AniListBase {
             "rtDate{year month day}coverImage{extraLarge large medium color}bannerImage siteUrl e" +
             "pisodes duration genres trailer{id site}}}}";
 
-    protected static <T> Request getRequestFor(GraphQLRequest<T> request) throws ParsingError {
+    protected static final String TRENDING_ANIME_QUERY = "query($page:Int){Page(page:$page){pageI" +
+            "nfo{hasNextPage}media(sort:TRENDING_DESC,type:ANIME){id idMal description title{roma" +
+            "ji english native userPreferred}averageScore format status startDate{year month day}" +
+            "coverImage{extraLarge large medium color}bannerImage siteUrl episodes duration genre" +
+            "s trailer{id site}}}}";
+
+    protected static Request getRequestFor(GraphQLRequest request) throws ParsingError {
         return getBaseBuilder().post(getBaseBody(request)).build();
     }
 
@@ -57,17 +66,17 @@ public abstract class AniListBase {
         return builder;
     }
 
-    protected static <T> RequestBody getBaseBody(GraphQLRequest<T> request) throws ParsingError {
+    protected static RequestBody getBaseBody(GraphQLRequest request) throws ParsingError {
         return RequestBody.create(request.serialize(), MediaType.get("application/json"));
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    protected static class GraphQLRequest<T> {
+    protected static class GraphQLRequest {
         public String query;
-        public T variables;
+        public Map<String, Object> variables;
 
         @JsonIgnore
-        public GraphQLRequest(String query, @Nullable T variables) {
+        protected GraphQLRequest(String query, @Nullable Map<String, Object> variables) {
             this.query = query;
             this.variables = variables;
         }
@@ -82,6 +91,18 @@ public abstract class AniListBase {
             } catch (JsonProcessingException e) {
                 throw new ParsingError(e);
             }
+        }
+    }
+
+    protected static class PagedGraphQLRequest extends GraphQLRequest {
+        @JsonIgnore
+        protected PagedGraphQLRequest(String query, @NotNull Map<String, Object> variables) {
+            super(query, variables);
+            variables.put("page", 1);
+        }
+
+        protected void setPage(long page) {
+            variables.put("page", page);
         }
     }
 }

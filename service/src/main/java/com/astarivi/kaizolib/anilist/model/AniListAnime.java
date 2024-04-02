@@ -119,30 +119,9 @@ public class AniListAnime {
         }
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class ResponseMany {
-        public DataMany data;
-
-        private static class DataMany {
-            public Page Page;
-        }
-
-        private static class Page {
-            public List<AniListAnime> media;
-        }
-    }
-
     public static AniListAnime deserializeOne(String serialized) throws ParsingError {
         try {
             return JsonMapper.deserializeGeneric(serialized, Response.class).data.Media;
-        } catch (IOException | NullPointerException e) {
-            throw new ParsingError(e);
-        }
-    }
-
-    public static List<AniListAnime> deserializeMany(String serialized) throws ParsingError {
-        try {
-            return JsonMapper.deserializeGeneric(serialized, ResponseMany.class).data.Page.media;
         } catch (IOException | NullPointerException e) {
             throw new ParsingError(e);
         }

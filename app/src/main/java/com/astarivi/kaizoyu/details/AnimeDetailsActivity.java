@@ -206,9 +206,9 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             if (animeType == ModelType.Anime.LOCAL || finalKitsuId != null) {
                 AniListAnime ktAnime = null;
                 try {
-                    ktAnime = new AniList().get(
+                    ktAnime = AniList.get(
                             currentShowId
-                    );
+                    ).get();
                 } catch (AniListException | IOException e) {
                     if (finalKitsuId != null) {
                         Logger.error("No internet connection to initialize this deep link, or an error occurred");

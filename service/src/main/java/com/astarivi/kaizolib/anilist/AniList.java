@@ -1,140 +1,55 @@
 package com.astarivi.kaizolib.anilist;
 
-import com.astarivi.kaizolib.anilist.base.AniListBase;
-import com.astarivi.kaizolib.anilist.exception.AniListException;
-import com.astarivi.kaizolib.anilist.exception.ParsingError;
-import com.astarivi.kaizolib.anilist.model.AiringSchedule;
-import com.astarivi.kaizolib.anilist.model.AniListAnime;
-import com.astarivi.kaizolib.common.exception.NoResponseException;
-import com.astarivi.kaizolib.common.network.HttpMethodsV2;
-
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
 import java.util.TreeMap;
 
 
-public class AniList extends AniListBase {
-    public @NotNull AniListAnime get(long id) throws AniListException, IOException {
-        TreeMap<String, Long> variables = new TreeMap<>();
+public class AniList extends AniListCommon {
+    public static @NotNull AniListQuery.Single get(long id){
+        TreeMap<String, Object> variables = new TreeMap<>();
         variables.put("id", id);
 
-        GraphQLRequest<Map<String, Long>> graphQlContent = new GraphQLRequest<>(
+        GraphQLRequest graphQLRequest = new GraphQLRequest(
                 ANIME_QUERY_BY_ID,
                 variables
         );
 
-        String response = HttpMethodsV2.executeRequest(
-                getRequestFor(graphQlContent)
-        );
-
-        return AniListAnime.deserializeOne(response);
+        return new AniListQuery.Single(graphQLRequest);
     }
 
-    public @NotNull List<AniListAnime> search(String title, int page, int limit) throws AniListException, IOException {
+    public static @NotNull AniListQuery.Paged search(String title) {
         TreeMap<String, Object> variables = new TreeMap<>();
         variables.put("name", title);
-        variables.put("page", page);
-        variables.put("limit", limit);
 
-        GraphQLRequest<Map<String, Object>> graphQlContent = new GraphQLRequest<>(
+        PagedGraphQLRequest graphQlContent = new PagedGraphQLRequest(
                 ANIME_QUERY_SEARCH_TITLE,
                 variables
         );
 
-        String response = HttpMethodsV2.executeRequest(
-                getRequestFor(graphQlContent)
-        );
-
-        return AniListAnime.deserializeMany(response);
+        return new AniListQuery.Paged(graphQlContent);
     }
 
-    public AiringSchedule airingSchedule() throws AniListException, IOException {
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+    public static @NotNull AniListQuery.Paged query(TYPE queryType) {
+        TreeMap<String, Object> variables = new TreeMap<>();
 
-        calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        long weekStart = calendar.getTimeInMillis() / 1000;
-
-        calendar.add(Calendar.DAY_OF_WEEK, 6);
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
-
-        return airingSchedule(
-                weekStart,
-                calendar.getTimeInMillis() / 1000
-        );
-    }
-
-    public AiringSchedule airingSchedule(long weekStart, long weekEnd) throws AniListException, IOException {
-        long page = 1;
-
-        AiringSchedule airingSchedule = new AiringSchedule();
-
-        while (true) {
-            TreeMap<String, Long> variables = new TreeMap<>();
-            variables.put("page", page);
-            variables.put("week_start", weekStart);
-            variables.put("week_end", weekEnd);
-
-            GraphQLRequest<Map<String, Long>> graphQlContent = new GraphQLRequest<>(
-                    AIRING_SCHEDULE_QUERY,
-                    variables
-            );
-
-            String response = HttpMethodsV2.executeRequest(
-                    getRequestFor(graphQlContent)
-            );
-
-            if (!airingSchedule.deserialize(response)) break;
-
-            page++;
-        }
-
-        return airingSchedule;
-    }
-
-    public @Nullable AiringSchedule.Episode airingNextEpisode(long aniListId) throws ParsingError, IOException {
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
-        long timestampNow = calendar.getTimeInMillis() / 1000;
-
-        TreeMap<String, Long> variables = new TreeMap<>();
-        variables.put("media_id", aniListId);
-        variables.put("start", timestampNow);
-
-        GraphQLRequest<Map<String, Long>> graphQlContent = new GraphQLRequest<>(
-                AIRING_ANIME_QUERY,
+        PagedGraphQLRequest graphQlContent = new PagedGraphQLRequest(
+                queryType.getQuery(),
                 variables
         );
 
-        String response;
-        try {
-            response = HttpMethodsV2.executeRequest(
-                    getRequestFor(graphQlContent)
-            );
-        } catch(NoResponseException e) {
-            if (e.getMessage().equals("404")) {
-                return null;
-            }
+        return new AniListQuery.Paged(graphQlContent);
+    }
 
-            throw e;
+    public enum TYPE {
+        TRENDING(TRENDING_ANIME_QUERY);
+        private final String query;
+        TYPE(String query) {
+            this.query = query;
         }
 
-        return AiringSchedule.Episode.deserialize(response);
+        public String getQuery() {
+            return query;
+        }
     }
 }
