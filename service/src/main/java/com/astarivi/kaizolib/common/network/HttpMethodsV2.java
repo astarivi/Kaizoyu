@@ -30,13 +30,12 @@ public class HttpMethodsV2 {
             throw new NoResponseException("Remote destination had no response to this request.");
         }
 
-        switch(responseCode) {
-            case 304:
-            case 200:
-                return responseContent;
-            default:
+        return switch (responseCode) {
+            case 304, 200 -> responseContent;
+            default -> {
                 Logger.error("Remote response code was incorrect, it was {}. (Only 200 and 304 allowed)", responseCode);
                 throw new NoResponseException(String.valueOf(responseCode));
-        }
+            }
+        };
     }
 }

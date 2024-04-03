@@ -10,13 +10,13 @@ import androidx.lifecycle.ViewModel;
 import com.astarivi.kaizolib.anilist.AniList;
 import com.astarivi.kaizolib.anilist.AniListQuery;
 import com.astarivi.kaizolib.anilist.model.AniListAnime;
+import com.astarivi.kaizolib.ann.ANN;
+import com.astarivi.kaizolib.ann.model.ANNItem;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.rss.RssFetcher;
 import com.astarivi.kaizoyu.databinding.FragmentHomeBinding;
 import com.astarivi.kaizoyu.gui.home.recycler.recommendations.MainCategoryContainer;
 import com.astarivi.kaizoyu.utils.Threading;
-import com.rometools.rome.feed.synd.SyndEntry;
 
 import org.tinylog.Logger;
 
@@ -31,7 +31,7 @@ public class HomeViewModel extends ViewModel {
     @Getter
     private final MutableLiveData<ArrayList<MainCategoryContainer>> containers = new MutableLiveData<>();
     @Getter
-    private final MutableLiveData<List<SyndEntry>> news = new MutableLiveData<>();
+    private final MutableLiveData<List<ANNItem>> news = new MutableLiveData<>();
     private Future<?> reloadFuture = null;
     private Future<?> rssFuture = null;
 
@@ -56,7 +56,7 @@ public class HomeViewModel extends ViewModel {
         rssFuture = Threading.submitTask(Threading.TASK.INSTANT,() -> {
             try {
                 news.postValue(
-                        RssFetcher.getANNFeed()
+                        ANN.getANNFeed()
                 );
             } catch (Exception e) {
                 news.postValue(null);

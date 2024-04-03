@@ -31,6 +31,11 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.5'
     //noinspection GradleDependency
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.5'
+    //noinspection GradleDependency
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.5'
+    implementation 'com.fasterxml.woodstox:woodstox-core:6.6.2'
+    implementation 'javax.xml.stream:stax-api:1.0-2'
+    implementation 'org.codehaus.woodstox:stax2-api:4.2.2'
 
     implementation 'org.jsoup:jsoup:1.17.2'
 

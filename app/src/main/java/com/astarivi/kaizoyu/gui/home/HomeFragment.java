@@ -162,7 +162,7 @@ public class HomeFragment extends Fragment {
         newsRecycler.setHasFixedSize(false);
 
         NewsRecyclerAdapter newsAdapter =  new NewsRecyclerAdapter(article ->
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getLink())))
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.link)))
         );
 
         newsRecycler.setAdapter(newsAdapter);

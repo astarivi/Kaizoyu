@@ -7,13 +7,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizolib.ann.model.ANNItem;
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.rss.RssFetcher;
 import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.ItemNewsBinding;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.bumptech.glide.Glide;
-import com.rometools.rome.feed.synd.SyndEntry;
 
 import org.tinylog.Logger;
 
@@ -26,7 +25,7 @@ import lombok.Setter;
 
 public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.HomeNewsViewHolder>{
     private final ItemClickListener itemClickListener;
-    private final List<SyndEntry> items = new ArrayList<>();
+    private final List<ANNItem> items = new ArrayList<>();
 
     public NewsRecyclerAdapter(ItemClickListener listener) {
         itemClickListener = listener;
@@ -48,7 +47,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         return new HomeNewsViewHolder(binding);
     }
 
-    public void replaceData(List<SyndEntry> entries) {
+    public void replaceData(List<ANNItem> entries) {
         items.clear();
         items.addAll(entries);
         notifyDataSetChanged();
@@ -56,12 +55,12 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
 
     @Override
     public void onBindViewHolder(@NonNull HomeNewsViewHolder holder, int position) {
-        final SyndEntry entry = items.get(position);
+        final ANNItem entry = items.get(position);
         holder.setEntry(entry);
 
-        holder.binding.newsTitle.setText(entry.getTitle());
+        holder.binding.newsTitle.setText(entry.title);
         holder.binding.newsDescription.setText(
-                entry.getDescription().getValue().replaceAll("\\s*</?[^>\\s]*>\\s*", "")
+                entry.description
         );
 
         holder.fetchImage();
@@ -75,7 +74,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     public class HomeNewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ItemNewsBinding binding;
         @Setter
-        private SyndEntry entry;
+        private ANNItem entry;
         private Future<?> imageUrlFetcher;
 
         public HomeNewsViewHolder(@NonNull ItemNewsBinding binding) {
@@ -94,7 +93,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
             }
 
             imageUrlFetcher = Threading.submitTask(Threading.TASK.INSTANT, () -> {
-                String url = RssFetcher.getThumbnailUrl(entry);
+                String url = entry.getThumbnailUrl();
 
                 if (url == null) return;
 
@@ -114,7 +113,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
                 return;
             }
 
-            if (entry == null || entry.getLink() == null) {
+            if (entry == null || entry.link == null) {
                 return;
             }
 
@@ -123,6 +122,6 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     }
 
     public interface ItemClickListener {
-        void onItemClick(SyndEntry article);
+        void onItemClick(ANNItem article);
     }
 }
