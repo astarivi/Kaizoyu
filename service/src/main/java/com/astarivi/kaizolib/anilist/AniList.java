@@ -30,11 +30,11 @@ public class AniList extends AniListCommon {
         return new AniListQuery.Paged(graphQlContent);
     }
 
-    public static @NotNull AniListQuery.Paged query(TYPE queryType) {
+    public static @NotNull AniListQuery.Paged sortedBy(TYPE queryType) {
         TreeMap<String, Object> variables = new TreeMap<>();
 
         PagedGraphQLRequest graphQlContent = new PagedGraphQLRequest(
-                queryType.getQuery(),
+                String.format(GENERIC_ANIME_QUERY, queryType.query),
                 variables
         );
 
@@ -42,14 +42,13 @@ public class AniList extends AniListCommon {
     }
 
     public enum TYPE {
-        TRENDING(TRENDING_ANIME_QUERY);
+        TRENDING("TRENDING_DESC"),
+        SCORE("SCORE_DESC"),
+        POPULARITY("POPULARITY_DESC"),
+        FAVOURITES("FAVOURITES_DESC");
         private final String query;
         TYPE(String query) {
             this.query = query;
-        }
-
-        public String getQuery() {
-            return query;
         }
     }
 }

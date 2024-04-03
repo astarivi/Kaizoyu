@@ -3,9 +3,15 @@ package com.astarivi.kaizoyu.gui.home;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.astarivi.kaizolib.anilist.AniList;
+import com.astarivi.kaizolib.anilist.AniListQuery;
+import com.astarivi.kaizolib.anilist.model.AniListAnime;
+import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.core.rss.RssFetcher;
 import com.astarivi.kaizoyu.databinding.FragmentHomeBinding;
 import com.astarivi.kaizoyu.gui.home.recycler.recommendations.MainCategoryContainer;
@@ -27,9 +33,11 @@ public class HomeViewModel extends ViewModel {
     @Getter
     private final MutableLiveData<List<SyndEntry>> news = new MutableLiveData<>();
     private Future<?> reloadFuture = null;
+    private Future<?> rssFuture = null;
 
-    public void reloadHome(FragmentHomeBinding binding) {
-        if (reloadFuture != null && !reloadFuture.isDone()) return;
+    public boolean reloadHome(FragmentHomeBinding binding) {
+        if (reloadFuture != null && !reloadFuture.isDone()) return false;
+        if (rssFuture != null && !rssFuture.isDone()) return false;
         binding.newsRecycler.setVisibility(View.INVISIBLE);
         binding.itemsLayout.setVisibility(View.INVISIBLE);
         binding.loadingBar.setVisibility(View.VISIBLE);
@@ -40,213 +48,75 @@ public class HomeViewModel extends ViewModel {
         containers.postValue(new ArrayList<>());
 
         fetchHome();
+
+        return true;
     }
 
     private void fetchHome() {
-        reloadFuture = Threading.submitTask(Threading.TASK.INSTANT,() -> {
-                try {
-                    news.postValue(
-                            RssFetcher.getANNFeed()
-                    );
-                } catch (Exception e) {
-                    news.postValue(null);
-                    Logger.error(e);
-                }
-
-//                Kitsu kitsu = new Kitsu();
-//
-//                fetchCategory(
-//                        kitsu,
-//                        R.string.popular_anime,
-//                        new KitsuSearchParams().
-//                                setLimit(
-//                                        15
-//                                ).
-//                                setCustomParameter(
-//                                        "sort",
-//                                        "popularityRank"
-//                                )
-//                );
-//
-//                fetchCategory(
-//                        kitsu,
-//                        R.string.home_beloved,
-//                        new KitsuSearchParams().
-//                                setLimit(
-//                                        15
-//                                ).
-//                                setCustomParameter(
-//                                        "sort",
-//                                        "popularityRank"
-//                                ).
-//                                setCustomParameter(
-//                                        "sort",
-//                                        "-favoritesCount"
-//                                )
-//                );
-//
-//                fetchCategory(
-//                        kitsu,
-//                        R.string.home_seinen,
-//                        new KitsuSearchParams().
-//                                setLimit(
-//                                        15
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[categories]",
-//                                        "seinen"
-//                                ).
-//                                setCustomParameter(
-//                                        "sort",
-//                                        "popularityRank"
-//                                ).
-//                                setCustomParameter(
-//                                        "sort",
-//                                        "-favoritesCount"
-//                                )
-//                );
-//
-//                fetchCategory(
-//                        kitsu,
-//                        R.string.popular_airing,
-//                        new KitsuSearchParams().
-//                                setLimit(
-//                                        15
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[subtype]",
-//                                        "TV"
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[status]",
-//                                        "current"
-//                                ).
-//                                setCustomParameter(
-//                                        "sort",
-//                                        "popularityRank"
-//                                )
-//                );
-//
-//                fetchCategory(
-//                        kitsu,
-//                        R.string.popular_upcoming,
-//                        new KitsuSearchParams().
-//                                setLimit(
-//                                        15
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[subtype]",
-//                                        "TV"
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[status]",
-//                                        "upcoming"
-//                                ).
-//                                setCustomParameter(
-//                                        "sort",
-//                                        "popularityRank"
-//                                )
-//                );
-//
-//                fetchCategory(
-//                        kitsu,
-//                        R.string.trash_anime,
-//                        new KitsuSearchParams().
-//                                setLimit(
-//                                        15
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[subtype]",
-//                                        "TV"
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[status]",
-//                                        "finished"
-//                                ).
-//                                setCustomParameter(
-//                                        "sort",
-//                                        "popularityRank"
-//                                ).
-//                                setCustomParameter(
-//                                        "sort",
-//                                        "averageRating"
-//                                )
-//                );
-//
-//                fetchCategory(
-//                        kitsu,
-//                        R.string.shoujo_anime,
-//                        new KitsuSearchParams().
-//                                setLimit(
-//                                        15
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[categories]",
-//                                        "shoujo"
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[subtype]",
-//                                        "TV"
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[status]",
-//                                        "finished"
-//                                ).
-//                                setCustomParameter(
-//                                        "sort",
-//                                        "popularityRank"
-//                                )
-//                );
-//
-//                fetchCategory(
-//                        kitsu,
-//                        R.string.shounen_anime,
-//                        new KitsuSearchParams().
-//                                setLimit(
-//                                        20
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[categories]",
-//                                        "shounen"
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[subtype]",
-//                                        "TV"
-//                                ).
-//                                setCustomParameter(
-//                                        "filter[status]",
-//                                        "finished"
-//                                ).
-//                                setCustomParameter(
-//                                        "sort",
-//                                        "popularityRank"
-//                                )
-//                );
-//
-//                @Nullable ArrayList<MainCategoryContainer> items = containers.getValue();
-//
-//                if (items == null || items.isEmpty()) {
-//                    containers.postValue(null);
-//                }
+        rssFuture = Threading.submitTask(Threading.TASK.INSTANT,() -> {
+            try {
+                news.postValue(
+                        RssFetcher.getANNFeed()
+                );
+            } catch (Exception e) {
+                news.postValue(null);
+                Logger.error(e);
             }
-        );
+        });
+
+        reloadFuture = Threading.submitTask(Threading.TASK.INSTANT,() -> {
+            fetchCategory(
+                    R.string.trending_anime,
+                    AniList.sortedBy(AniList.TYPE.TRENDING)
+            );
+
+            if (Thread.interrupted()) return;
+
+            fetchCategory(
+                    R.string.popular_anime,
+                    AniList.sortedBy(AniList.TYPE.POPULARITY)
+            );
+
+            if (Thread.interrupted()) return;
+
+            fetchCategory(
+                    R.string.best_score_anime,
+                    AniList.sortedBy(AniList.TYPE.SCORE)
+            );
+
+            if (Thread.interrupted()) return;
+
+            fetchCategory(
+                    R.string.home_beloved,
+                    AniList.sortedBy(AniList.TYPE.FAVOURITES)
+            );
+
+            @Nullable ArrayList<MainCategoryContainer> items = containers.getValue();
+
+            // Check if nothing succeeded.
+            if (items == null || items.isEmpty()) {
+                containers.postValue(null);
+            }
+        });
     }
 
-//    private void fetchCategory(Kitsu kitsu, @StringRes int titleResourceId, KitsuSearchParams params) {
-//        List<AniListAnime> anime;
-//        try {
-//            anime = kitsu.searchAnime(params);
-//        } catch (Exception ignored) {
-//            return;
-//        }
-//
-//        List<Anime> fetchedAnime = new Anime.BulkAnimeBuilder(anime).build();
-//        anime.clear();
-//        addItemToMutable(new MainCategoryContainer(
-//                titleResourceId,
-//                fetchedAnime
-//        ));
-//    }
+    private void fetchCategory(@StringRes int titleResourceId, AniListQuery.Paged query) {
+        List<AniListAnime> anime;
+        try {
+            anime = query.next();
+        } catch (Exception e) {
+            Logger.debug(e);
+            return;
+        }
+
+        List<Anime> fetchedAnime = new Anime.BulkAnimeBuilder(anime).build();
+        // Free it up, although, this is mostly useless.
+        anime.clear();
+        addItemToMutable(new MainCategoryContainer(
+                titleResourceId,
+                fetchedAnime
+        ));
+    }
 
     private synchronized void addItemToMutable(MainCategoryContainer item) {
         @Nullable ArrayList<MainCategoryContainer> items = containers.getValue();

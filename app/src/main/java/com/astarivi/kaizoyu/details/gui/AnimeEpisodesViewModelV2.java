@@ -81,32 +81,6 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
                 return;
             }
 
-            // TODO: Implement this with AniList
-//            List<KitsuEpisode> kitsuEpisodes;
-//            try {
-//                kitsuEpisodes = kitsu.getEpisodesRange(
-//                        this.animeId,
-//                        pagination[0],
-//                        pagination[1],
-//                        episodeCount
-//                );
-//            } catch (Exception e) {
-//                exceptionHandler.postValue(KitsuExceptionManager.getFailureCode(e));
-//                episodes.postValue(null);
-//                return;
-//            }
-//
-//            if (episodeCount <= 20) {
-//                if (episodeCount > kitsuEpisodes.size()) episodeCount = kitsuEpisodes.size();
-//                if (episodeCount < kitsuEpisodes.size()) kitsuEpisodes = kitsuEpisodes.subList(0, episodeCount);
-//            }
-//
-//            currentPage = page;
-//
-//            episodes.postValue(
-//                    new Episode.BulkEpisodeBuilder(kitsuEpisodes, this.animeId).build()
-//            );
-
             // Build dummy episodes
             TreeSet<Episode> eps = new TreeSet<>();
 

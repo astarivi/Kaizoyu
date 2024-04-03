@@ -182,10 +182,12 @@ public class HomeFragment extends Fragment {
             binding.newsRecycler.smoothScrollToPosition(0);
         });
 
+        binding.swipeRefresh.setDistanceToTriggerSync(300);
+
         binding.swipeRefresh.setOnRefreshListener(() -> {
-            adapter.clearData();
             binding.swipeRefresh.setRefreshing(false);
-            viewModel.reloadHome(binding);
+            if (viewModel.reloadHome(binding)) adapter.clearData();
+
         });
 
         viewModel.reloadHome(binding);

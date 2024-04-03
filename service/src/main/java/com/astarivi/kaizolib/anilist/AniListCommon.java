@@ -48,8 +48,8 @@ abstract class AniListCommon {
             "rtDate{year month day}coverImage{extraLarge large medium color}bannerImage siteUrl e" +
             "pisodes duration genres trailer{id site}}}}";
 
-    protected static final String TRENDING_ANIME_QUERY = "query($page:Int){Page(page:$page){pageI" +
-            "nfo{hasNextPage}media(sort:TRENDING_DESC,type:ANIME){id idMal description title{roma" +
+    protected static final String GENERIC_ANIME_QUERY = "query($page:Int){Page(page:$page,perPage:20){pageI" +
+            "nfo{hasNextPage}media(sort:%s,type:ANIME){id idMal description title{roma" +
             "ji english native userPreferred}averageScore format status startDate{year month day}" +
             "coverImage{extraLarge large medium color}bannerImage siteUrl episodes duration genre" +
             "s trailer{id site}}}}";

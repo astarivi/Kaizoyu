@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="popular_anime">All-time popular</string>
+    <string name="popular_anime">All time popular</string>
+    <string name="trending_anime">Trending now</string>
+    <string name="best_score_anime">Highest rated</string>
     <string name="home_beloved">Beloved and popular</string>
     <string name="home_seinen">Best for mature audiences</string>
     <string name="popular_airing">Most popular currently airing</string>

@@ -43,7 +43,7 @@ public class AniListTest {
     @Test
     @DisplayName("AniList generic query")
     void testGenericQuery() throws Exception {
-        AniListQuery.Paged query = AniList.query(AniList.TYPE.TRENDING);
+        AniListQuery.Paged query = AniList.sortedBy(AniList.TYPE.TRENDING);
         List<AniListAnime> result = query.next();
     }
 
