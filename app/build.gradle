@@ -108,7 +108,7 @@ dependencies {
     // Guava solves a dependency issue between ACRA.ch and work-runtime
     implementation 'com.google.guava:guava:33.1.0-android'
     implementation 'com.github.WrichikBasu:AudioFocusController:3.0.2'
-    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.1.0'
     implementation 'com.github.astarivi:Zparc:1.1'
 
     //noinspection GradleDependency
@@ -126,11 +126,11 @@ dependencies {
 
     // Lombok
     //noinspection AnnotationProcessorOnCompilePath
-    compileOnly 'org.projectlombok:lombok:1.18.32'
-    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
     //noinspection AnnotationProcessorOnCompilePath
-    testCompileOnly 'org.projectlombok:lombok:1.18.32'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
+    testCompileOnly 'org.projectlombok:lombok:1.18.34'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 
     // Analytics
     implementation 'ch.acra:acra-http:5.11.3'

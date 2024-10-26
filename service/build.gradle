@@ -13,14 +13,14 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
+    // Logging
     implementation 'org.tinylog:tinylog-api:2.7.0'
     runtimeOnly 'org.tinylog:tinylog-impl:2.7.0'
     runtimeOnly 'org.tinylog:slf4j-tinylog:2.7.0'
-
-    implementation 'org.jetbrains:annotations:24.1.0'
 
     // Jackson
     //noinspection GradleDependency
@@ -37,7 +37,9 @@ dependencies {
     implementation 'javax.xml.stream:stax-api:1.0-2'
     implementation 'org.codehaus.woodstox:stax2-api:4.2.2'
 
+    // Misc
     implementation 'org.jsoup:jsoup:1.17.2'
+    implementation 'org.jetbrains:annotations:24.1.0'
 
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 

@@ -7,8 +7,17 @@ import com.astarivi.kaizolib.xdcc.model.DCC;
 
 import org.tinylog.Logger;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
 
@@ -71,7 +80,7 @@ public class XDCCDownloader {
 
         InetAddress address;
         try {
-            address = InetAddress.getByName(dcc.getIp());
+            address = InetAddress.getByName(dcc.ip());
         } catch (UnknownHostException e) {
             if (downloadEventListener != null) downloadEventListener.onError(
                     XDCCFailure.UnknownHost
@@ -81,7 +90,7 @@ public class XDCCDownloader {
 
         //noinspection IOStreamConstructor
         try(
-                Socket socket = new Socket(address, dcc.getPort());
+                Socket socket = new Socket(address, dcc.port());
                 DataInputStream inputStream = new DataInputStream(
                         socket.getInputStream()
                 );
@@ -102,10 +111,10 @@ public class XDCCDownloader {
 
             int repetitions = 0;
             long downloadedLength = 0;
-            long fileLength = dcc.getSizeBits();
+            long fileLength = dcc.sizeBits();
             long downloadStartTime = System.currentTimeMillis();
 
-            Logger.debug("About to start download loop. Downloading from: " + dcc.getIp());
+            Logger.debug("About to start download loop. Downloading from: " + dcc.ip());
 
             // Signal start
             write(output, 0);

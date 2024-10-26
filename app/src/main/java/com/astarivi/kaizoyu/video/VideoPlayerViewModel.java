@@ -92,7 +92,7 @@ public class VideoPlayerViewModel extends ViewModel {
 
             XDCCDownloader xdccDownloader = new XDCCDownloader(
                     dcc,
-                    new File(context.getCacheDir(), dcc.getFilename()),
+                    new File(context.getCacheDir(), dcc.filename()),
                     20,
                     10
             );
