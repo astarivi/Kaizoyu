@@ -68,20 +68,12 @@ public class MoreFragment extends TabFragment {
                 String.format(getString(R.string.updatecheck_description), UpdateManager.VERSION)
         );
 
-        binding.discordButton.setOnClickListener(v ->
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/Yy6BphADFc")))
-        );
-
         binding.githubButton.setOnClickListener(v ->
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/astarivi/Kaizoyu")))
         );
 
         binding.donateButton.setOnClickListener(v ->
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.buymeacoffee.com/astarivi")))
-        );
-
-        binding.homepageButton.setOnClickListener(v ->
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://kaizoyu.ovh/")))
         );
 
         binding.openSettings.setOnClickListener(v -> {

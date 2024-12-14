@@ -6,6 +6,7 @@ import android.content.Context;
 import com.astarivi.kaizoyu.core.common.NotificationsHub;
 import com.astarivi.kaizoyu.core.threading.workers.WorkerInitializers;
 import com.google.android.material.color.DynamicColors;
+import com.startapp.sdk.adsbase.StartAppSDK;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
@@ -59,6 +60,9 @@ public class KaizoyuApplication extends Application {
                                 .build()
                 )
         );
+
+        //noinspection ConstantValue
+        StartAppSDK.setTestAdsEnabled(com.astarivi.kaizoyu.BuildConfig.VERSION_NAME.contains("-DEBUG"));
 
         NotificationsHub.initialize();
         WorkerInitializers.queueWorkers(this);

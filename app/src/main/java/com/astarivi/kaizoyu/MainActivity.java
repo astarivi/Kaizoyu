@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
+import com.astarivi.kaizoyu.core.adapters.modal.GenericModalBottomSheet;
+import com.astarivi.kaizoyu.core.adapters.modal.ModalOption;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
 import com.astarivi.kaizoyu.core.storage.PersistenceRepository;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
@@ -33,6 +35,7 @@ import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.startapp.sdk.adsbase.StartAppSDK;
 
 import java.text.ParseException;
 
@@ -41,7 +44,8 @@ public class MainActivity extends AppCompatActivityTheme {
     private ActivityMainBinding binding;
     private TabLayout tabLayout;
     private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {});
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,17 +105,13 @@ public class MainActivity extends AppCompatActivityTheme {
         boolean isFirstTime = appSettings.getBooleanProperty("first_time", true);
 
         if (isFirstTime) {
-            WelcomeModalBottomSheet welcomeModalBottomSheet = new WelcomeModalBottomSheet(() -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    checkForNotificationsPermission();
-                }
-            });
+            WelcomeModalBottomSheet welcomeModalBottomSheet = new WelcomeModalBottomSheet(this::checkForGDPR);
 
             welcomeModalBottomSheet.show(getSupportFragmentManager(), WelcomeModalBottomSheet.TAG);
 
             appSettings.setBooleanProperty("first_time", false);
             appSettings.save();
-        // This if is here to avoid showing both the modals at the same time
+            // This if is here to avoid showing both the modals at the same time
         } else if (appSettings.getBooleanProperty("autoupdate", true)) {
             Threading.submitTask(Threading.TASK.INSTANT, () -> {
                 UpdateManager updateManager = new UpdateManager();
@@ -157,6 +157,10 @@ public class MainActivity extends AppCompatActivityTheme {
         if (!isFirstTime && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkForNotificationsPermission();
         }
+
+        if (!isFirstTime) {
+            checkForGDPR();
+        }
     }
 
     @Override
@@ -196,7 +200,7 @@ public class MainActivity extends AppCompatActivityTheme {
     private void checkForNotificationsPermission() {
         if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
             NotificationModalBottomSheet notificationModalBottomSheet = new NotificationModalBottomSheet(() ->
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             );
 
             notificationModalBottomSheet.show(getSupportFragmentManager(), NotificationModalBottomSheet.TAG);
@@ -205,7 +209,46 @@ public class MainActivity extends AppCompatActivityTheme {
         }
     }
 
-    private void configureTabAdapter(){
+    private void checkForGDPR() {
+        ExtendedProperties appSettings = Data.getProperties(Data.CONFIGURATION.APP);
+        boolean hasAskedGdpr = appSettings.getBooleanProperty("has_asked_gdpr", false);
+
+        if (hasAskedGdpr) return;
+
+        GenericModalBottomSheet modalDialog = new GenericModalBottomSheet(
+                getString(R.string.fw_ad_title),
+                new ModalOption[]{
+                        new ModalOption(
+                                getString(R.string.fw_ad_allow),
+                                getString(R.string.fw_ad_allow_desc),
+                                true
+                        ),
+                        new ModalOption(
+                                getString(R.string.fw_ad_deny),
+                                getString(R.string.fw_ad_deny_desc)
+                        )
+                },
+                (index, highlight) -> {
+                    appSettings.setBooleanProperty("gdpr_consent", index == 0);
+                    appSettings.setBooleanProperty("has_asked_gdpr", true);
+
+                    StartAppSDK.setUserConsent (
+                            this,
+                            "pas",
+                            System.currentTimeMillis(),
+                            index == 0
+                    );
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        checkForNotificationsPermission();
+                    }
+                }
+        );
+
+        modalDialog.show(getSupportFragmentManager(), GenericModalBottomSheet.TAG);
+    }
+
+    private void configureTabAdapter() {
         tabLayout = binding.bottomTabs;
         TabAdapter tabAdapter = new TabAdapter(this);
         ViewPager2 viewPager = binding.mainPager;
@@ -255,7 +298,7 @@ public class MainActivity extends AppCompatActivityTheme {
                     if (fragment instanceof TabFragment) {
                         ((TabFragment) fragment).onTabReselected();
                     }
-                } catch(Exception ignored) {
+                } catch (Exception ignored) {
                 }
             }
         });

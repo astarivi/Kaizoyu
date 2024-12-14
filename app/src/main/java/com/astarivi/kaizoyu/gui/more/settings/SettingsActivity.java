@@ -35,6 +35,7 @@ import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.materialswitch.MaterialSwitch;
+import com.startapp.sdk.adsbase.StartAppSDK;
 
 import java.io.File;
 
@@ -164,6 +165,16 @@ public class SettingsActivity extends AppCompatActivityTheme {
         binding.strictModeValue.setOnCheckedChangeListener(this::triggerSave);
         binding.autoMoveValue.setOnCheckedChangeListener(this::triggerSave);
         binding.xdccValue.setOnCheckedChangeListener(this::triggerSave);
+        binding.gdprValue.setOnCheckedChangeListener((v, val) -> {
+            StartAppSDK.setUserConsent (
+                    this,
+                    "pas",
+                    System.currentTimeMillis(),
+                    val
+            );
+
+            this.saveSettings();
+        });
 
         binding.themeTrigger.setOnClickListener(v -> {
             ThemeSelectionModalBottomSheet modalBottomSheet = new ThemeSelectionModalBottomSheet(theme -> {
@@ -332,6 +343,11 @@ public class SettingsActivity extends AppCompatActivityTheme {
                 binding.strictModeValue.isChecked()
         );
 
+        config.setBooleanProperty(
+                "gdpr_consent",
+                binding.gdprValue.isChecked()
+        );
+
         config.save();
 
         Data.reloadProperties();
@@ -391,6 +407,10 @@ public class SettingsActivity extends AppCompatActivityTheme {
 
         binding.advancedSearch.setChecked(
                 config.getBooleanProperty("advanced_search", false)
+        );
+
+        binding.gdprValue.setChecked(
+                config.getBooleanProperty("gdpr_consent", false)
         );
 
         // IPv6 stuff

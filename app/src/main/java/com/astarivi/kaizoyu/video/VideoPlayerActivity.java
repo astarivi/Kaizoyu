@@ -352,6 +352,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
             binding.initialDownloadProgress.setVisibility(View.GONE);
             binding.downloadSpeed.setVisibility(View.GONE);
             binding.downloadStatus.setVisibility(View.GONE);
+            binding.loadingBanner.hideBanner();
 
             audioFocusController.requestFocus();
             binding.mainPlayer.play(file);

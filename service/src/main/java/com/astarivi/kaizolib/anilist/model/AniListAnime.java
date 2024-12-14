@@ -131,6 +131,10 @@ public class AniListAnime {
         AniListAnime anime = new AniListAnime();
 
         anime.id = id;
+        anime.title = new Titles();
+        anime.coverImage = new CoverImage();
+        anime.trailer = new Trailer();
+        anime.startDate = new AniListAnime.FuzzyDate();
 
         return anime;
     }

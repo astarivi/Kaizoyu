@@ -134,6 +134,8 @@ dependencies {
 
     // Analytics
     implementation 'ch.acra:acra-http:5.11.3'
+    // Ads
+    implementation 'com.startapp:inapp-sdk:5.1.0'
 
     // Android X
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01'
