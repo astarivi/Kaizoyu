@@ -1,8 +1,10 @@
 package com.astarivi.kaizolib.xdcc.model;
 
+import org.jetbrains.annotations.NotNull;
+
 public record DCC(String filename, String ip, int port, long sizeBits, boolean ipv6) {
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "DCC{" +
                 "filename='" + filename + '\'' +
                 ", ip='" + ip + '\'' +

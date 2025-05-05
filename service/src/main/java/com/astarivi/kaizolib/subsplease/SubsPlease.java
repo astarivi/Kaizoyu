@@ -6,18 +6,24 @@ import com.astarivi.kaizolib.subsplease.model.SubsPleaseAnime;
 import com.astarivi.kaizolib.subsplease.model.SubsPleaseResult;
 import com.astarivi.kaizolib.subsplease.model.SubsPleaseTodayResult;
 import com.astarivi.kaizolib.subsplease.parser.ParseJson;
-import okhttp3.HttpUrl;
-import okhttp3.Request;
-import okhttp3.Response;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.TreeMap;
+
+import okhttp3.HttpUrl;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
+@Deprecated
 public class SubsPlease {
     private final UserHttpClient client;
 

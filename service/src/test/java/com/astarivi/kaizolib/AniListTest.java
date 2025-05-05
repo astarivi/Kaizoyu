@@ -51,6 +51,8 @@ public class AniListTest {
     @DisplayName("AniList get airing schedule")
     void testAiring() throws Exception {
         AiringSchedule airingSchedule = AniListSchedule.airingSchedule();
+
+        System.out.printf("Found %d episodes", airingSchedule.episodes.size());
     }
 
     @Test
