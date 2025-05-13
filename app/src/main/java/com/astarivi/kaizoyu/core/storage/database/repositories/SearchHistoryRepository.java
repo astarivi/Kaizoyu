@@ -12,6 +12,7 @@ import java.util.List;
 import lombok.Getter;
 
 
+@Deprecated
 @Getter
 public class SearchHistoryRepository {
     private final SearchHistoryDao searchHistoryDao;

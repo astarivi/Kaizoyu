@@ -22,9 +22,9 @@ import java.util.regex.Pattern;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchEnhancer implements Parcelable {
+    public long id;
     public String type;
-    public int databaseId;
-    public String responseType;
+    public long kitsu_id;
     public String title;
     public String regex;
     public Integer episode;
@@ -35,7 +35,7 @@ public class SearchEnhancer implements Parcelable {
 
     @JsonIgnore
     public void filter(@NotNull List<NiblResult> niblResults) {
-        if (responseType.equals("title")) return;
+        if (type.equals("title")) return;
 
         Pattern pattern = Pattern.compile(regex);
 
@@ -50,7 +50,7 @@ public class SearchEnhancer implements Parcelable {
         try {
             return JsonMapper.getObjectReader().readValue(json, SearchEnhancer.class);
         } catch (IOException e) {
-            Logger.error("Failed to decode SearchEnhancer from search.kaizoyu.ovh");
+            Logger.error("Failed to decode SearchEnhancer from kaizoyu.ddns.net");
             Logger.error(e);
             return null;
         }
@@ -60,16 +60,16 @@ public class SearchEnhancer implements Parcelable {
 
     @JsonIgnore
     private SearchEnhancer(Parcel parcel) {
+        id = parcel.readLong();
         type = parcel.readString();
-        databaseId = parcel.readInt();
-        responseType = parcel.readString();
+        kitsu_id = parcel.readLong();
         title = parcel.readString();
         regex = parcel.readString();
         episode = (Integer) parcel.readValue(Integer.class.getClassLoader());
     }
 
     @JsonIgnore
-    public static final Parcelable.Creator<SearchEnhancer> CREATOR = new Parcelable.Creator<SearchEnhancer>() {
+    public static final Parcelable.Creator<SearchEnhancer> CREATOR = new Parcelable.Creator<>() {
         @Override
         public SearchEnhancer createFromParcel(Parcel parcel) {
             return new SearchEnhancer(parcel);
@@ -90,9 +90,9 @@ public class SearchEnhancer implements Parcelable {
     @JsonIgnore
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(type);
-        dest.writeInt(databaseId);
-        dest.writeString(responseType);
+        dest.writeLong(kitsu_id);
         dest.writeString(title);
         dest.writeString(regex);
         dest.writeValue(episode);

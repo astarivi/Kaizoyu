@@ -16,10 +16,7 @@ import java.util.List;
 
 
 public class SearchUtils {
-    public static @Nullable ArrayList<Result> parseResults (
-            @NotNull List<NiblResult> results,
-            @NotNull Nibl nibl)
-    {
+    public static @Nullable ArrayList<Result> parseResults (@NotNull List<NiblResult> results) {
         ArrayList<Result> parsedResults = new ArrayList<>();
         ExtendedProperties botsMap = Data.getProperties(Data.CONFIGURATION.BOTS);
 
@@ -37,7 +34,7 @@ public class SearchUtils {
             );
 
             if (botName == null) {
-                nibl.getBotsMap(botsMap);
+                Nibl.getBotsMap(botsMap);
                 if (!botsMap.containsKey(String.valueOf(result.botId))) continue;
 
                 botsMap.save();

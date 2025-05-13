@@ -1,5 +1,7 @@
 package com.astarivi.kaizolib.kitsuv2.public_api;
 
+import com.astarivi.kaizolib.kitsu.exception.ParsingException;
+import com.astarivi.kaizolib.kitsu.parser.ParseJson;
 import com.astarivi.kaizolib.kitsuv2.exception.KitsuException;
 import com.astarivi.kaizolib.kitsuv2.exception.ParsingError;
 import com.astarivi.kaizolib.kitsuv2.model.KitsuAnime;
@@ -32,7 +34,7 @@ public class KitsuPublic extends Methods {
         );
     }
 
-    public @NotNull List<KitsuEpisode> getEpisodesRange(long animeId, int from, int to, int totalLength) throws KitsuException, ParsingError {
+    public static @NotNull List<KitsuEpisode> getEpisodesRange(long animeId, int from, int to, int totalLength) throws KitsuException, ParsingError {
         if (totalLength <= 20) {
             return KitsuEpisode.deserializeSearch(
                     episodesRequest(animeId, 20, 0)
@@ -59,7 +61,17 @@ public class KitsuPublic extends Methods {
         );
     }
 
-    public boolean isAnimeLongRunning(long animeId, int episodesLength) {
+    public static int episodeCount(long animeId) throws KitsuException, ParsingException {
+        String req = episodesRequest(animeId, 1, 0);
+
+        KitsuEpisode.SearchResults se = ParseJson.parseGeneric(req, KitsuEpisode.SearchResults.class);
+
+        if (se.meta == null) return 0;
+
+        return se.meta.count;
+    }
+
+    public static boolean isAnimeLongRunning(long animeId, int episodesLength) {
         if (episodesLength <= 24) return false;
         // We definitely want to treat this as long-running
         if (episodesLength > 100) return true;

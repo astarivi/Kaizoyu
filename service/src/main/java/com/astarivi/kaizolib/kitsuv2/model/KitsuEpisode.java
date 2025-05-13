@@ -1,9 +1,11 @@
 package com.astarivi.kaizolib.kitsuv2.model;
 
 import com.astarivi.kaizolib.common.util.JsonMapper;
+import com.astarivi.kaizolib.kitsu.model.KitsuEpisodeResults;
 import com.astarivi.kaizolib.kitsuv2.exception.ParsingError;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +27,16 @@ public class KitsuEpisode {
     public KitsuEpisode(KitsuEpisodeBuilder builder) {
         this.id = builder.id;
         this.attributes = builder.attributes;
+    }
+
+    @JsonProperty("id")
+    public void setId(String id) {
+        this.id = Long.parseLong(id);
+    }
+
+    @JsonProperty("id")
+    public void setId(long id) {
+        this.id = id;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -87,8 +99,14 @@ public class KitsuEpisode {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class SearchResults {
+    public static class SearchResults {
         public List<KitsuEpisode> data;
+        public KitsuEpisodeResults.KitsuEpisodeMeta meta;
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public static class KitsuEpisodeMeta {
+            public int count;
+        }
     }
 
     public static List<KitsuEpisode> deserializeSearch(String serialized) throws ParsingError {

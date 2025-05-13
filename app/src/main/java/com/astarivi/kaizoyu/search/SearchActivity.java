@@ -15,14 +15,14 @@ import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
-import com.astarivi.kaizoyu.core.models.base.ModelType;
-import com.astarivi.kaizoyu.core.storage.database.data.search.SearchHistory;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
+import com.astarivi.kaizoyu.core.storage.database.repo.SearchHistoryRepo;
+import com.astarivi.kaizoyu.core.storage.database.tables.search_history.SearchHistory;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.databinding.ActivitySearchBinding;
 import com.astarivi.kaizoyu.databinding.FragmentSearchSuggestionBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
 import com.astarivi.kaizoyu.search.recycler.SearchRecyclerAdapter;
-import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.google.android.material.search.SearchBar;
 import com.google.android.material.search.SearchView;
@@ -63,7 +63,7 @@ public class SearchActivity extends AppCompatActivityTheme {
             Intent intent = new Intent();
             intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
             intent.putExtra("anime", anime);
-            intent.putExtra("type", ModelType.Anime.BASE.name());
+            intent.putExtra("type", AnimeBasicInfo.AnimeType.REMOTE.name());
             startActivity(intent);
         });
         recyclerView.setAdapter(adapter);
@@ -121,7 +121,7 @@ public class SearchActivity extends AppCompatActivityTheme {
             if (searchView.getText() != null) {
                 String search = searchView.getText().toString();
 
-                if (search.equals("")) {
+                if (search.isEmpty()) {
                     optOutOfSearch();
                     return false;
                 }
@@ -139,10 +139,7 @@ public class SearchActivity extends AppCompatActivityTheme {
                     return false;
                 }
 
-                Data.getRepositories()
-                        .getSearchHistoryRepository()
-                        .saveAsync(search);
-
+                SearchHistoryRepo.saveAsync(search);
                 viewModel.searchAnime(search, binding, this);
             }
 
@@ -174,8 +171,7 @@ public class SearchActivity extends AppCompatActivityTheme {
         }
 
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            List<SearchHistory> searchHistoryList = Data.getRepositories()
-                    .getSearchHistoryRepository().getAll();
+            List<SearchHistory> searchHistoryList = SearchHistoryRepo.getAll();
 
             Threading.submitTask(Threading.TASK.INSTANT, () -> {
                 ArrayList<FragmentSearchSuggestionBinding> suggestionBindings = new ArrayList<>();
@@ -190,9 +186,7 @@ public class SearchActivity extends AppCompatActivityTheme {
                     searchSuggestionBinding.itemHistory.setVisibility(View.VISIBLE);
                     searchSuggestionBinding.itemText.setText(searchHistory.searchTerm);
                     searchSuggestionBinding.rootLayout.setOnClickListener(v -> {
-                        Data.getRepositories()
-                                .getSearchHistoryRepository()
-                                .bumpUpAsync(searchHistory);
+                        SearchHistoryRepo.bumpUpAsync(searchHistory);
                         doProgrammaticSearch(searchHistory.searchTerm);
                     });
 

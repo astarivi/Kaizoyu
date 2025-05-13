@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 
+@Deprecated
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AniListAnime {
     public Long id;

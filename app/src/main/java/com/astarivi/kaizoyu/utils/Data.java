@@ -3,7 +3,6 @@ package com.astarivi.kaizoyu.utils;
 import com.astarivi.kaizolib.common.network.UserHttpClient;
 import com.astarivi.kaizoyu.core.storage.PersistenceRepository;
 import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
-import com.astarivi.kaizoyu.core.storage.database.repositories.RepositoryDirectory;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 
 import org.jetbrains.annotations.NotNull;
@@ -36,10 +35,6 @@ public class Data {
 
     public static AppDatabase getDatabase() {
         return PersistenceRepository.getInstance().getDatabase();
-    }
-
-    public static RepositoryDirectory getRepositories() {
-        return PersistenceRepository.getInstance().getRepositoryDirectory();
     }
 
     public static boolean isDeviceLowSpec() {

@@ -33,6 +33,7 @@ import okhttp3.HttpUrl;
 import okhttp3.Request;
 
 
+// FIXME: Change this
 public class UpdateManager {
     public static String VERSION = BuildConfig.VERSION_NAME;
 

@@ -25,6 +25,7 @@ import java.util.List;
 import okhttp3.HttpUrl;
 
 
+@Deprecated
 public class Kitsu {
     private final UserHttpClient client;
 

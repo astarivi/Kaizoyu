@@ -13,7 +13,6 @@ import com.astarivi.kaizolib.anilist.model.AniListAnime;
 import com.astarivi.kaizolib.ann.ANN;
 import com.astarivi.kaizolib.ann.model.ANNItem;
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.models.Anime;
 import com.astarivi.kaizoyu.databinding.FragmentHomeBinding;
 import com.astarivi.kaizoyu.gui.home.recycler.recommendations.MainCategoryContainer;
 import com.astarivi.kaizoyu.utils.Threading;

@@ -18,4 +18,13 @@ public class Migrations {
             database.execSQL("ALTER TABLE seen_episode ADD COLUMN notified INTEGER NOT NULL DEFAULT 0");
         }
     };
+
+    public static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("DROP TABLE IF EXISTS seen_episode");
+            database.execSQL("DROP TABLE IF EXISTS seen_anime");
+            database.execSQL("DROP TABLE IF EXISTS favorite_anime");
+        }
+    };
 }

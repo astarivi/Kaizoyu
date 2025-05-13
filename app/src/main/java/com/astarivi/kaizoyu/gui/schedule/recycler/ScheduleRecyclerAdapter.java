@@ -28,7 +28,7 @@ public class ScheduleRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolde
 
         holder.binding.subtype.setText(
                 Translation.getSubTypeTranslation(
-                        seasonalAnime.getAniListAnime().subtype,
+                        seasonalAnime.getKitsuAnime().subtype,
                         holder.binding.getRoot().getContext()
                 )
         );

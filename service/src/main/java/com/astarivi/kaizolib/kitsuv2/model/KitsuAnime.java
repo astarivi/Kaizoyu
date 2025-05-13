@@ -28,6 +28,11 @@ public class KitsuAnime {
         this.id = Long.parseLong(id);
     }
 
+    @JsonProperty("id")
+    public void setId(long id) {
+        this.id = id;
+    }
+
     @JsonIgnore
     private KitsuAnime(@NotNull KitsuAnimeBuilder builder) {
         id = builder.id;
@@ -63,8 +68,7 @@ public class KitsuAnime {
         public KitsuAnimeImages coverImage;
         public int episodeCount;
         public int episodeLength;
-        // Just in case One Piece ever overflows an int...
-        public long totalLength;
+        public int totalLength;
         public String youtubeVideoId;
         public String showType;
         public boolean nsfw;

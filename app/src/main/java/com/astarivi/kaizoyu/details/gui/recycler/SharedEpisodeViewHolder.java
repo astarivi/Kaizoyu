@@ -5,13 +5,15 @@ import android.graphics.Color;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Consumer;
+import androidx.core.util.Supplier;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.models.Episode;
-import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnimeWithEpisodes;
-import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenEpisode;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
+import com.astarivi.kaizoyu.core.models.episode.RemoteEpisode;
+import com.astarivi.kaizoyu.core.storage.database.repo.SavedShowRepo;
+import com.astarivi.kaizoyu.core.storage.database.tables.saved_episode.SavedEpisode;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeEpisodesItemBinding;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
@@ -21,8 +23,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -31,12 +31,11 @@ import lombok.Setter;
 
 public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     public final FragmentAnimeEpisodesItemBinding binding;
+    private RemoteEpisode episode;
     @Setter
-    private SharedEpisodeItemClickListener listener;
-    private Episode episode;
+    private Supplier<AnimeBasicInfo> anime;
     @Setter
-    private Anime anime;
-    private List<SeenEpisode> seenEpisodes;
+    private Consumer<RemoteEpisode> listener;
 
     public SharedEpisodeViewHolder(@NonNull @NotNull FragmentAnimeEpisodesItemBinding binding) {
         super(binding.getRoot());
@@ -46,7 +45,7 @@ public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements 
         this.binding = binding;
     }
 
-    public void setEpisode(Episode episode) {
+    public void setEpisode(RemoteEpisode episode) {
         this.episode = episode;
 
         resetSeenStatus();
@@ -67,7 +66,7 @@ public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements 
             return;
         }
 
-        listener.onItemClick(this.episode);
+        listener.accept(this.episode);
     }
 
     @Override
@@ -99,27 +98,24 @@ public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements 
                     episode.setLength(24);
                 }
 
-                Data.getRepositories()
-                        .getSeenAnimeRepository()
-                        .saveSeenEpisodeAsync(
-                                anime,
-                                episode,
-                                (int) TimeUnit.MINUTES.toMillis(
-                                        episode.getLength()
-                                ),
-                                this::triggerSeenRefresh
-                        );
+                SavedShowRepo.saveEpisodeAsync(
+                        anime.get(),
+                        episode,
+                        (int) TimeUnit.MINUTES.toMillis(
+                                episode.getLength()
+                        ),
+                        (result) -> this.checkSeen()
+                );
             } else {
-                Data.getRepositories()
-                        .getSeenAnimeRepository()
-                        .deleteSeenEpisodeAsync(
-                                anime,
-                                episode,
-                                () -> {
-                                    triggerSeenRefresh();
-                                    resetSeenStatus();
-                                }
-                        );
+                Threading.database(() -> {
+                    SavedShowRepo.getEpisodeDao().deleteByOwnKitsuId(
+                            episode.getKitsuId()
+                    );
+
+                    Data.getTemporarySwitches().setPendingSeenEpisodeStateRefresh(true);
+
+                    binding.getRoot().post(this::checkSeen);
+                });
             }
         });
 
@@ -128,7 +124,7 @@ public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements 
         return true;
     }
 
-    private void markSeen(SeenEpisode seenEpisode) {
+    private void markSeen(@NonNull SavedEpisode seenEpisode) {
         binding.getRoot().setCardBackgroundColor(
                 MaterialColors.getColor(binding.getRoot().getContext(), R.attr.colorPrimaryContainer, Color.BLUE)
         );
@@ -154,43 +150,12 @@ public class SharedEpisodeViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     public void checkSeen() {
-        if (seenEpisodes == null) {
-            triggerSeenRefresh();
-            return;
-        }
+        Threading.database(() -> {
+            SavedEpisode savedEpisode = SavedShowRepo.getEpisodeDao().getByOwnKitsuId(episode.getKitsuId());
 
-        if (seenEpisodes.isEmpty()) {
-            return;
-        }
-
-        Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            for (SeenEpisode seenEpisode : seenEpisodes) {
-                if (seenEpisode.episode.episodeNumber == episode.getNumber()) {
-                    binding.getRoot().post(() -> markSeen(seenEpisode));
-                }
+            if (savedEpisode != null) {
+                binding.getRoot().post(() -> markSeen(savedEpisode));
             }
-        });
-    }
-
-    public void triggerSeenRefresh() {
-        Data.getTemporarySwitches().setPendingSeenEpisodeStateRefresh(false);
-
-        Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            SeenAnimeWithEpisodes seenAnimeWithEpisodes = Data.getRepositories()
-                    .getSeenAnimeRepository()
-                    .getSeenAnimeDao()
-                    .getRelationFromKitsuId(
-                            episode.getAnimeId()
-                    );
-
-            if (seenAnimeWithEpisodes == null) {
-                seenEpisodes = new ArrayList<>();
-                return;
-            }
-
-            seenEpisodes = seenAnimeWithEpisodes.episodes;
-
-            checkSeen();
         });
     }
 }

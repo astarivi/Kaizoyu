@@ -5,6 +5,7 @@ import com.astarivi.kaizolib.anilist.exception.AniListException;
 import com.astarivi.kaizolib.anilist.model.AiringSchedule;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
 import com.astarivi.kaizoyu.core.models.SeasonalAnime;
+import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +18,7 @@ import java.util.TreeSet;
 
 @ThreadedOnly
 public class AssistedScheduleFetcher {
-    public static @Nullable SeasonalAnime getSingle(int animeId) throws AniListException, IOException {
+    public static @Nullable SeasonalAnime getSingle(RemoteAnime remoteAnime) throws AniListException, IOException {
         AiringSchedule.Episode airingEpisode = AniListSchedule.nextAiringEpisodeFor(animeId);
 
         if (airingEpisode == null) return null;
@@ -39,7 +40,7 @@ public class AssistedScheduleFetcher {
 
             if (seasonalAnime == null) continue;
 
-            if (!seasonalAnime.getAniListAnime().subtype.equals("TV")) continue;
+            if (!seasonalAnime.getKitsuAnime().subtype.equals("TV")) continue;
 
             DayOfWeek dow = seasonalAnime.getEmissionDay();
 

@@ -11,9 +11,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.astarivi.kaizolib.anilist.model.AniListAnime;
-import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.models.base.ModelType;
+import com.astarivi.kaizolib.kitsuv2.model.KitsuAnime;
+import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
 import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeInfoBinding;
 import com.astarivi.kaizoyu.databinding.ItemChipCategoryBinding;
@@ -33,7 +33,7 @@ import java.util.List;
 public class AnimeInfoFragment extends Fragment {
     private FragmentAnimeInfoBinding binding;
     private AnimeInfoViewModel viewModel;
-    private Anime anime;
+    private AnimeBasicInfo anime;
 
     public AnimeInfoFragment() {
     }
@@ -47,13 +47,30 @@ public class AnimeInfoFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentAnimeInfoBinding.inflate(inflater, container, false);
 
+        Bundle bundle;
         if (getArguments() != null) {
-            anime = Utils.getAnimeFromBundle(getArguments(), ModelType.Anime.BASE);
+            bundle = getArguments();
+        } else if (savedInstanceState != null && anime == null) {
+            bundle = savedInstanceState;
+        } else {
+            Logger.error("Couldn't initialize bundle at AnimeInfoFragment");
+            bundle = null;
         }
 
-        if (savedInstanceState != null && anime == null){
-            anime = Utils.getAnimeFromBundle(savedInstanceState, ModelType.Anime.BASE);
+        assert bundle != null;
+
+        String type = bundle.getString("type");
+
+        AnimeBasicInfo.AnimeType animeType;
+
+        try {
+            animeType = AnimeBasicInfo.AnimeType.valueOf(type);
+        } catch(IllegalArgumentException e) {
+            Logger.error("Invalid anime type {} for this bundle", type);
+            animeType = AnimeBasicInfo.AnimeType.REMOTE;
         }
+
+        anime = Utils.getAnimeFromBundle(bundle, animeType);
 
         return binding.getRoot();
     }
@@ -62,68 +79,66 @@ public class AnimeInfoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(AnimeInfoViewModel.class);
 
-        AniListAnime aniListAnime = anime.getAniListAnime();
-
         binding.categoriesContainer.setVisibility(View.GONE);
+        binding.trailerCard.setVisibility(View.GONE);
 
-        binding.animeSynopsis.setText(aniListAnime.description);
+        binding.animeSynopsis.setText(anime.getSynopsis());
 
-        AniListAnime.Titles titles = aniListAnime.title;
-
-        if (titles.english != null) {
+        if (anime.getTitleEn() != null) {
+            String titleEn = anime.getTitleEn();
             binding.titleUs.setVisibility(View.VISIBLE);
-            binding.animeTitleUs.setText(titles.english);
+            binding.animeTitleUs.setText(titleEn);
             binding.titleUs.setOnLongClickListener(v ->
-                    Utils.copyToClipboard(getActivity(), "Anime title", titles.english)
+                    Utils.copyToClipboard(getActivity(), "Anime title", titleEn)
             );
         }
 
-        if (titles.romaji != null) {
+        if (anime.getTitleEnJp() != null) {
+            String titleEnJp = anime.getTitleEnJp();
             binding.titleEnJp.setVisibility(View.VISIBLE);
-            binding.animeTitleEnjp.setText(titles.romaji);
+            binding.animeTitleEnjp.setText(titleEnJp);
             binding.titleEnJp.setOnLongClickListener(v ->
-                    Utils.copyToClipboard(getActivity(), "Anime title", titles.romaji)
+                    Utils.copyToClipboard(getActivity(), "Anime title", titleEnJp)
             );
         }
 
-        if (titles.japanese != null) {
+        if (anime.getTitleJp() != null) {
+            String titleJp = anime.getTitleJp();
             binding.titleJp.setVisibility(View.VISIBLE);
-            binding.animeTitleJp.setText(titles.japanese);
+            binding.animeTitleJp.setText(titleJp);
             binding.titleJp.setOnLongClickListener(v ->
-                    Utils.copyToClipboard(getActivity(), "Anime title", titles.japanese)
+                    Utils.copyToClipboard(getActivity(), "Anime title", titleJp)
             );
         }
 
-        if (
-                aniListAnime.trailer != null &&
-                aniListAnime.trailer.id != null &&
-                (aniListAnime.trailer.site == null || aniListAnime.trailer.site.equals("youtube"))
-        ) {
-            YouTubePlayerView youTubePlayerView = binding.youtubePlayer;
-            getLifecycle().addObserver(youTubePlayerView);
+        if (anime instanceof RemoteAnime remoteAnime) {
+            KitsuAnime kitsuAnime = remoteAnime.getInternal();
 
-            youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
-                @Override
-                public void onReady(@NonNull YouTubePlayer youTubePlayer) {
-                    youTubePlayer.cueVideo(
-                            aniListAnime.trailer.id,
-                            0
-                    );
-                }
-            });
-        } else {
-            binding.trailerCard.setVisibility(View.GONE);
-        }
+            if (kitsuAnime.attributes.youtubeVideoId != null) {
+                YouTubePlayerView youTubePlayerView = binding.youtubePlayer;
+                getLifecycle().addObserver(youTubePlayerView);
 
-        if (aniListAnime.genres != null && !aniListAnime.genres.isEmpty()) {
-            this.makeCategoryChips(aniListAnime.genres);
+                youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+                    @Override
+                    public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                        youTubePlayer.cueVideo(kitsuAnime.attributes.youtubeVideoId, 0);
+                    }
+                });
+
+                binding.trailerCard.setVisibility(View.VISIBLE);
+            }
+
+            // TODO: Enable this.
+//            if (aniListAnime.genres != null && !aniListAnime.genres.isEmpty()) {
+//                this.makeCategoryChips(aniListAnime.genres);
+//            }
         }
 
         viewModel.initialize(anime);
     }
 
     private void makeCategoryChips(List<String> categories) {
-        Threading.submitTask(Threading.TASK.INSTANT, () -> {
+        Threading.instant(() -> {
             ArrayList<View> chipViews = new ArrayList<>();
 
             LayoutInflater layoutInflater = getLayoutInflater();
@@ -172,5 +187,6 @@ public class AnimeInfoFragment extends Fragment {
     public void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("anime", anime);
+        outState.putString("type", anime.getType().name());
     }
 }

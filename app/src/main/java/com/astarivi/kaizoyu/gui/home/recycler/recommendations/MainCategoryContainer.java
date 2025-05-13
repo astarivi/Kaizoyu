@@ -4,7 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.StringRes;
 
-import com.astarivi.kaizoyu.core.models.Anime;
+import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
 
 import java.util.List;
 
@@ -14,9 +14,9 @@ import lombok.Getter;
 public class MainCategoryContainer {
     private final @StringRes int title;
     @Getter
-    private final List<Anime> anime;
+    private final List<RemoteAnime> anime;
 
-    public MainCategoryContainer(@StringRes int title, List<Anime> anime) {
+    public MainCategoryContainer(@StringRes int title, List<RemoteAnime> anime) {
         this.title = title;
         this.anime = anime;
     }
@@ -28,5 +28,4 @@ public class MainCategoryContainer {
     public String getVerboseTitle(Context context) {
         return context.getString(title);
     }
-
 }

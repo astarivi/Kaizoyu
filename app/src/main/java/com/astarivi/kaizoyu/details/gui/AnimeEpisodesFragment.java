@@ -15,14 +15,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.astarivi.kaizolib.anilist.model.AniListAnime;
+import com.astarivi.kaizolib.kitsu.exception.ParsingException;
+import com.astarivi.kaizolib.kitsuv2.exception.KitsuException;
+import com.astarivi.kaizolib.kitsuv2.public_api.KitsuPublic;
 import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.models.Episode;
 import com.astarivi.kaizoyu.core.models.Result;
-import com.astarivi.kaizoyu.core.models.SeasonalAnime;
-import com.astarivi.kaizoyu.core.models.base.ModelType;
+import com.astarivi.kaizoyu.core.models.anime.SeasonalAnime;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
+import com.astarivi.kaizoyu.core.models.base.EpisodeBasicInfo;
 import com.astarivi.kaizoyu.core.search.SearchEnhancer;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.databinding.ComponentSuggestionChipBinding;
@@ -35,6 +36,8 @@ import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.astarivi.kaizoyu.video.VideoPlayerActivity;
 
+import org.tinylog.Logger;
+
 import java.util.Locale;
 
 
@@ -42,8 +45,8 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
     private FragmentAnimeEpisodesBinding binding;
     private AnimeEpisodesViewModelV2 viewModel;
     private EpisodesRecyclerAdapter adapter;
-    private Anime anime;
-    private Episode episode;
+    private AnimeBasicInfo anime;
+    private EpisodeBasicInfo episode;
     private SearchEnhancer searchEnhancer = null;
 
     public void scrollTop() {
@@ -59,16 +62,35 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentAnimeEpisodesBinding.inflate(inflater, container, false);
 
-        // Anime object
-
+        Bundle bundle;
         if (getArguments() != null) {
-            anime = Utils.getAnimeFromBundle(getArguments(), ModelType.Anime.BASE);
+            bundle = getArguments();
+        } else if (savedInstanceState != null && anime == null) {
+            bundle = savedInstanceState;
+        } else {
+            Logger.error("Couldn't initialize bundle at AnimeEpisodesFragment");
+            bundle = null;
+        }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                searchEnhancer = getArguments().getParcelable("search_enhancer", SearchEnhancer.class);
-            } else {
-                searchEnhancer = getArguments().getParcelable("search_enhancer");
-            }
+        assert bundle != null;
+
+        String type = bundle.getString("type");
+
+        AnimeBasicInfo.AnimeType animeType;
+
+        try {
+            animeType = AnimeBasicInfo.AnimeType.valueOf(type);
+        } catch(IllegalArgumentException e) {
+            Logger.error("Invalid anime type {} for this bundle", type);
+            animeType = AnimeBasicInfo.AnimeType.REMOTE;
+        }
+
+        anime = Utils.getAnimeFromBundle(bundle, animeType);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            searchEnhancer = getArguments().getParcelable("search_enhancer", SearchEnhancer.class);
+        } else {
+            searchEnhancer = getArguments().getParcelable("search_enhancer");
         }
 
         return binding.getRoot();
@@ -76,14 +98,22 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        // region Basic Init
         binding.getRoot().getLayoutTransition().setAnimateParentHierarchy(false);
         binding.linearRoot.getLayoutTransition().setAnimateParentHierarchy(false);
         binding.episodeSelectorChips.getLayoutTransition().setAnimateParentHierarchy(false);
+
+        binding.backToTopFab.setOnClickListener(v ->
+                binding.animeEpisodesRecycler.smoothScrollToPosition(0)
+        );
+
+        binding.episodeSelectorScroll.setVisibility(View.GONE);
+
         // Anime object
         viewModel = new ViewModelProvider(this).get(AnimeEpisodesViewModelV2.class);
+        // endregion
 
-        // Reminder dialog
-
+        // region Reminder dialog
         final boolean scheduleReminder = Data.getProperties(Data.CONFIGURATION.APP)
                 .getBooleanProperty("episodes_reminder", true);
 
@@ -98,29 +128,21 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
             appConfig.setBooleanProperty("episodes_reminder", false);
             appConfig.save();
         });
+        // endregion
 
-        binding.backToTopFab.setOnClickListener(v ->
-            binding.animeEpisodesRecycler.smoothScrollToPosition(0)
-        );
-
-        // Mixed
-
-        binding.episodeSelectorScroll.setVisibility(View.GONE);
-
-        // Recycler View
-
+        // region Recycler View
         RecyclerView recyclerView = binding.animeEpisodesRecycler;
         LinearLayoutManager recyclerLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(recyclerLayoutManager);
         recyclerView.setHasFixedSize(true);
 
         adapter = new EpisodesRecyclerAdapter();
-        adapter.setItemClickListener(this::searchEpisode);
+        adapter.setListener(this::searchEpisode);
         adapter.setAnime(anime);
         recyclerView.setAdapter(adapter);
+        // endregion
 
         // ViewModel shenanigans
-
         viewModel.getEpisodes().observe(getViewLifecycleOwner(), episodes -> {
             if (episodes == null) {
                 binding.loadingBar.setVisibility(View.VISIBLE);
@@ -173,24 +195,41 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
             );
         });
 
-        Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            AniListAnime aniListAnime = anime.getAniListAnime();
+        Threading.instant(() -> {
             final int animeLength;
 
             // Get anime length
             if (
                     (searchEnhancer == null || searchEnhancer.episode == null)
-                    && anime instanceof SeasonalAnime seasonalAnime
-                    && ((SeasonalAnime) anime).getCurrentEpisode() > 0
+                            && anime instanceof SeasonalAnime
+                            && ((SeasonalAnime) anime).getCurrentEpisode() > 0
             ) {
-
-                if (seasonalAnime.hasAired()) {
-                    animeLength = seasonalAnime.getCurrentEpisode();
-                } else {
-                    animeLength = seasonalAnime.getCurrentEpisode() - 1;
-                }
+                animeLength = ((SeasonalAnime) anime).getCurrentEpisode();
             } else {
-                animeLength = aniListAnime.episodes;
+                // Dumb workaround lol
+                int fetchResult;
+
+                try {
+                    fetchResult = KitsuPublic.episodeCount(
+                            anime.getKitsuId()
+                    );
+                } catch (KitsuException e) {
+                    Utils.makeToastRegardless(
+                            getContext(),
+                            R.string.network_connection_error,
+                            Toast.LENGTH_SHORT
+                    );
+                    fetchResult = 0;
+                } catch (ParsingException e) {
+                    Utils.makeToastRegardless(
+                            getContext(),
+                            R.string.parsing_error,
+                            Toast.LENGTH_SHORT
+                    );
+                    fetchResult = 0;
+                }
+
+                animeLength = fetchResult;
             }
 
             binding.getRoot().post(() -> {
@@ -222,6 +261,9 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putParcelable("search_enhancer", searchEnhancer);
+        outState.putParcelable("anime", anime);
+        outState.putString("type", anime.getType().name());
     }
 
     @Override
@@ -276,7 +318,7 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
         }
     }
 
-    private void searchEpisode(@Nullable Episode episode) {
+    private void searchEpisode(@Nullable EpisodeBasicInfo episode) {
         if (episode == null) return;
         this.episode = episode;
 
@@ -297,7 +339,7 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
         intent.setClassName(BuildConfig.APPLICATION_ID, VideoPlayerActivity.class.getName());
         intent.putExtra("result", result);
         intent.putExtra("anime", anime);
-        intent.putExtra("type", ModelType.Anime.BASE.name());
+        intent.putExtra("type", anime.getType().name());
         intent.putExtra("episode", episode);
         binding.getRoot().post(() -> activity.startActivity(intent));
     }

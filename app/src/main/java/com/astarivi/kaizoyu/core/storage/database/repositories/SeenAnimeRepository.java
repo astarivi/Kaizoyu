@@ -22,6 +22,7 @@ import lombok.Getter;
 
 
 @Getter
+@Deprecated
 public class SeenAnimeRepository {
     private final SeenAnimeDao seenAnimeDao;
     private final SeenEpisodeDao seenEpisodeDao;
@@ -107,7 +108,7 @@ public class SeenAnimeRepository {
 
     private void deleteSeenEpisodeAsync(Runnable runnable, Anime anime, Episode episode) {
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            final int animeId = Math.toIntExact(anime.getAniListAnime().id);
+            final int animeId = Math.toIntExact(anime.getKitsuAnime().id);
 
             SeenAnimeWithEpisodes seenAnimeWithEpisodes = seenAnimeDao.getRelationFromKitsuId(
                     animeId
@@ -138,7 +139,7 @@ public class SeenAnimeRepository {
 
     public @Nullable SeenAnime get(Anime anime) {
         return seenAnimeDao.getFromKitsuId(
-                Math.toIntExact(anime.getAniListAnime().id)
+                Math.toIntExact(anime.getKitsuAnime().id)
         );
     }
 

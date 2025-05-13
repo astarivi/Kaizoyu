@@ -372,7 +372,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
                     .getSeenAnimeRepository()
                     .getSeenEpisodeDao()
                     .getEpisodeWith(
-                            Math.toIntExact(animeEpisodeManager.getAnime().getAniListAnime().id),
+                            Math.toIntExact(animeEpisodeManager.getAnime().getKitsuAnime().id),
                             animeEpisodeManager.getEpisode().getNumber()
                     );
 

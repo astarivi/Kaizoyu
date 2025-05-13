@@ -4,17 +4,18 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Consumer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.models.Episode;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
+import com.astarivi.kaizoyu.core.models.episode.RemoteEpisode;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeEpisodesItemBinding;
+import com.astarivi.kaizoyu.utils.Data;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,13 +23,12 @@ import lombok.Setter;
 
 public class EpisodesRecyclerAdapter extends RecyclerView.Adapter<SharedEpisodeViewHolder> {
     @Setter
-    private SharedEpisodeItemClickListener itemClickListener;
-    private final List<Episode> items = new ArrayList<>();
+    private Consumer<RemoteEpisode> listener;
+    private final ArrayList<RemoteEpisode> items = new ArrayList<>();
     @Getter
-    private final List<SharedEpisodeViewHolder> holders = new ArrayList<>();
-
+    private final ArrayList<SharedEpisodeViewHolder> holders = new ArrayList<>();
     @Setter
-    private Anime anime;
+    private AnimeBasicInfo anime;
 
     @NonNull
     @NotNull
@@ -45,10 +45,10 @@ public class EpisodesRecyclerAdapter extends RecyclerView.Adapter<SharedEpisodeV
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull SharedEpisodeViewHolder holder, int position) {
-        final Episode episode = getEpisodeFromPosition(position);
+        final RemoteEpisode episode = getEpisodeFromPosition(position);
         holder.setEpisode(episode);
-        holder.setAnime(anime);
-        holder.setListener(itemClickListener);
+        holder.setAnime(() -> anime);
+        holder.setListener(listener);
 
         holder.binding.episodeNumberCard.setText(
                 String.valueOf(
@@ -56,7 +56,9 @@ public class EpisodesRecyclerAdapter extends RecyclerView.Adapter<SharedEpisodeV
                 )
         );
 
-//        holder.binding.episodeTitle.setText(episode.getDefaultTitle());
+        String title = episode.getPreferredTitle();
+        holder.binding.episodeTitle.setText(title != null ? title : "");
+
         holder.checkSeen();
 
         holders.add(holder);
@@ -69,16 +71,17 @@ public class EpisodesRecyclerAdapter extends RecyclerView.Adapter<SharedEpisodeV
 
     public void checkSeenAgain() {
         for (SharedEpisodeViewHolder holder : getHolders()) {
-            holder.triggerSeenRefresh();
+            Data.getTemporarySwitches().setPendingSeenEpisodeStateRefresh(false);
+            holder.checkSeen();
         }
     }
 
-    public void replaceData(TreeSet<Episode> episodes) {
+    public void replaceData(Set<RemoteEpisode> episodes) {
         items.clear();
         items.addAll(episodes);
     }
 
-    private Episode getEpisodeFromPosition(int position) {
+    private RemoteEpisode getEpisodeFromPosition(int position) {
         return items.get(position);
     }
 

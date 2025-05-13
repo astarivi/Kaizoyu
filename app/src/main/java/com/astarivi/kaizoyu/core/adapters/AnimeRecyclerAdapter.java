@@ -6,20 +6,21 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Consumer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.astarivi.kaizoyu.core.models.Anime;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
 import com.astarivi.kaizoyu.databinding.ItemAnimeBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public abstract class AnimeRecyclerAdapter<VH extends AnimeViewHolder<A>, A extends Anime> extends RecyclerView.Adapter<VH> {
+public abstract class AnimeRecyclerAdapter<VH extends AnimeViewHolder<A>, A extends AnimeBasicInfo> extends RecyclerView.Adapter<VH> {
     protected final ArrayList<A> items = new ArrayList<>();
-    protected AnimeViewHolder.ItemClickListener<A> itemClickListener;
+    protected Consumer<A> itemClickListener;
 
-    protected AnimeRecyclerAdapter(AnimeViewHolder.ItemClickListener<A> itemClickListener) {
+    protected AnimeRecyclerAdapter(Consumer<A> itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
@@ -42,7 +43,7 @@ public abstract class AnimeRecyclerAdapter<VH extends AnimeViewHolder<A>, A exte
         final A anime = getItemFromPosition(position);
         holder.setAnime(anime);
         holder.removeFavorite();
-        holder.binding.animeTitle.setText(anime.getDisplayTitle());
+        holder.binding.animeTitle.setText(anime.getPreferredTitle());
 
         LinearLayout icons = holder.binding.infoIcons;
 

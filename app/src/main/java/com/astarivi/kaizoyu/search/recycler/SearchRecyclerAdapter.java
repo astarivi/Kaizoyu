@@ -4,27 +4,27 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Consumer;
 
 import com.astarivi.kaizoyu.core.adapters.AnimeRecyclerAdapter;
 import com.astarivi.kaizoyu.core.adapters.AnimeViewHolder;
-import com.astarivi.kaizoyu.core.models.Anime;
+import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
 import com.astarivi.kaizoyu.utils.Translation;
 
 
-public class SearchRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<Anime>, Anime> {
-
-    public SearchRecyclerAdapter(AnimeViewHolder.ItemClickListener<Anime> itemClickListener) {
+public class SearchRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<RemoteAnime>, RemoteAnime> {
+    public SearchRecyclerAdapter(Consumer<RemoteAnime> itemClickListener) {
         super(itemClickListener);
     }
 
     @Override
-    public AnimeViewHolder<Anime> onCreateViewHolderStarted(@NonNull ViewGroup parent, int viewType) {
+    public AnimeViewHolder<RemoteAnime> onCreateViewHolderStarted(@NonNull ViewGroup parent, int viewType) {
         return new AnimeViewHolder<>(inflateView(parent), true);
     }
 
     @Override
-    public void onBindViewHolderStarted(@NonNull AnimeViewHolder<Anime> holder, int position, Anime anime) {
-        String animeStartDate = anime.getAniListAnime().startDate.getDateAsQuarters();
+    public void onBindViewHolderStarted(@NonNull AnimeViewHolder<RemoteAnime> holder, int position, RemoteAnime anime) {
+        String animeStartDate = anime.getInternal().attributes.startDate;
 
         if (animeStartDate != null && !animeStartDate.isEmpty()) {
             holder.binding.launchDate.setText(
@@ -36,7 +36,7 @@ public class SearchRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<
 
         holder.binding.subtype.setText(
                 Translation.getSubTypeTranslation(
-                        anime.getAniListAnime().subtype,
+                        anime.getInternal().attributes.subtype,
                         holder.binding.getRoot().getContext()
                 )
         );

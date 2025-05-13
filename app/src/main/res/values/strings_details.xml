@@ -8,7 +8,7 @@
     <string name="d_favorite_description">Report an issue with this episode</string>
     <string name="d_share_description">Share this show</string>
     <string name="d_share_title">Share this show</string>
-    <string name="d_share_kitsu">Share AniList URL</string>
+    <string name="d_share_kitsu">Share Kitsu URL</string>
     <string name="d_share_kitsu_desc">Share the URL to the Kitsu page for this show. Anyone can open it, but they can\'t watch it.</string>
     <string name="d_share_app">Share Kaizoyu! URL</string>
     <string name="d_share_app_desc">Share the URL for this show in Kaizoyu!. Only Kaizoyu! users can open it.</string>

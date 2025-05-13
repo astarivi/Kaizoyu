@@ -5,6 +5,7 @@ import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
 import lombok.Getter;
 
 
+@Deprecated
 @Getter
 public class RepositoryDirectory {
     private final AnimeStorageRepository animeStorageRepository;

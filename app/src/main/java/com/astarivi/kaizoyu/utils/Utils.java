@@ -16,10 +16,10 @@ import androidx.annotation.StringRes;
 
 import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
-import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.models.SeasonalAnime;
-import com.astarivi.kaizoyu.core.models.base.ModelType;
-import com.astarivi.kaizoyu.core.models.local.LocalAnime;
+import com.astarivi.kaizoyu.core.models.anime.LocalAnime;
+import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
+import com.astarivi.kaizoyu.core.models.anime.SeasonalAnime;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 
 import org.jetbrains.annotations.Contract;
@@ -106,25 +106,16 @@ public class Utils {
     }
 
     @SuppressWarnings("deprecation")
-    public static @Nullable Anime getAnimeFromBundle(@NotNull Bundle bundle, @NotNull ModelType.Anime type) {
-        switch(type) {
-            case BASE:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    return bundle.getParcelable("anime", Anime.class);
-                }
-                return bundle.getParcelable("anime");
-            case SEASONAL:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    return bundle.getParcelable("anime", SeasonalAnime.class);
-                }
-                return bundle.getParcelable("anime");
-            default:
-            case LOCAL:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    return bundle.getParcelable("anime", LocalAnime.class);
-                }
-                return bundle.getParcelable("anime");
+    public static @Nullable AnimeBasicInfo getAnimeFromBundle(@NotNull Bundle bundle, @NotNull AnimeBasicInfo.AnimeType type) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return bundle.getParcelable("anime");
         }
+
+        return switch (type) {
+            case REMOTE -> bundle.getParcelable("anime", RemoteAnime.class);
+            case SEASONAL -> bundle.getParcelable("anime", SeasonalAnime.class);
+            default -> bundle.getParcelable("anime", LocalAnime.class);
+        };
     }
 
     @NonNull

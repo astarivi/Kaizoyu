@@ -24,7 +24,7 @@ public class SharedLibraryRecyclerAdapter extends AnimeRecyclerAdapter<AnimeView
 
     @Override
     public void onBindViewHolderStarted(@NonNull AnimeViewHolder<LocalAnime> holder, int position, LocalAnime localAnime) {
-        String animeStartDate = localAnime.getAniListAnime().startDate.getDateAsQuarters();
+        String animeStartDate = localAnime.getKitsuAnime().startDate.getDateAsQuarters();
 
         if (animeStartDate != null && !animeStartDate.isEmpty()) {
             holder.binding.launchDate.setText(
@@ -36,7 +36,7 @@ public class SharedLibraryRecyclerAdapter extends AnimeRecyclerAdapter<AnimeView
 
         holder.binding.subtype.setText(
                 Translation.getSubTypeTranslation(
-                        localAnime.getAniListAnime().subtype,
+                        localAnime.getKitsuAnime().subtype,
                         holder.binding.getRoot().getContext()
                 )
         );

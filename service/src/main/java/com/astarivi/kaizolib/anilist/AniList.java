@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.TreeMap;
 
 
+@Deprecated
 public class AniList extends AniListCommon {
     public static @NotNull AniListQuery.Single get(long id){
         TreeMap<String, Object> variables = new TreeMap<>();

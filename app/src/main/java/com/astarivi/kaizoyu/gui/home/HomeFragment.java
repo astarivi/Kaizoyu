@@ -18,13 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
-import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.databinding.FragmentHomeBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
 import com.astarivi.kaizoyu.fullsearch.FullSearchActivity;
 import com.astarivi.kaizoyu.gui.home.recycler.news.NewsRecyclerAdapter;
 import com.astarivi.kaizoyu.gui.home.recycler.recommendations.HomeMainRecyclerAdapter;
-import com.astarivi.kaizoyu.gui.home.recycler.recommendations.HomeRecyclerAdapter;
 import com.astarivi.kaizoyu.gui.more.settings.SettingsActivity;
 import com.astarivi.kaizoyu.search.SearchActivity;
 import com.astarivi.kaizoyu.utils.Data;
@@ -119,19 +117,18 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
-        HomeRecyclerAdapter.ItemClickListener listener = anime -> {
-            Intent intent = new Intent();
-            intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
-            intent.putExtra("anime", anime);
-            intent.putExtra("type", ModelType.Anime.BASE.name());
-            startActivity(intent);
-        };
 
         RecyclerView recyclerView = binding.itemsLayout;
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(false);
-        HomeMainRecyclerAdapter adapter = new HomeMainRecyclerAdapter(listener);
+        HomeMainRecyclerAdapter adapter = new HomeMainRecyclerAdapter((anime) -> {
+            Intent intent = new Intent();
+            intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
+            intent.putExtra("anime", anime);
+            intent.putExtra("type", anime.getType().name());
+            startActivity(intent);
+        });
 
         recyclerView.setAdapter(adapter);
 

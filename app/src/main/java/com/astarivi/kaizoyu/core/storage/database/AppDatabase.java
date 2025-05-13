@@ -1,30 +1,34 @@
 package com.astarivi.kaizoyu.core.storage.database;
 
+import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
-import com.astarivi.kaizoyu.core.storage.database.data.favorite.FavoriteAnime;
-import com.astarivi.kaizoyu.core.storage.database.data.favorite.FavoriteAnimeDao;
-import com.astarivi.kaizoyu.core.storage.database.data.search.SearchHistory;
-import com.astarivi.kaizoyu.core.storage.database.data.search.SearchHistoryDao;
-import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnime;
-import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnimeDao;
-import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenEpisode;
-import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenEpisodeDao;
+import com.astarivi.kaizoyu.core.storage.database.tables.id_overlays.IdOverlays;
+import com.astarivi.kaizoyu.core.storage.database.tables.id_overlays.IdOverlaysDao;
+import com.astarivi.kaizoyu.core.storage.database.tables.saved_anime.SavedAnime;
+import com.astarivi.kaizoyu.core.storage.database.tables.saved_anime.SavedAnimeDao;
+import com.astarivi.kaizoyu.core.storage.database.tables.saved_episode.SavedEpisode;
+import com.astarivi.kaizoyu.core.storage.database.tables.saved_episode.SavedEpisodeDao;
+import com.astarivi.kaizoyu.core.storage.database.tables.search_history.SearchHistory;
+import com.astarivi.kaizoyu.core.storage.database.tables.search_history.SearchHistoryDao;
 
 
 @Database(
+        version = 4,
         entities = {
-                FavoriteAnime.class,
-                SeenAnime.class,
-                SeenEpisode.class,
+                IdOverlays.class,
+                SavedAnime.class,
+                SavedEpisode.class,
                 SearchHistory.class
         },
-        version = 3
+        autoMigrations = {
+                @AutoMigration(from = 3, to = 4)
+        }
 )
 public abstract class AppDatabase extends RoomDatabase {
-    public abstract FavoriteAnimeDao favoriteAnimeDao();
+    public abstract IdOverlaysDao idOverlaysDao();
     public abstract SearchHistoryDao searchHistoryDao();
-    public abstract SeenAnimeDao seenAnimeDao();
-    public abstract SeenEpisodeDao seenEpisodeDao();
+    public abstract SavedEpisodeDao savedEpisodeDao();
+    public abstract SavedAnimeDao savedAnimeDao();
 }

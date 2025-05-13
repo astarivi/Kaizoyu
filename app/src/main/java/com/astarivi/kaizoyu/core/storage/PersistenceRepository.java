@@ -12,7 +12,6 @@ import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
 import com.astarivi.kaizoyu.core.storage.database.migrations.Migrations;
-import com.astarivi.kaizoyu.core.storage.database.repositories.RepositoryDirectory;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.utils.Utils;
 
@@ -34,7 +33,6 @@ public class PersistenceRepository {
     private final ExtendedProperties appConfiguration;
     private final ExtendedProperties botsConfiguration;
     private final AppDatabase database;
-    private final RepositoryDirectory repositoryDirectory;
     private final UserHttpClient httpClient = UserHttpClient.getInstance();
     private final boolean isDeviceLowSpec;
 
@@ -67,11 +65,11 @@ public class PersistenceRepository {
                 "kaizo-database"
         ).addMigrations(
                 Migrations.MIGRATION_1_2,
-                Migrations.MIGRATION_2_3
+                Migrations.MIGRATION_2_3,
+                Migrations.MIGRATION_3_4
         ).build(
         );
 
-        repositoryDirectory = new RepositoryDirectory(database);
         boolean areAnalyticsEnabled = appConfiguration.getBooleanProperty("analytics", false);
 
         AnalyticsClient.isEnabled = areAnalyticsEnabled;
@@ -100,10 +98,6 @@ public class PersistenceRepository {
             }
         }
         return _instance;
-    }
-
-    public boolean isDeviceLowSpec() {
-        return isDeviceLowSpec;
     }
 
     public void applyConfigurationChanges() {

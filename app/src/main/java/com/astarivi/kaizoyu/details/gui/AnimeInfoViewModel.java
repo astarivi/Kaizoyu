@@ -2,7 +2,7 @@ package com.astarivi.kaizoyu.details.gui;
 
 import androidx.lifecycle.ViewModel;
 
-import com.astarivi.kaizoyu.core.models.Anime;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
 
 
 // Unused, for now.
@@ -11,7 +11,8 @@ public class AnimeInfoViewModel extends ViewModel {
 //    private final MutableLiveData<List<KitsuCategory>> categories = new MutableLiveData<>();
 //    private Future<?> fetchingFuture = null;
 
-    public void initialize(Anime anime) {
+    // FIXME: Enable this
+    public void initialize(AnimeBasicInfo anime) {
 //        final int kitsuId = Integer.parseInt(anime.getAniListAnime().id);
 //
 //        fetchingFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
