@@ -35,10 +35,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.models.Result;
-import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenEpisode;
+import com.astarivi.kaizoyu.core.storage.database.repo.SavedShowRepo;
+import com.astarivi.kaizoyu.core.storage.database.tables.saved_episode.SavedEpisode;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.databinding.ActivityVideoPlayerBinding;
-import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.video.gui.PlayerSkipView;
 import com.astarivi.kaizoyu.video.gui.PlayerView;
@@ -125,8 +125,7 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
 
         // If we're operating in basic mode, decode from bundle.
         try {
-            animeEpisodeManager = new AnimeEpisodeManager.Builder(bundle)
-                    .build();
+            animeEpisodeManager = new AnimeEpisodeManager(bundle);
         } catch (IllegalArgumentException illegalArgumentException) {
             // We don't have enough data to operate
             if (!bundle.getBoolean("isAdvancedMode", false)) {
@@ -252,31 +251,22 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         viewModel.getIrcFailure().observe(this, failureCode -> {
             if (failureCode == null) return;
 
-            String message;
-
-            switch (failureCode) {
-                case TimeOut:
-                    message = "Connection to IRC has timed out. Check your internet connection and retry later.";
-                    break;
-                case NoQuickRetry:
-                    message = "You have been rate-limited by the server. Please wait some minutes.";
-                    break;
-                case StrictModeFailure:
-                    message = "Strict mode has stopped this connection to protect your privacy.";
-                    break;
-                case BlacklistedIp:
-                    message = "Your IP seems to have been blacklisted. Try disabling/changing your VPN.";
-                    break;
-                case GenericHandshakeError:
-                    message = "The server has declined your handshake. Is your connection private?";
-                    break;
-                case BotNotFound:
-                    message = "The option you selected is currently offline. Please try another one.";
-                    break;
-                default:
-                    message = "There was a general I/O exception. Check your internet connection, and/or app permissions.";
-                    break;
-            }
+            String message = switch (failureCode) {
+                case TimeOut ->
+                        "Connection to IRC has timed out. Check your internet connection and retry later.";
+                case NoQuickRetry ->
+                        "You have been rate-limited by the server. Please wait some minutes.";
+                case StrictModeFailure ->
+                        "Strict mode has stopped this connection to protect your privacy.";
+                case BlacklistedIp ->
+                        "Your IP seems to have been blacklisted. Try disabling/changing your VPN.";
+                case GenericHandshakeError ->
+                        "The server has declined your handshake. Is your connection private?";
+                case BotNotFound ->
+                        "The option you selected is currently offline. Please try another one.";
+                default ->
+                        "There was a general I/O exception. Check your internet connection, and/or app permissions.";
+            };
 
             AnalyticsClient.onError("irc_failure", result.getContents(), failureCode.name());
 
@@ -368,13 +358,13 @@ public class VideoPlayerActivity extends AppCompatActivityTheme {
         }
 
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            SeenEpisode currentSeenEpisode = Data.getRepositories()
-                    .getSeenAnimeRepository()
-                    .getSeenEpisodeDao()
-                    .getEpisodeWith(
-                            Math.toIntExact(animeEpisodeManager.getAnime().getKitsuAnime().id),
-                            animeEpisodeManager.getEpisode().getNumber()
-                    );
+            SavedEpisode currentSeenEpisode = SavedShowRepo.getEpisodeDao().getEpisodeByOwnKitsuId(
+                    animeEpisodeManager.getEpisode().getKitsuId()
+            );
+
+            if (currentSeenEpisode == null) {
+                return;
+            }
 
             int currentPosition = currentSeenEpisode.episode.currentPosition;
 

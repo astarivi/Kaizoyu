@@ -18,7 +18,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.palette.graphics.Palette;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.astarivi.kaizolib.anilist.exception.AniListException;
 import com.astarivi.kaizolib.kitsuv2.exception.KitsuException;
 import com.astarivi.kaizolib.kitsuv2.exception.ParsingError;
 import com.astarivi.kaizolib.kitsuv2.public_api.KitsuPublic;
@@ -211,13 +210,14 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                         R.string.network_connection_error,
                         Toast.LENGTH_SHORT
                 ).show();
-            } catch (AniListException e) {
-                Toast.makeText(
-                        this,
-                        R.string.parsing_error,
-                        Toast.LENGTH_SHORT
-                ).show();
             }
+//            catch (AniListException e) {
+//                Toast.makeText(
+//                        this,
+//                        R.string.parsing_error,
+//                        Toast.LENGTH_SHORT
+//                ).show();
+//            }
 
             // Seasonal anime
             if (seasonalAnime != null) {

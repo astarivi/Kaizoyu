@@ -341,6 +341,7 @@ public class AnimeEpisodesFragment extends Fragment implements BackInterceptAdap
         intent.putExtra("anime", anime);
         intent.putExtra("type", anime.getType().name());
         intent.putExtra("episode", episode);
+        intent.putExtra("episode_type", episode.getType().name());
         binding.getRoot().post(() -> activity.startActivity(intent));
     }
 }

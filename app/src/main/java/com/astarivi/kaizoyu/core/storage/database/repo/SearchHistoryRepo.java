@@ -61,6 +61,6 @@ public class SearchHistoryRepo {
     }
 
     public static void deleteAllAsync() {
-        Threading.submitTask(Threading.TASK.DATABASE, searchDao::deleteAll);
+        Threading.database(searchDao::deleteAll);
     }
 }

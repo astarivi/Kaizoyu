@@ -3,11 +3,12 @@ package com.astarivi.kaizoyu.video.utils;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.models.Episode;
-import com.astarivi.kaizoyu.core.models.base.ModelType;
-import com.astarivi.kaizoyu.utils.Data;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
+import com.astarivi.kaizoyu.core.models.base.EpisodeBasicInfo;
+import com.astarivi.kaizoyu.core.storage.database.repo.SavedShowRepo;
 import com.astarivi.kaizoyu.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
@@ -20,16 +21,39 @@ import lombok.Getter;
 
 @Getter
 public class AnimeEpisodeManager {
-    private final Anime anime;
-    private final Episode episode;
+    private final AnimeBasicInfo anime;
+    private final EpisodeBasicInfo episode;
 
-    public AnimeEpisodeManager(Anime anime, Episode episode) {
+    public AnimeEpisodeManager(AnimeBasicInfo anime, EpisodeBasicInfo episode) {
         this.anime = anime;
         this.episode = episode;
     }
 
+    public AnimeEpisodeManager(@NonNull Bundle bundle) {
+        final String type = bundle.getString("type");
+        final String episodeTypeStr = bundle.getString("episode_type");
+
+        if ((type == null || type.isEmpty()) || (episodeTypeStr == null || episodeTypeStr.isEmpty())) {
+            throw new IllegalArgumentException("The type String in bundle cannot be empty");
+        }
+
+        this.anime = Utils.getAnimeFromBundle(
+                bundle,
+                AnimeBasicInfo.AnimeType.valueOf(type)
+        );
+
+        this.episode = BundleUtils.getEpisodeFromBundle(
+                bundle,
+                EpisodeBasicInfo.EpisodeType.valueOf(episodeTypeStr)
+        );
+
+        if (anime == null || episode == null) {
+            throw new IllegalArgumentException("No anime and/or episode were given");
+        }
+    }
+
     public String getAnimeTitle() {
-        return anime.getDisplayTitle();
+        return anime.getPreferredTitle();
     }
 
     public String getEpisodeTitle(@NotNull Context context) {
@@ -47,37 +71,6 @@ public class AnimeEpisodeManager {
             episode.setLength((int) TimeUnit.MILLISECONDS.toMinutes(totalLength));
         }
 
-        Data.getRepositories()
-                .getSeenAnimeRepository()
-                .saveSeenEpisodeAsync(anime, episode, playTime);
-    }
-
-    public static class Builder {
-        private final Bundle bundle;
-
-        public Builder(@NotNull Bundle from) {
-            bundle = from;
-        }
-
-        public @NotNull AnimeEpisodeManager build() throws IllegalArgumentException {
-            final String type = bundle.getString("type");
-
-            if (type == null || type.isEmpty()) {
-                throw new IllegalArgumentException("The type bundle cannot be empty");
-            }
-
-            ModelType.Anime animeType;
-
-            animeType = ModelType.Anime.valueOf(type);
-
-            Episode episode = BundleUtils.getEpisodeFromBundle(bundle);
-            Anime anime = Utils.getAnimeFromBundle(bundle, animeType);
-
-            if (anime == null || episode == null) {
-                throw new IllegalArgumentException("No anime and episode were given");
-            }
-
-            return new AnimeEpisodeManager(anime, episode);
-        }
+        SavedShowRepo.saveEpisodeAsync(anime, episode, playTime, null);
     }
 }

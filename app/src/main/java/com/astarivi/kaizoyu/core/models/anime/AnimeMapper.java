@@ -82,6 +82,12 @@ public class AnimeMapper {
         );
     }
 
+    public static List<LocalAnime> bulkLocalFromSaved(@NonNull List<SavedAnime> sa) {
+        return sa.stream()
+                .map(AnimeMapper::localFromSaved)
+                .collect(Collectors.toList());
+    }
+
     @NonNull
     public static LocalAnime localFromSaved(@NonNull SavedAnime savedAnime) {
         LocalAnime local = savedAnime.anime;

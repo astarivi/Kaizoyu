@@ -4,6 +4,8 @@ import android.os.Parcel;
 
 import androidx.annotation.NonNull;
 
+import com.astarivi.kaizolib.kitsuv2.model.KitsuAnime;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +20,12 @@ import lombok.Getter;
 public class SeasonalAnime extends RemoteAnime implements Comparable<SeasonalAnime> {
     private final ZonedDateTime airingDateTime;
     private int currentEpisode = -1;
+
+    public SeasonalAnime(@NotNull KitsuAnime internal, ZonedDateTime airingDateTime, int currentEpisode) {
+        super(internal);
+        this.airingDateTime = airingDateTime;
+        this.currentEpisode = currentEpisode;
+    }
 
     public String getEmissionTime() {
         return airingDateTime.format(DateTimeFormatter.ofPattern("hh:mm a"));

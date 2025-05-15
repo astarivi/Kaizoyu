@@ -14,10 +14,10 @@ import androidx.core.view.WindowInsetsCompat;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.storage.database.io.Manager;
+import com.astarivi.kaizoyu.core.storage.database.repo.SearchHistoryRepo;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.ActivityStorageBinding;
-import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -147,7 +147,7 @@ public class StorageActivity extends AppCompatActivityTheme {
         });
 
         binding.clearSearchTrigger.setOnClickListener(v -> {
-            Data.getRepositories().getSearchHistoryRepository().deleteAllAsync();
+            SearchHistoryRepo.deleteAllAsync();
             Toast.makeText(this, getString(R.string.history_toast), Toast.LENGTH_SHORT).show();
         });
 

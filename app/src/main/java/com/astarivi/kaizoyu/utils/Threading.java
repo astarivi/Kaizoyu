@@ -6,7 +6,6 @@ import android.os.Looper;
 import com.astarivi.kaizoyu.core.threading.ThreadingAssistant;
 
 import org.jetbrains.annotations.NotNull;
-import org.tinylog.Logger;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -35,26 +34,8 @@ public class Threading {
         return ThreadingAssistant.getInstance().submitToDatabaseThread(task);
     }
 
-    /**
-     * Runs a series of Instant threads in sequential, FIFO order.
-     * <p>
-     * Returns a Future to all running tasks. Can be interrupted
-     * to stop the next task in list from executing.
-     */
-    public static Future<?> instant(Runnable... tasks) {
-        return ThreadingAssistant.getInstance().submitToInstantThread(() -> {
-            for (Runnable task : tasks) {
-                if (Thread.interrupted()) {
-                    return;
-                }
-
-                try {
-                    task.run();
-                } catch (Exception e) {
-                    Logger.error("Instant runnable execution failed. {}", e);
-                }
-            }
-        });
+    public static Future<?> instant(Runnable task) {
+        return ThreadingAssistant.getInstance().submitToInstantThread(task);
     }
 
     public static ScheduledFuture<?> submitScheduledTask(@NotNull Runnable task, long delay, @NotNull TimeUnit timeUnit) {

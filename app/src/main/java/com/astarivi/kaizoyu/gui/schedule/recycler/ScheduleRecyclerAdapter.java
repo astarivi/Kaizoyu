@@ -4,16 +4,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Consumer;
 
 import com.astarivi.kaizoyu.core.adapters.AnimeRecyclerAdapter;
 import com.astarivi.kaizoyu.core.adapters.AnimeViewHolder;
-import com.astarivi.kaizoyu.core.models.SeasonalAnime;
+import com.astarivi.kaizoyu.core.models.anime.SeasonalAnime;
 import com.astarivi.kaizoyu.utils.Translation;
 
 
 public class ScheduleRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<SeasonalAnime>, SeasonalAnime> {
 
-    public ScheduleRecyclerAdapter(AnimeViewHolder.ItemClickListener<SeasonalAnime> itemClickListener) {
+    public ScheduleRecyclerAdapter(Consumer<SeasonalAnime> itemClickListener) {
         super(itemClickListener);
     }
 
@@ -28,7 +29,7 @@ public class ScheduleRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolde
 
         holder.binding.subtype.setText(
                 Translation.getSubTypeTranslation(
-                        seasonalAnime.getKitsuAnime().subtype,
+                        seasonalAnime.getInternal().attributes.subtype,
                         holder.binding.getRoot().getContext()
                 )
         );

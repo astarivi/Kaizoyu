@@ -28,6 +28,9 @@ public class IdOverlays {
     public long malId = 0;
     public long aniId = 0;
 
+    public IdOverlays() {
+    }
+
     public IdOverlays(long kitsuId, long malId, long anilistId) {
         this.kitsuId = kitsuId;
         this.malId = malId;

@@ -20,7 +20,6 @@ import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
-import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.databinding.FragmentScheduleBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
@@ -148,7 +147,7 @@ public class ScheduleFragment extends TabFragment {
             Intent intent = new Intent();
             intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
             intent.putExtra("anime", anime);
-            intent.putExtra("type", ModelType.Anime.SEASONAL.name());
+            intent.putExtra("type", anime.getType().name());
             startActivity(intent);
         });
 

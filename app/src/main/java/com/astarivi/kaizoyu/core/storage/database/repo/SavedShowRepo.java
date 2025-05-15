@@ -168,7 +168,7 @@ public class SavedShowRepo {
         });
     }
 
-    public static void saveEpisodeAsync(AnimeBasicInfo parent, EpisodeBasicInfo epi, int currentPlayerTime, Consumer<Boolean> callback) {
+    public static void saveEpisodeAsync(AnimeBasicInfo parent, EpisodeBasicInfo epi, int currentPlayerTime, @Nullable Consumer<Boolean> callback) {
         Threading.database(() -> {
            try {
                saveEpisode(parent, epi, currentPlayerTime);
@@ -180,11 +180,15 @@ public class SavedShowRepo {
                        "There was an error while deleting anime from the database",
                        e
                );
-               Threading.runOnUiThread(() -> callback.accept(false));
+               if (callback != null) {
+                   Threading.runOnUiThread(() -> callback.accept(false));
+               }
                return;
            }
 
-            Threading.runOnUiThread(() -> callback.accept(true));
+            if (callback != null) {
+                Threading.runOnUiThread(() -> callback.accept(true));
+            }
         });
     }
 }

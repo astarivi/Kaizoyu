@@ -33,6 +33,9 @@ public interface SavedAnimeDao {
     SavedAnime getByKitsuId(long id);
     @Query("SELECT * FROM saved_anime ORDER BY updateDate DESC")
     List<SavedAnime> getAll();
+
+    @Query("SELECT * FROM saved_anime WHERE list=:list ORDER BY updateDate DESC")
+    List<SavedAnime> getAllByType(int list);
     @Query("SELECT * FROM saved_anime ORDER BY updateDate DESC LIMIT :limit")
     List<SavedAnime> getPartial(int limit);
     @Query("SELECT * FROM saved_anime WHERE id=:id")
@@ -48,5 +51,5 @@ public interface SavedAnimeDao {
     SavedAnimeWithEpisodes getRelationFromKitsuId(long id);
     @Transaction
     @Query("SELECT * FROM saved_anime WHERE list=:list")
-    List<SavedAnimeWithEpisodes> getRelationFromList(int list);
+    List<SavedAnimeWithEpisodes> getRelationFromType(int list);
 }

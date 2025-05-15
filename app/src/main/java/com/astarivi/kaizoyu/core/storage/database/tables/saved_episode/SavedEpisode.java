@@ -3,6 +3,7 @@ package com.astarivi.kaizoyu.core.storage.database.tables.saved_episode;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
@@ -35,6 +36,7 @@ public class SavedEpisode {
     public SavedEpisode() {
     }
 
+    @Ignore
     @Contract(pure = true)
     public SavedEpisode(LocalEpisode episode, long updateDate) {
         this.id = episode.dbId;

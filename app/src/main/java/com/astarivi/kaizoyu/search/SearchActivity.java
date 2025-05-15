@@ -170,10 +170,10 @@ public class SearchActivity extends AppCompatActivityTheme {
             return;
         }
 
-        Threading.submitTask(Threading.TASK.DATABASE, () -> {
+        Threading.database(() -> {
             List<SearchHistory> searchHistoryList = SearchHistoryRepo.getAll();
 
-            Threading.submitTask(Threading.TASK.INSTANT, () -> {
+            Threading.instant(() -> {
                 ArrayList<FragmentSearchSuggestionBinding> suggestionBindings = new ArrayList<>();
 
                 for (SearchHistory searchHistory : searchHistoryList) {

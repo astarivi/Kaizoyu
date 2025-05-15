@@ -10,53 +10,34 @@ import java.time.DayOfWeek;
 
 
 public class Translation {
-
     public static @NotNull String getSubTypeTranslation(@NotNull String subtype, @NotNull Context context) {
-        switch(subtype) {
-            case "ONA":
-                return context.getResources().getString(R.string.type_ona);
-            case "OVA":
-                return context.getResources().getString(R.string.type_ova);
-            case "TV":
-                return context.getResources().getString(R.string.type_tv);
-            case "MOVIE":
-                return context.getResources().getString(R.string.type_movie);
-            case "SPECIAL":
-                return context.getResources().getString(R.string.type_special);
-            case "MUSIC":
-            default:
-                return context.getResources().getString(R.string.type_music);
-        }
+        return switch (subtype) {
+            case "ONA" -> context.getResources().getString(R.string.type_ona);
+            case "OVA" -> context.getResources().getString(R.string.type_ova);
+            case "TV" -> context.getResources().getString(R.string.type_tv);
+            case "MOVIE" -> context.getResources().getString(R.string.type_movie);
+            case "SPECIAL" -> context.getResources().getString(R.string.type_special);
+            default -> context.getResources().getString(R.string.type_music);
+        };
     }
 
     public static String getNightThemeTranslation(int option, Context context) {
-        switch(option) {
-            case 0:
-                return context.getResources().getString(R.string.night_theme_default);
-            case 1:
-                return context.getResources().getString(R.string.night_theme_day);
-            default:
-                return context.getResources().getString(R.string.night_theme_night);
-        }
+        return switch (option) {
+            case 0 -> context.getResources().getString(R.string.night_theme_default);
+            case 1 -> context.getResources().getString(R.string.night_theme_day);
+            default -> context.getResources().getString(R.string.night_theme_night);
+        };
     }
 
     public static String getLocalizedDow(DayOfWeek dow, Context context) {
-        switch(dow) {
-            case MONDAY:
-                return context.getResources().getString(R.string.monday);
-            case TUESDAY:
-                return context.getResources().getString(R.string.tuesday);
-            case WEDNESDAY:
-                return context.getResources().getString(R.string.wednesday);
-            case THURSDAY:
-                return context.getResources().getString(R.string.thursday);
-            case FRIDAY:
-                return context.getResources().getString(R.string.friday);
-            case SATURDAY:
-                return context.getResources().getString(R.string.saturday);
-            default:
-                return context.getResources().getString(R.string.sunday);
-        }
-
+        return switch (dow) {
+            case MONDAY -> context.getResources().getString(R.string.monday);
+            case TUESDAY -> context.getResources().getString(R.string.tuesday);
+            case WEDNESDAY -> context.getResources().getString(R.string.wednesday);
+            case THURSDAY -> context.getResources().getString(R.string.thursday);
+            case FRIDAY -> context.getResources().getString(R.string.friday);
+            case SATURDAY -> context.getResources().getString(R.string.saturday);
+            default -> context.getResources().getString(R.string.sunday);
+        };
     }
 }

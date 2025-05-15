@@ -1,13 +1,13 @@
 package com.astarivi.kaizoyu.gui.schedule;
 
+import android.util.ArraySet;
 import android.view.View;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.astarivi.kaizolib.anilist.exception.AniListException;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
-import com.astarivi.kaizoyu.core.models.SeasonalAnime;
+import com.astarivi.kaizoyu.core.models.anime.SeasonalAnime;
 import com.astarivi.kaizoyu.core.schedule.AssistedScheduleFetcher;
 import com.astarivi.kaizoyu.databinding.FragmentScheduleBinding;
 import com.astarivi.kaizoyu.utils.Threading;
@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.Future;
 
 import lombok.Getter;
@@ -33,8 +32,8 @@ public class ScheduleViewModel extends ViewModel {
     @Getter
     private final MutableLiveData<ArrayList<DayOfWeek>> availableDaysOfWeek = new MutableLiveData<>();
     @Getter
-    private final MutableLiveData<TreeSet<SeasonalAnime>> animeFromSchedule = new MutableLiveData<>();
-    private final MutableLiveData<TreeMap<DayOfWeek, TreeSet<SeasonalAnime>>> schedule = new MutableLiveData<>(null);
+    private final MutableLiveData<ArraySet<SeasonalAnime>> animeFromSchedule = new MutableLiveData<>();
+    private final MutableLiveData<TreeMap<DayOfWeek, ArraySet<SeasonalAnime>>> schedule = new MutableLiveData<>(null);
     private Future<?> reloadFuture = null;
 
     public void reloadSchedule(@NotNull FragmentScheduleBinding binding) {
@@ -45,11 +44,11 @@ public class ScheduleViewModel extends ViewModel {
         binding.scheduleAnimeRecycler.setVisibility(View.INVISIBLE);
         binding.dowTabs.setVisibility(View.GONE);
 
-        reloadFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            TreeMap<DayOfWeek, TreeSet<SeasonalAnime>> fetchedSchedule;
+        reloadFuture = Threading.instant(() -> {
+            TreeMap<DayOfWeek, ArraySet<SeasonalAnime>> fetchedSchedule;
             try {
                 fetchedSchedule = AssistedScheduleFetcher.getSchedule();
-            } catch (AniListException | IOException e) {
+            } catch (IOException e) {
                 processException.postValue(e);
                 return;
             }
@@ -60,7 +59,7 @@ public class ScheduleViewModel extends ViewModel {
     }
 
     @ThreadedOnly
-    private void updateDayOfWeekChips(@Nullable TreeMap<DayOfWeek, TreeSet<SeasonalAnime>> fetchedSchedule) {
+    private void updateDayOfWeekChips(@Nullable TreeMap<DayOfWeek, ArraySet<SeasonalAnime>> fetchedSchedule) {
         if (fetchedSchedule == null) {
             availableDaysOfWeek.postValue(null);
             return;
@@ -80,7 +79,7 @@ public class ScheduleViewModel extends ViewModel {
     }
 
     public void showDaySchedule(@NotNull DayOfWeek day) {
-        Threading.submitTask(Threading.TASK.INSTANT, () -> {
+        Threading.instant(() -> {
             if (schedule.getValue() == null) return;
 
             animeFromSchedule.postValue(

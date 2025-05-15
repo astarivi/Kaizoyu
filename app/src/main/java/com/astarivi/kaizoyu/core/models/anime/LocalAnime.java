@@ -37,6 +37,9 @@ public class LocalAnime extends AnimeBasicInfo {
     public String coverImgLink;
     public String posterImageLink;
 
+    public LocalAnime() {
+    }
+
     public LocalAnime(long kitsuId, LocalList localList, String subtype, String titleJp, String titleEn, String titleEnJp, String synopsis, String coverImgLink, String posterImageLink) {
         this.kitsuId = kitsuId;
         this.localList = localList;
