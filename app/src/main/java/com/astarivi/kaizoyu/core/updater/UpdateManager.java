@@ -13,11 +13,15 @@ import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
+import com.astarivi.kaizoyu.utils.Data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Locale;
 
 import lombok.AllArgsConstructor;
@@ -38,6 +42,35 @@ public class UpdateManager {
 
     public static boolean isBeta() {
         return VERSION.contains("-BETA");
+    }
+
+    @Nullable
+    public static String databaseUpdateAvailable() throws IOException {
+        ExtendedProperties config = Data.getProperties(Data.CONFIGURATION.APP);
+        String localVersion = config.getProperty("idsVersion", null);
+
+        final RemoteVersions remoteVersions = RemoteVersions.latest();
+
+        if (remoteVersions == null || remoteVersions.database == null || remoteVersions.database.isEmpty())
+            return null;
+
+        if (localVersion == null) return remoteVersions.database;
+
+        LocalDate localDate;
+        LocalDate remoteDate;
+        try {
+            localDate = LocalDate.parse(localVersion);
+            remoteDate = LocalDate.parse(remoteVersions.database);
+        } catch (Exception e) {
+            Logger.error("Failed to parse dates {} and/or {}", localVersion, remoteVersions.database);
+            return null;
+        }
+
+        if (remoteDate.isAfter(localDate)) {
+            return remoteVersions.database;
+        }
+
+        return null;
     }
 
     public static @Nullable AppUpdate getAppUpdate() throws IOException {

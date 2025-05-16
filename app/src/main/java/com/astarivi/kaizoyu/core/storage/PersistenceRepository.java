@@ -12,7 +12,9 @@ import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
 import com.astarivi.kaizoyu.core.storage.database.migrations.Migrations;
+import com.astarivi.kaizoyu.core.storage.ids.AnimeIdsDatabase;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
+import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 
 import org.acra.ACRA;
@@ -86,6 +88,9 @@ public class PersistenceRepository {
         );
 
         Logger.info("Starting logging session");
+
+        // Check for ids database updates
+        Threading.instant(AnimeIdsDatabase::tryUpdate);
 
         applyConfigurationChanges();
     }
