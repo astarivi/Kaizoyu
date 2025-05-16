@@ -11,7 +11,6 @@ import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Result;
 import com.astarivi.kaizoyu.core.search.IndependentResultSearcher;
 import com.astarivi.kaizoyu.databinding.ActivityFullsearchBinding;
-import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 
 import org.jetbrains.annotations.NotNull;
@@ -68,16 +67,11 @@ public class FullSearchViewModel extends ViewModel {
         binding.noResultsPrompt.setVisibility(View.GONE);
         binding.loadingBar.setVisibility(View.VISIBLE);
 
-        searchingFuture = Threading.submitTask(Threading.TASK.INSTANT,() -> {
+        searchingFuture = Threading.instant(() -> {
             isSearchActive = true;
             results.postValue(
-                    new IndependentResultSearcher(
-                            Data.getUserHttpClient()
-                    ).searchEpisode(
-                            search
-                    )
+                    IndependentResultSearcher.searchEpisode(search)
             );
-
         });
     }
 }

@@ -56,12 +56,12 @@ public class UpdaterActivity extends AppCompatActivityTheme {
 
         if (bundle == null) return;
 
-        UpdateManager.LatestUpdate latestUpdate = getUpdateFromBundle(getIntent().getExtras());
+        UpdateManager.AppUpdate latestUpdate = getUpdateFromBundle(getIntent().getExtras());
 
         if (latestUpdate == null) return;
 
         updateDownloader = new HttpFileDownloader(
-                latestUpdate.downloadUrl,
+                latestUpdate.getURL(),
                 new File(getCacheDir(), "update.apk")
         );
 
@@ -117,9 +117,9 @@ public class UpdaterActivity extends AppCompatActivityTheme {
     }
 
     @SuppressWarnings("deprecation")
-    public static @Nullable UpdateManager.LatestUpdate getUpdateFromBundle(@NotNull Bundle bundle) {
+    public static @Nullable UpdateManager.AppUpdate getUpdateFromBundle(@NotNull Bundle bundle) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            return bundle.getParcelable("latestUpdate", UpdateManager.LatestUpdate.class);
+            return bundle.getParcelable("latestUpdate", UpdateManager.AppUpdate.class);
         }
         return bundle.getParcelable("latestUpdate");
     }
@@ -143,6 +143,7 @@ public class UpdaterActivity extends AppCompatActivityTheme {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         new MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.update_cancel_title))
                 .setMessage(getString(R.string.update_cancel_description))

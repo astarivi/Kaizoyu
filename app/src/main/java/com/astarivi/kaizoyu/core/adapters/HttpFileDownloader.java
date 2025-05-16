@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
 
+import lombok.Setter;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -23,15 +24,12 @@ import okhttp3.ResponseBody;
 public class HttpFileDownloader {
     private final String url;
     private final File downloadFile;
+    @Setter
     private ProgressListener listener;
 
     public HttpFileDownloader(String url, File destination) {
         this.url = url;
         downloadFile = destination;
-    }
-
-    public void setListener(ProgressListener listener) {
-        this.listener = listener;
     }
 
     @ThreadedOnly

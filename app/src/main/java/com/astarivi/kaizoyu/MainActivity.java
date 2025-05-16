@@ -37,7 +37,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.startapp.sdk.adsbase.StartAppSDK;
 
-import java.text.ParseException;
+import java.io.IOException;
 
 
 public class MainActivity extends AppCompatActivityTheme {
@@ -113,23 +113,21 @@ public class MainActivity extends AppCompatActivityTheme {
             appSettings.save();
             // This if is here to avoid showing both the modals at the same time
         } else if (appSettings.getBooleanProperty("autoupdate", true)) {
-            Threading.submitTask(Threading.TASK.INSTANT, () -> {
-                UpdateManager updateManager = new UpdateManager();
-
-                UpdateManager.LatestUpdate latestUpdate;
+            Threading.instant(() -> {
+                UpdateManager.AppUpdate latestUpdate;
                 try {
-                    latestUpdate = updateManager.getLatestUpdate();
-                } catch (ParseException e) {
+                    latestUpdate = UpdateManager.getAppUpdate();
+                } catch (IOException e) {
                     return;
                 }
 
                 String versionToSkip = Data.getProperties(Data.CONFIGURATION.APP)
                         .getProperty("skip_version", "false");
 
-                if (latestUpdate == null || versionToSkip.equals(latestUpdate.version)) return;
+                if (latestUpdate == null || versionToSkip.equals(latestUpdate.getVersion())) return;
 
                 binding.getRoot().post(() -> {
-                    UpdaterModalBottomSheet modalBottomSheet = new UpdaterModalBottomSheet(latestUpdate, (result, update) -> {
+                    UpdaterModalBottomSheet modalBottomSheet = new UpdaterModalBottomSheet(latestUpdate, (result) -> {
                         if (result == UpdaterModalBottomSheet.Result.SKIP) return;
 
                         ExtendedProperties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
@@ -138,12 +136,12 @@ public class MainActivity extends AppCompatActivityTheme {
                             appProperties.setProperty("skip_version", "false");
                             Intent intent = new Intent();
                             intent.setClassName(BuildConfig.APPLICATION_ID, UpdaterActivity.class.getName());
-                            intent.putExtra("latestUpdate", update);
+                            intent.putExtra("latestUpdate", latestUpdate);
                             startActivity(intent);
                         }
 
                         if (result == UpdaterModalBottomSheet.Result.NEVER) {
-                            appProperties.setProperty("skip_version", update.version);
+                            appProperties.setProperty("skip_version", latestUpdate.getVersion());
                         }
 
                         appProperties.save();

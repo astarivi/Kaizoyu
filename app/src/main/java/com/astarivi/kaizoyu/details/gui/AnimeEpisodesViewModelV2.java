@@ -17,7 +17,7 @@ import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
 import com.astarivi.kaizoyu.core.models.base.EpisodeBasicInfo;
 import com.astarivi.kaizoyu.core.models.episode.EpisodeMapper;
 import com.astarivi.kaizoyu.core.models.episode.RemoteEpisode;
-import com.astarivi.kaizoyu.core.search.AssistedResultSearcher;
+import com.astarivi.kaizoyu.core.search.ManagedEpisodeSearch;
 import com.astarivi.kaizoyu.core.search.Organizer;
 import com.astarivi.kaizoyu.core.search.SearchEnhancer;
 import com.astarivi.kaizoyu.core.video.VideoQuality;
@@ -128,11 +128,10 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
         isSearching = true;
 
         Threading.submitTask(Threading.TASK.INSTANT,() -> {
-                List<Result> results = AssistedResultSearcher.searchEpisode(
-                        searchEnhancer,
-                        episode.getAnimeKitsuId(),
-                        anime.getAllTitles(),
-                        episode.getNumber()
+            List<Result> results = ManagedEpisodeSearch.search(
+                    anime,
+                    episode.getNumber(),
+                    searchEnhancer
                 );
 
                 if (results == null) {

@@ -7,6 +7,7 @@ import com.astarivi.kaizoyu.core.storage.database.tables.saved_episode.SavedEpis
 
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 
@@ -20,7 +21,7 @@ public class EpisodeMapper {
     public static Set<RemoteEpisode> bulkRemoteSetFromKitsu(@NonNull List<KitsuEpisode> episodes, long animeKitsuId) {
         return episodes.stream()
                 .map((a) -> EpisodeMapper.remoteFromKitsu(a, animeKitsuId))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
     @NonNull

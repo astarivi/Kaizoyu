@@ -1,6 +1,8 @@
 package com.astarivi.kaizoyu.core.storage.database.migrations;
 
 import androidx.annotation.NonNull;
+import androidx.room.DeleteTable;
+import androidx.room.migration.AutoMigrationSpec;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
@@ -19,12 +21,11 @@ public class Migrations {
         }
     };
 
-    public static final Migration MIGRATION_3_4 = new Migration(3, 4) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("DROP TABLE IF EXISTS seen_episode");
-            database.execSQL("DROP TABLE IF EXISTS seen_anime");
-            database.execSQL("DROP TABLE IF EXISTS favorite_anime");
-        }
-    };
+    @DeleteTable.Entries({
+            @DeleteTable(tableName = "favorite_anime"),
+            @DeleteTable(tableName = "seen_episode"),
+            @DeleteTable(tableName = "seen_anime")
+    })
+    public static class AUTO_MIGRATION_3_4 implements AutoMigrationSpec {
+    }
 }

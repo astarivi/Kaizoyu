@@ -17,7 +17,6 @@ import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
-import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.FragmentMoreBinding;
@@ -30,7 +29,7 @@ import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
-import java.text.ParseException;
+import java.io.IOException;
 
 
 public class MoreFragment extends TabFragment {
@@ -102,17 +101,10 @@ public class MoreFragment extends TabFragment {
 
         binding.checkForUpdate.setOnClickListener(v ->
                 Threading.submitTask(Threading.TASK.INSTANT, () -> {
-                    UpdateManager updateManager = new UpdateManager();
-
-                    UpdateManager.LatestUpdate latestUpdate;
+                    UpdateManager.AppUpdate latestUpdate;
                     try {
-                        latestUpdate = updateManager.getLatestUpdate();
-                    } catch (ParseException e) {
-                        AnalyticsClient.onError(
-                                "update_parse",
-                                "Couldn't parse update from KaizoDelivery",
-                                e
-                        );
+                        latestUpdate = UpdateManager.getAppUpdate();
+                    } catch (IOException e) {
                         return;
                     }
 
@@ -122,7 +114,7 @@ public class MoreFragment extends TabFragment {
                     }
 
                     binding.getRoot().post(() -> {
-                        UpdaterModalBottomSheet modalBottomSheet = new UpdaterModalBottomSheet(latestUpdate, (result, update) -> {
+                        UpdaterModalBottomSheet modalBottomSheet = new UpdaterModalBottomSheet(latestUpdate, (result) -> {
                             if (result == UpdaterModalBottomSheet.Result.SKIP) return;
 
                             ExtendedProperties appProperties = Data.getProperties(Data.CONFIGURATION.APP);
@@ -131,12 +123,12 @@ public class MoreFragment extends TabFragment {
                                 appProperties.setBooleanProperty("skip_version", false);
                                 Intent intent = new Intent();
                                 intent.setClassName(BuildConfig.APPLICATION_ID, UpdaterActivity.class.getName());
-                                intent.putExtra("latestUpdate", update);
+                                intent.putExtra("latestUpdate", latestUpdate);
                                 startActivity(intent);
                             }
 
                             if (result == UpdaterModalBottomSheet.Result.NEVER) {
-                                appProperties.setProperty("skip_version", update.version);
+                                appProperties.setProperty("skip_version", latestUpdate.getVersion());
                             }
 
                             appProperties.save();

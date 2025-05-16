@@ -57,7 +57,9 @@ public class AssistedScheduleFetcher {
     private static @Nullable TreeMap<DayOfWeek, @NotNull ArraySet<SeasonalAnime>> fetchAndParse() throws IOException {
         TreeMap<DayOfWeek, @NotNull ArraySet<SeasonalAnime>> result = new TreeMap<>();
 
-        for (RemoteSchedule remoteSchedule : fetchSchedule()) {
+        RemoteSchedule[] remoteSchedules = fetchSchedule();
+
+        for (RemoteSchedule remoteSchedule : remoteSchedules) {
             final SeasonalAnime seasonalAnime = remoteSchedule.toSeasonal();
 
             // Ignore other types of shows
@@ -95,11 +97,10 @@ public class AssistedScheduleFetcher {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private static class RemoteSchedule {
-        long id;
-        long airingAt;
-        int next_episode;
-        KitsuAnime data;
-
+        public long id;
+        public long airingAt;
+        public int next_episode;
+        public KitsuAnime data;
 
         /**
          * @noinspection unused

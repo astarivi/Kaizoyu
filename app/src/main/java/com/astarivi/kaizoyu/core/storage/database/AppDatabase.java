@@ -4,6 +4,7 @@ import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
+import com.astarivi.kaizoyu.core.storage.database.migrations.Migrations;
 import com.astarivi.kaizoyu.core.storage.database.tables.id_overlays.IdOverlays;
 import com.astarivi.kaizoyu.core.storage.database.tables.id_overlays.IdOverlaysDao;
 import com.astarivi.kaizoyu.core.storage.database.tables.saved_anime.SavedAnime;
@@ -23,7 +24,7 @@ import com.astarivi.kaizoyu.core.storage.database.tables.search_history.SearchHi
                 SearchHistory.class
         },
         autoMigrations = {
-                @AutoMigration(from = 3, to = 4)
+                @AutoMigration(from = 3, to = 4, spec = Migrations.AUTO_MIGRATION_3_4.class)
         }
 )
 public abstract class AppDatabase extends RoomDatabase {
