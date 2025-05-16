@@ -257,7 +257,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
     }
 
     public void triggerFavoriteRefresh() {
-        Threading.submitTask(Threading.TASK.DATABASE, () -> {
+        Threading.database(() -> {
             localList = SavedShowRepo.getLocalListFrom(anime.getKitsuId());
 
             if (localList != null && localList != AnimeBasicInfo.LocalList.NOT_TRACKED) {
@@ -275,7 +275,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             return;
         }
 
-        Threading.submitTask(Threading.TASK.DATABASE, () -> {
+        Threading.database(() -> {
             localList = SavedShowRepo.getLocalListFrom(anime.getKitsuId());
 
             if (localList != null && localList != AnimeBasicInfo.LocalList.NOT_TRACKED) {

@@ -1,7 +1,5 @@
 package com.astarivi.kaizoyu.core.schedule;
 
-import android.util.ArraySet;
-
 import androidx.annotation.NonNull;
 
 import com.astarivi.kaizolib.common.network.CommonHeaders;
@@ -25,6 +23,7 @@ import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import okhttp3.HttpUrl;
 import okhttp3.Request;
@@ -50,12 +49,12 @@ public class AssistedScheduleFetcher {
         return null;
     }
 
-    public static TreeMap<DayOfWeek, ArraySet<SeasonalAnime>> getSchedule() throws IOException {
+    public static TreeMap<DayOfWeek, TreeSet<SeasonalAnime>> getSchedule() throws IOException {
         return fetchAndParse();
     }
 
-    private static @Nullable TreeMap<DayOfWeek, @NotNull ArraySet<SeasonalAnime>> fetchAndParse() throws IOException {
-        TreeMap<DayOfWeek, @NotNull ArraySet<SeasonalAnime>> result = new TreeMap<>();
+    private static @Nullable TreeMap<DayOfWeek, @NotNull TreeSet<SeasonalAnime>> fetchAndParse() throws IOException {
+        TreeMap<DayOfWeek, @NotNull TreeSet<SeasonalAnime>> result = new TreeMap<>();
 
         RemoteSchedule[] remoteSchedules = fetchSchedule();
 
@@ -67,10 +66,10 @@ public class AssistedScheduleFetcher {
 
             DayOfWeek dow = seasonalAnime.getEmissionDay();
 
-            ArraySet<SeasonalAnime> sAnime = result.get(dow);
+            TreeSet<SeasonalAnime> sAnime = result.get(dow);
 
             if (sAnime == null) {
-                sAnime = new ArraySet<>();
+                sAnime = new TreeSet<>();
                 result.put(dow, sAnime);
             }
 

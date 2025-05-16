@@ -57,13 +57,19 @@ public class SavedShowRepo {
         LocalAnime localAnime;
 
         if (info instanceof RemoteAnime remoteAnime) {
-            localAnime = AnimeMapper.localFromRemote(remoteAnime, localList);
-        } else if (info instanceof LocalAnime localAnime1) {
-            localAnime1.localList = localList;
-            localAnime = localAnime1;
+            SavedAnime sa = animeDao.getByKitsuId(info.getKitsuId());
+            if (sa == null) {
+                localAnime = AnimeMapper.localFromRemote(remoteAnime, localList);
+            } else {
+                localAnime = AnimeMapper.localFromSaved(sa);
+            }
+        } else if (info instanceof LocalAnime la) {
+            localAnime = la;
         } else {
             throw new IllegalStateException("This AnimeBasicInfo instance has no valid type to cast to.");
         }
+
+        localAnime.localList = localList;
 
         animeDao.insert(
                 AnimeMapper.savedFromLocal(localAnime)

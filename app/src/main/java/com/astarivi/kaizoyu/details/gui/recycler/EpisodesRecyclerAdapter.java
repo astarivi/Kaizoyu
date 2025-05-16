@@ -71,9 +71,10 @@ public class EpisodesRecyclerAdapter extends RecyclerView.Adapter<SharedEpisodeV
 
     public void checkSeenAgain() {
         for (SharedEpisodeViewHolder holder : getHolders()) {
-            Data.getTemporarySwitches().setPendingSeenEpisodeStateRefresh(false);
             holder.checkSeen();
         }
+
+        Data.getTemporarySwitches().setPendingSeenEpisodeStateRefresh(false);
     }
 
     public void replaceData(Set<RemoteEpisode> episodes) {

@@ -40,7 +40,8 @@ public class RemoteEpisode extends EpisodeBasicInfo {
 
     @Override
     public int getLength() {
-        return internal.attributes.length;
+        if (internal.attributes.length != null) return internal.attributes.length;
+        return 0;
     }
 
     @Override
