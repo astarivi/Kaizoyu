@@ -35,7 +35,7 @@ public class SavedShowRepo {
     private final static SavedEpisodeDao episodeDao = PersistenceRepository.getInstance().getDatabase().savedEpisodeDao();
 
     private static void createOrUpdate(@NonNull SavedAnime sa) {
-        if (sa.id == -1) {
+        if (sa.id <= 0) {
             if (animeDao.insert(sa) != -1L) return;
         }
 
@@ -43,7 +43,7 @@ public class SavedShowRepo {
     }
 
     private static void createOrUpdate(@NonNull SavedEpisode sa) {
-        if (sa.id == -1) {
+        if (sa.id <= 0) {
             if (episodeDao.insert(sa) != -1L) return;
         }
 

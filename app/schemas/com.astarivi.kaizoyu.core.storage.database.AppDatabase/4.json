@@ -1,0 +1,289 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 4,
+    "identityHash": "34846eb6d865875cd8e65eefc61dd97e",
+    "entities": [
+      {
+        "tableName": "id_overlays",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `kitsuId` INTEGER NOT NULL, `malId` INTEGER NOT NULL, `aniId` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kitsuId",
+            "columnName": "kitsuId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "malId",
+            "columnName": "malId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "aniId",
+            "columnName": "aniId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_id_overlays_kitsuId",
+            "unique": true,
+            "columnNames": [
+              "kitsuId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_id_overlays_kitsuId` ON `${TABLE_NAME}` (`kitsuId`)"
+          },
+          {
+            "name": "index_id_overlays_malId",
+            "unique": true,
+            "columnNames": [
+              "malId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_id_overlays_malId` ON `${TABLE_NAME}` (`malId`)"
+          },
+          {
+            "name": "index_id_overlays_aniId",
+            "unique": true,
+            "columnNames": [
+              "aniId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_id_overlays_aniId` ON `${TABLE_NAME}` (`aniId`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "saved_anime",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `updateDate` INTEGER NOT NULL, `list` INTEGER NOT NULL, `kitsuId` INTEGER, `subtype` TEXT, `titleJp` TEXT, `titleEn` TEXT, `titleEnJp` TEXT, `synopsis` TEXT, `coverImgLink` TEXT, `posterImageLink` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updateDate",
+            "columnName": "updateDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "list",
+            "columnName": "list",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "anime.kitsuId",
+            "columnName": "kitsuId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "anime.subtype",
+            "columnName": "subtype",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "anime.titleJp",
+            "columnName": "titleJp",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "anime.titleEn",
+            "columnName": "titleEn",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "anime.titleEnJp",
+            "columnName": "titleEnJp",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "anime.synopsis",
+            "columnName": "synopsis",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "anime.coverImgLink",
+            "columnName": "coverImgLink",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "anime.posterImageLink",
+            "columnName": "posterImageLink",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_saved_anime_kitsuId",
+            "unique": true,
+            "columnNames": [
+              "kitsuId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_saved_anime_kitsuId` ON `${TABLE_NAME}` (`kitsuId`)"
+          },
+          {
+            "name": "index_saved_anime_list",
+            "unique": false,
+            "columnNames": [
+              "list"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_saved_anime_list` ON `${TABLE_NAME}` (`list`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "saved_episode",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `updateDate` INTEGER NOT NULL, `kitsuId` INTEGER, `animeKitsuId` INTEGER, `number` INTEGER, `length` INTEGER, `currentPosition` INTEGER, FOREIGN KEY(`animeKitsuId`) REFERENCES `saved_anime`(`kitsuId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updateDate",
+            "columnName": "updateDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "episode.kitsuId",
+            "columnName": "kitsuId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "episode.animeKitsuId",
+            "columnName": "animeKitsuId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "episode.number",
+            "columnName": "number",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "episode.length",
+            "columnName": "length",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "episode.currentPosition",
+            "columnName": "currentPosition",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_saved_episode_animeKitsuId",
+            "unique": false,
+            "columnNames": [
+              "animeKitsuId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_saved_episode_animeKitsuId` ON `${TABLE_NAME}` (`animeKitsuId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "saved_anime",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "animeKitsuId"
+            ],
+            "referencedColumns": [
+              "kitsuId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "search_history",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `searchTerm` TEXT, `date` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchTerm",
+            "columnName": "searchTerm",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '34846eb6d865875cd8e65eefc61dd97e')"
+    ]
+  }
+}

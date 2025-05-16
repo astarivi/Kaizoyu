@@ -478,10 +478,10 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                                     getString(R.string.d_share_kitsu),
                                     getString(R.string.d_share_kitsu_desc)
                             ),
-                            new ModalOption(
-                                    getString(R.string.d_share_app),
-                                    getString(R.string.d_share_app_desc)
-                            )
+//                            new ModalOption(
+//                                    getString(R.string.d_share_app),
+//                                    getString(R.string.d_share_app_desc)
+//                            )
                     },
                     (index, highlight) -> {
                         if (index == 0) {
@@ -491,11 +491,11 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                                     .setText(String.format(Locale.UK, "https://kitsu.io/anime/%d", anime.getKitsuId()))
                                     .startChooser();
                         } else {
-                            new ShareCompat.IntentBuilder(this)
-                                    .setType("text/plain")
-                                    .setChooserTitle(R.string.d_share_app)
-                                    .setText(String.format(Locale.UK, "https://kaizoyu.ovh/app/show/%d", anime.getKitsuId()))
-                                    .startChooser();
+//                            new ShareCompat.IntentBuilder(this)
+//                                    .setType("text/plain")
+//                                    .setChooserTitle(R.string.d_share_app)
+//                                    .setText(String.format(Locale.UK, "https://kaizoyu.ovh/app/show/%d", anime.getKitsuId()))
+//                                    .startChooser();
                         }
                     }
             );
