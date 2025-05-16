@@ -11,7 +11,7 @@ import java.util.List;
 
 @Dao
 public interface SavedEpisodeDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insert(SavedEpisode episode);
     @Insert
     long[] insertAll(SavedEpisode... episode);

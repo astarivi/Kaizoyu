@@ -54,7 +54,7 @@ public class HomeViewModel extends ViewModel {
     }
 
     private void fetchHome() {
-        rssFuture = Threading.submitTask(Threading.TASK.INSTANT,() -> {
+        rssFuture = Threading.instant(() -> {
             try {
                 news.postValue(
                         ANN.getANNFeed()

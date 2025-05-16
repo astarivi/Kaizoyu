@@ -13,7 +13,7 @@ import java.util.List;
 
 @Dao
 public interface SavedAnimeDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insert(SavedAnime anime);
     @Insert
     long[] insertAll(SavedAnime... anime);

@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.core.storage.database.repo;
 
+import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
@@ -23,6 +24,8 @@ import com.astarivi.kaizoyu.utils.Threading;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
+import java.util.Objects;
+
 import lombok.Getter;
 
 public class SavedShowRepo {
@@ -30,6 +33,22 @@ public class SavedShowRepo {
     private final static SavedAnimeDao animeDao = PersistenceRepository.getInstance().getDatabase().savedAnimeDao();
     @Getter
     private final static SavedEpisodeDao episodeDao = PersistenceRepository.getInstance().getDatabase().savedEpisodeDao();
+
+    private static void createOrUpdate(@NonNull SavedAnime sa) {
+        if (sa.id == -1) {
+            if (animeDao.insert(sa) != -1L) return;
+        }
+
+        animeDao.update(sa);
+    }
+
+    private static void createOrUpdate(@NonNull SavedEpisode sa) {
+        if (sa.id == -1) {
+            if (episodeDao.insert(sa) != -1L) return;
+        }
+
+        episodeDao.update(sa);
+    }
 
     @ThreadedOnly
     public static @Nullable AnimeBasicInfo.LocalList getLocalListFrom(long kitsuId) {
@@ -50,30 +69,26 @@ public class SavedShowRepo {
         animeDao.deleteByKitsuId(anime.getKitsuId());
 
         Data.getTemporarySwitches().setPendingFavoritesRefresh(true);
+        Data.getTemporarySwitches().setPendingSeenEpisodeStateRefresh(true);
     }
 
     @ThreadedOnly
     public static void createOrUpdate(AnimeBasicInfo info, AnimeBasicInfo.LocalList localList) {
-        LocalAnime localAnime;
+        SavedAnime savedAnime;
 
         if (info instanceof RemoteAnime remoteAnime) {
             SavedAnime sa = animeDao.getByKitsuId(info.getKitsuId());
-            if (sa == null) {
-                localAnime = AnimeMapper.localFromRemote(remoteAnime, localList);
-            } else {
-                localAnime = AnimeMapper.localFromSaved(sa);
-            }
+            savedAnime = Objects.requireNonNullElseGet(sa, () -> AnimeMapper.savedFromLocal(
+                    AnimeMapper.localFromRemote(remoteAnime, localList)
+            ));
         } else if (info instanceof LocalAnime la) {
-            localAnime = la;
+            savedAnime = AnimeMapper.savedFromLocal(la);
         } else {
             throw new IllegalStateException("This AnimeBasicInfo instance has no valid type to cast to.");
         }
+        savedAnime.list = localList.getValue();
 
-        localAnime.localList = localList;
-
-        animeDao.insert(
-                AnimeMapper.savedFromLocal(localAnime)
-        );
+        createOrUpdate(savedAnime);
 
         Data.getTemporarySwitches().setPendingFavoritesRefresh(true);
     }
@@ -85,51 +100,43 @@ public class SavedShowRepo {
         final boolean isAutoMove = Data.getProperties(Data.CONFIGURATION.APP)
                 .getBooleanProperty("auto_move", false);
 
-        LocalAnime localAnime;
+        SavedAnime savedAnime;
 
         if (parent instanceof LocalAnime la) {
-            localAnime = la;
+            savedAnime = AnimeMapper.savedFromLocal(la);
         } else if (parent instanceof RemoteAnime ra) {
             SavedAnime sa = animeDao.getByKitsuId(ra.getKitsuId());
-
-            if (sa == null) {
-                localAnime = AnimeMapper.localFromRemote(
-                        ra,
-                        isAutoFavorite ? AnimeBasicInfo.LocalList.WATCHING : AnimeBasicInfo.LocalList.NOT_TRACKED
-                );
-            } else {
-                localAnime = AnimeMapper.localFromSaved(sa);
-            }
+            savedAnime = Objects.requireNonNullElseGet(sa, () -> AnimeMapper.savedFromLocal(
+                    AnimeMapper.localFromRemote(
+                            ra,
+                            isAutoFavorite ? AnimeBasicInfo.LocalList.WATCHING : AnimeBasicInfo.LocalList.NOT_TRACKED
+                    )
+            ));
         } else {
             throw new IllegalStateException("This AnimeBasicInfo instance has no valid type to cast to.");
         }
 
-        LocalEpisode localEpisode;
+        SavedEpisode savedEpisode;
 
         if (epi instanceof LocalEpisode le) {
-            localEpisode = le;
+            savedEpisode = EpisodeMapper.savedFromLocal(le);
         } else if (epi instanceof RemoteEpisode re) {
             SavedEpisode se = episodeDao.getEpisodeByOwnKitsuId(epi.getKitsuId());
-
-            if (se == null) {
-                localEpisode = EpisodeMapper.localFromRemote(re, currentPlayerTime);
-            } else {
-                localEpisode = EpisodeMapper.localFromSaved(se);
-            }
+            savedEpisode = Objects.requireNonNullElseGet(se, () -> EpisodeMapper.savedFromLocal(
+                    EpisodeMapper.localFromRemote(
+                            re,
+                            currentPlayerTime
+                    )
+            ));
         } else {
             throw new IllegalStateException("This EpisodeBasicInfo instance has no valid type to cast to.");
         }
 
-        localEpisode.animeKitsuId = localAnime.getKitsuId();
-        localEpisode.currentPosition = currentPlayerTime;
+        savedEpisode.episode.animeKitsuId = savedAnime.anime.getKitsuId();
+        savedEpisode.episode.currentPosition = currentPlayerTime;
 
-        animeDao.insert(
-                AnimeMapper.savedFromLocal(localAnime)
-        );
-
-        episodeDao.insert(
-                EpisodeMapper.savedFromLocal(localEpisode)
-        );
+        createOrUpdate(savedAnime);
+        createOrUpdate(savedEpisode);
 
         Data.getTemporarySwitches().setPendingSeenEpisodeStateRefresh(true);
     }
