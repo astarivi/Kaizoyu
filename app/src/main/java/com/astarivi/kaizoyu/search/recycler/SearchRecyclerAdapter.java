@@ -10,6 +10,7 @@ import com.astarivi.kaizoyu.core.adapters.AnimeRecyclerAdapter;
 import com.astarivi.kaizoyu.core.adapters.AnimeViewHolder;
 import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
 import com.astarivi.kaizoyu.utils.Translation;
+import com.astarivi.kaizoyu.utils.Utils;
 
 
 public class SearchRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<RemoteAnime>, RemoteAnime> {
@@ -28,7 +29,7 @@ public class SearchRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<
 
         if (animeStartDate != null && !animeStartDate.isEmpty()) {
             holder.binding.launchDate.setText(
-                    animeStartDate
+                    Utils.getDateAsQuarters(animeStartDate)
             );
         } else {
             holder.binding.launchDate.setVisibility(View.GONE);

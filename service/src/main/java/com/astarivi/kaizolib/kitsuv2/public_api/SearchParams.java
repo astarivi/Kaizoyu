@@ -67,7 +67,7 @@ public class SearchParams {
 
     public @NotNull HttpUrl buildURI() {
         HttpUrl.Builder queryUrl = new HttpUrl.Builder();
-        queryUrl.scheme("https").host("kitsu.io").addPathSegments("api/edge/anime");
+        queryUrl.scheme("https").host("kitsu.app").addPathSegments("api/edge/anime");
 
         queryUrl.addQueryParameter("page[limit]", Integer.toString(limit));
         queryUrl.addQueryParameter("page[offset]", Integer.toString(offset));

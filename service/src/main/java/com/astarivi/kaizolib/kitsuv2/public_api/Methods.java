@@ -12,7 +12,7 @@ public class Methods extends KitsuCommon {
         return executeGet(
                 new HttpUrl.Builder()
                         .scheme("https")
-                        .host("kitsu.io")
+                        .host("kitsu.app")
                         .addPathSegments("api/edge/anime")
                         .addPathSegment(Long.toString(id))
                         .build()
@@ -23,7 +23,7 @@ public class Methods extends KitsuCommon {
         return executeGet(
                 new HttpUrl.Builder()
                     .scheme("https")
-                    .host("kitsu.io")
+                        .host("kitsu.app")
                     .addPathSegments("api/edge/episodes")
                     .addQueryParameter("filter[media_id]", Long.toString(animeId))
                     .addQueryParameter("page[limit]", Integer.toString(limit))

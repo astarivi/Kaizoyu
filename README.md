@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://i.ibb.co/x6k8Bbf/small-cover.png"  alt="Kaizoyu cover image"/>
+    <img src="media/small-cover.png"  alt="Kaizoyu cover image"/>
 </p>
 
 <p align="center">
@@ -9,7 +9,7 @@
 Kaizoyu is an Android exclusive anime streaming platform¹. Watch anime for free
 without any torrents, web-scraping, or highly compressed online video files.
 
-[Want to jump right in?, download here](https://github.com/astarivi/Kaizoyu/releases)
+[Want to jump right in?, download here](https://github.com/astarivi/Kaizoyu/releases/latest/download/app-mainline-universal-release.apk)
 
 # Features
 

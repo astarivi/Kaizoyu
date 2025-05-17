@@ -83,7 +83,6 @@ public class Utils {
     }
 
     // Only accepts ISO-8601 date strings ("2023-03-10")
-    @Deprecated
     @NotNull
     public static String getDateAsQuarters(@NotNull String dateString) {
         LocalDate date = LocalDate.parse(dateString);

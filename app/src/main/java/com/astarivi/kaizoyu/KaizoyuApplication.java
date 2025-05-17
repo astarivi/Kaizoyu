@@ -4,7 +4,9 @@ import android.app.Application;
 import android.content.Context;
 
 import com.astarivi.kaizoyu.core.common.NotificationsHub;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.threading.workers.WorkerInitializers;
+import com.astarivi.kaizoyu.utils.Data;
 import com.google.android.material.color.DynamicColors;
 import com.startapp.sdk.adsbase.StartAppSDK;
 
@@ -63,6 +65,14 @@ public class KaizoyuApplication extends Application {
 
         //noinspection ConstantValue
         StartAppSDK.setTestAdsEnabled(com.astarivi.kaizoyu.BuildConfig.VERSION_NAME.contains("-DEBUG"));
+        ExtendedProperties appSettings = Data.getProperties(Data.CONFIGURATION.APP);
+
+        StartAppSDK.setUserConsent(
+                this,
+                "pas",
+                System.currentTimeMillis(),
+                appSettings.getBooleanProperty("gdpr_consent", false)
+        );
 
         NotificationsHub.initialize();
         WorkerInitializers.queueWorkers(this);

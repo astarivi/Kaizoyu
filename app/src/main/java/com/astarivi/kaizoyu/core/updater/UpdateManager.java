@@ -34,10 +34,10 @@ import okhttp3.Request;
 public class UpdateManager {
     public static String VERSION = BuildConfig.VERSION_NAME;
     public static String[] RELEASE_ABI = new String[]{
-            "app-armeabi-v7a-release.apk",
-            "app-arm64-v8a-release.apk",
-            "app-x86-release.apk",
-            "app-x86_64-release.apk"
+            "app-mainline-armeabi-v7a-release.apk",
+            "app-mainline-arm64-v8a-release.apk",
+            "app-mainline-x86-release.apk",
+            "app-mainline-x86_64-release.apk"
     };
 
     public static boolean isBeta() {
@@ -108,7 +108,7 @@ public class UpdateManager {
             return null;
 
         final String desiredVersion = String.format(
-                "app-%s-release.apk",
+                "app-mainline-%s-release.apk",
                 Build.SUPPORTED_ABIS[0]
         );
 
@@ -127,7 +127,7 @@ public class UpdateManager {
         }
 
         return new AppUpdate(
-                "https://github.com/astarivi/Kaizoyu/releases/latest/download/app-universal-release.apk",
+                "https://github.com/astarivi/Kaizoyu/releases/latest/download/app-mainline-universal-release.apk",
                 latestRelease.body,
                 String.valueOf(latestVersion)
         );

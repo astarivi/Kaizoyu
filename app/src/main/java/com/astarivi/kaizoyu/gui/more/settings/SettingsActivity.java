@@ -348,6 +348,13 @@ public class SettingsActivity extends AppCompatActivityTheme {
                 binding.gdprValue.isChecked()
         );
 
+        StartAppSDK.setUserConsent(
+                this,
+                "pas",
+                System.currentTimeMillis(),
+                binding.gdprValue.isChecked()
+        );
+
         config.save();
 
         Data.reloadProperties();
