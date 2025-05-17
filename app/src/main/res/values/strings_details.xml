@@ -33,4 +33,7 @@
     <string name="d_general_toast_p">Saved successfully</string>
     <string name="d_general_toast_n">We couldn\'t modify your lists due to an error.</string>
     <string name="d_title_categories">Categories</string>
+    <string name="d_issue_title">Report an issue with this show</string>
+    <string name="d_issue_join_title">Join Kaizoyu Discord</string>
+    <string name="d_issue_join_description">Join us on Discord, reports are handled there.</string>
 </resources>

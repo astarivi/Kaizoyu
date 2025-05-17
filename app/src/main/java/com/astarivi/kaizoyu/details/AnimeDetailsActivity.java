@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -168,7 +169,7 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
 
         // If this var isn't null, we are dealing with a deep link
         Long finalKitsuId = kitsuId;
-        Threading.submitTask(Threading.TASK.INSTANT, () -> {
+        Threading.instant(() -> {
             // Try to promote a LocalAnime model to a RemoteAnime.
             if (anime.getType() == AnimeBasicInfo.AnimeType.LOCAL) {
                 LocalAnime la = (LocalAnime) anime;
@@ -466,10 +467,6 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             anime.getPreferredTitle()
         );
 
-        binding.issueTouchArea.setOnClickListener(v ->
-            Toast.makeText(this, R.string.d_issue_unavailable, Toast.LENGTH_SHORT).show()
-        );
-
         binding.shareTouchArea.setOnClickListener(v -> {
             GenericModalBottomSheet modalDialog = new GenericModalBottomSheet(
                     getString(R.string.d_share_title),
@@ -529,6 +526,24 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
         } else {
             binding.animeRating.setVisibility(View.GONE);
         }
+
+        // Issue report
+        binding.issueTouchArea.setOnClickListener(v -> {
+            GenericModalBottomSheet modalDialog = new GenericModalBottomSheet(
+                    getString(R.string.d_issue_title),
+                    new ModalOption[]{
+                            new ModalOption(
+                                    getString(R.string.d_issue_join_title),
+                                    getString(R.string.d_issue_join_description),
+                                    false
+                            )
+                    },
+                    (index, highlight) ->
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/8YvvxbfqSG")))
+            );
+
+            modalDialog.show(getSupportFragmentManager(), GenericModalBottomSheet.TAG);
+        });
 
         // Favorite Button
         binding.favoriteTouchArea.setOnClickListener(v -> {
