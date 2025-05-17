@@ -14,7 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
-import com.astarivi.kaizoyu.core.storage.database.data.search.SearchHistory;
+import com.astarivi.kaizoyu.core.storage.database.repo.SearchHistoryRepo;
+import com.astarivi.kaizoyu.core.storage.database.tables.search_history.SearchHistory;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.databinding.ActivityFullsearchBinding;
@@ -116,7 +117,7 @@ public class FullSearchActivity extends AppCompatActivityTheme {
             if (searchView.getText() != null) {
                 String search = searchView.getText().toString();
 
-                if (search.equals("")) {
+                if (search.isEmpty()) {
                     optOutOfSearch();
                     return false;
                 }
@@ -134,10 +135,7 @@ public class FullSearchActivity extends AppCompatActivityTheme {
                     return false;
                 }
 
-                Data.getRepositories()
-                        .getSearchHistoryRepository()
-                        .saveAsync(search);
-
+                SearchHistoryRepo.saveAsync(search);
                 viewModel.searchAnime(search, binding, this);
             }
 
@@ -186,11 +184,10 @@ public class FullSearchActivity extends AppCompatActivityTheme {
 
         searchSuggestions.removeAllViews();
 
-        Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            List<SearchHistory> searchHistoryList = Data.getRepositories()
-                    .getSearchHistoryRepository().getAll();
+        Threading.database(() -> {
+            List<SearchHistory> searchHistoryList = SearchHistoryRepo.getAll();
 
-            Threading.submitTask(Threading.TASK.INSTANT, () -> {
+            Threading.instant(() -> {
                 ArrayList<FragmentSearchSuggestionBinding> suggestionBindings = new ArrayList<>();
 
                 for (SearchHistory searchHistory : searchHistoryList) {
@@ -203,9 +200,7 @@ public class FullSearchActivity extends AppCompatActivityTheme {
                     searchSuggestionBinding.itemHistory.setVisibility(View.VISIBLE);
                     searchSuggestionBinding.itemText.setText(searchHistory.searchTerm);
                     searchSuggestionBinding.rootLayout.setOnClickListener(v -> {
-                        Data.getRepositories()
-                                .getSearchHistoryRepository()
-                                .bumpUpAsync(searchHistory);
+                        SearchHistoryRepo.bumpUpAsync(searchHistory);
                         doProgrammaticSearch(searchHistory.searchTerm);
                     });
 

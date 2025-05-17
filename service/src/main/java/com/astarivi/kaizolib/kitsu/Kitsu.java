@@ -25,6 +25,7 @@ import java.util.List;
 import okhttp3.HttpUrl;
 
 
+@Deprecated
 public class Kitsu {
     private final UserHttpClient client;
 
@@ -33,7 +34,7 @@ public class Kitsu {
     }
 
     public Kitsu() {
-        client = new UserHttpClient();
+        client = UserHttpClient.getInstance();
     }
 
     public @NotNull List<KitsuAnime> searchAnime(@NotNull KitsuSearchParams params) throws NoResultsException, NetworkConnectionException, ParsingException, NoResponseException {

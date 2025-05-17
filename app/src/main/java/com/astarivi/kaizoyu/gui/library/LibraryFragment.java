@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
-import com.astarivi.kaizoyu.core.models.base.ModelType;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
 import com.astarivi.kaizoyu.databinding.FragmentLibraryBinding;
 import com.astarivi.kaizoyu.gui.library.watching.SharedLibraryActivity;
 import com.astarivi.kaizoyu.utils.Utils;
@@ -51,12 +51,12 @@ public class LibraryFragment extends TabFragment {
                 }
         );
 
-        binding.currentlyWatching.setOnClickListener(v -> openSharedLibrary(ModelType.LocalAnime.FAVORITE));
-        binding.watchLater.setOnClickListener(v -> openSharedLibrary(ModelType.LocalAnime.PENDING));
-        binding.finishedWatching.setOnClickListener(v -> openSharedLibrary(ModelType.LocalAnime.WATCHED));
+        binding.currentlyWatching.setOnClickListener(v -> openSharedLibrary(AnimeBasicInfo.LocalList.WATCHING));
+        binding.watchLater.setOnClickListener(v -> openSharedLibrary(AnimeBasicInfo.LocalList.WATCH_LATER));
+        binding.finishedWatching.setOnClickListener(v -> openSharedLibrary(AnimeBasicInfo.LocalList.FINISHED));
     }
 
-    private void openSharedLibrary(ModelType.LocalAnime type) {
+    private void openSharedLibrary(AnimeBasicInfo.LocalList type) {
         if (getActivity() == null) return;
 
         Intent intent = new Intent();

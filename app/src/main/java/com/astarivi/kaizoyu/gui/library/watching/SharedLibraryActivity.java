@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
-import com.astarivi.kaizoyu.core.models.base.ModelType;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.ActivitySharedLibraryBinding;
@@ -32,7 +32,7 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
     private ActivitySharedLibraryBinding binding;
     private SharedLibraryViewModel viewModel;
     private SharedLibraryRecyclerAdapter adapter;
-    private ModelType.LocalAnime localAnimeType;
+    private AnimeBasicInfo.LocalList localAnimeType;
 
     public SharedLibraryActivity() {
         // Required empty public constructor
@@ -59,13 +59,13 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
 
         final String type = bundle.getString("local_type");
 
-        if (type == null || type.equals("")) {
+        if (type == null || type.isEmpty()) {
             finish();
             return;
         }
 
         try {
-            localAnimeType = ModelType.LocalAnime.valueOf(type);
+            localAnimeType = AnimeBasicInfo.LocalList.valueOf(type);
         } catch(IllegalArgumentException e) {
             Logger.error("Invalid anime local type {}", type);
             finish();
@@ -74,19 +74,11 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
 
         binding.internalToolbar.setNavigationOnClickListener(v -> finish());
 
-        @StringRes int title;
-
-        switch (localAnimeType) {
-            case PENDING:
-                title = R.string.d_pending;
-                break;
-            case WATCHED:
-                title = R.string.d_watched_list;
-                break;
-            case FAVORITE:
-            default:
-                title = R.string.d_favorite_list;
-        }
+        @StringRes int title = switch (localAnimeType) {
+            case WATCH_LATER -> R.string.d_pending;
+            case FINISHED -> R.string.d_watched_list;
+            default -> R.string.d_favorite_list;
+        };
 
         binding.internalToolbar.setTitle(title);
 
@@ -149,7 +141,7 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
             Intent intent = new Intent();
             intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
             intent.putExtra("anime", anime);
-            intent.putExtra("type", ModelType.Anime.LOCAL.name());
+            intent.putExtra("type", anime.getType().name());
             startActivity(intent);
         });
 

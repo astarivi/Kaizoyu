@@ -62,4 +62,6 @@
     <string name="dev_test_task_title">Select a worker</string>
     <string name="xdcc_title">Use XDCC</string>
     <string name="xdcc_description">When enabled, XDCC will be used instead of DCC; this may result in faster downloads. May cause complete download failure</string>
+    <string name="gdpr_title">Third party data collection</string>
+    <string name="grp_description">Share your data with third party ad providers to serve relevant, personalised advertisements</string>
 </resources>

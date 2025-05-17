@@ -7,35 +7,30 @@ import android.widget.Toast;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.astarivi.kaizolib.kitsu.Kitsu;
-import com.astarivi.kaizolib.kitsu.KitsuSearchParams;
-import com.astarivi.kaizolib.kitsu.exception.NetworkConnectionException;
-import com.astarivi.kaizolib.kitsu.exception.NoResponseException;
-import com.astarivi.kaizolib.kitsu.exception.NoResultsException;
-import com.astarivi.kaizolib.kitsu.exception.ParsingException;
-import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizolib.kitsuv2.exception.KitsuException;
+import com.astarivi.kaizolib.kitsuv2.exception.ParsingError;
+import com.astarivi.kaizolib.kitsuv2.model.KitsuAnime;
+import com.astarivi.kaizolib.kitsuv2.public_api.KitsuPublic;
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.models.Anime;
+import com.astarivi.kaizoyu.core.models.anime.AnimeMapper;
+import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
 import com.astarivi.kaizoyu.databinding.ActivitySearchBinding;
-import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import lombok.Getter;
+
 
 public class SearchViewModel extends ViewModel {
-    private final MutableLiveData<ArrayList<Anime>> results = new MutableLiveData<>();
+    @Getter
+    private final MutableLiveData<List<RemoteAnime>> results = new MutableLiveData<>();
     private Future<?> searchingFuture = null;
     private boolean isSearchActive = false;
-
-    public MutableLiveData<ArrayList<Anime>> getResults() {
-        return results;
-    }
 
     public boolean hasSearch() {
         return results.getValue() != null;
@@ -68,8 +63,7 @@ public class SearchViewModel extends ViewModel {
                     context,
                     context.getString(R.string.anime_busy),
                     Toast.LENGTH_SHORT
-            ).show(
-            );
+            ).show();
             return;
         }
 
@@ -78,43 +72,36 @@ public class SearchViewModel extends ViewModel {
         binding.loadingBar.setVisibility(View.VISIBLE);
 
         searchingFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            Kitsu kitsu = new Kitsu(
-                    Data.getUserHttpClient()
-            );
-
             List<KitsuAnime> searchResults;
             try {
-                searchResults = kitsu.searchAnime(
-                        new KitsuSearchParams(
-                        ).setTitle(
-                                search
-                        ).setLimit(
-                                20
-                        )
-                );
-            } catch (NoResultsException e) {
-                results.postValue(null);
-                return;
-            } catch (NetworkConnectionException e) {
+                searchResults = KitsuPublic.search(search);
+            } catch (KitsuException | ParsingError e) {
+                if (e instanceof ParsingError) {
+                    Utils.makeToastRegardless(
+                            context,
+                            R.string.parsing_error,
+                            Toast.LENGTH_SHORT
+                    );
+                    return;
+                }
+
                 Utils.makeToastRegardless(
                         context,
                         R.string.network_connection_error,
                         Toast.LENGTH_SHORT
                 );
                 return;
-            } catch (ParsingException | NoResponseException e) {
-                Utils.makeToastRegardless(
-                        context,
-                        R.string.parsing_error,
-                        Toast.LENGTH_SHORT
-                );
+            }
+
+            if (searchResults.isEmpty()) {
+                results.postValue(null);
                 return;
             }
 
             isSearchActive = true;
 
             results.postValue(
-                    new Anime.BulkAnimeBuilder(searchResults).build()
+                    AnimeMapper.bulkRemoteFromKitsu(searchResults)
             );
         });
     }

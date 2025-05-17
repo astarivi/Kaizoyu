@@ -6,225 +6,155 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.astarivi.kaizolib.common.network.CommonHeaders;
+import com.astarivi.kaizolib.common.network.HttpMethodsV2;
+import com.astarivi.kaizolib.common.util.JsonMapper;
 import com.astarivi.kaizoyu.BuildConfig;
 import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.adapters.WebAdapter;
 import com.astarivi.kaizoyu.core.common.ThreadedOnly;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
+import com.astarivi.kaizoyu.utils.Data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.TimeZone;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import okhttp3.HttpUrl;
+import okhttp3.Request;
 
 
+@ThreadedOnly
 public class UpdateManager {
     public static String VERSION = BuildConfig.VERSION_NAME;
-    public static String VERSION_NAME = "judgement";
+    public static String[] RELEASE_ABI = new String[]{
+            "app-mainline-armeabi-v7a-release.apk",
+            "app-mainline-arm64-v8a-release.apk",
+            "app-mainline-x86-release.apk",
+            "app-mainline-x86_64-release.apk"
+    };
 
     public static boolean isBeta() {
         return VERSION.contains("-BETA");
     }
 
-    @ThreadedOnly
-    public @Nullable LatestUpdate getLatestUpdate() throws ParseException {
+    @Nullable
+    public static String databaseUpdateAvailable() throws IOException {
+        ExtendedProperties config = Data.getProperties(Data.CONFIGURATION.APP);
+        String localVersion = config.getProperty("idsVersion", null);
+
+        final RemoteVersions remoteVersions = RemoteVersions.latest();
+
+        if (remoteVersions == null || remoteVersions.database == null || remoteVersions.database.isEmpty())
+            return null;
+
+        if (localVersion == null) return remoteVersions.database;
+
+        LocalDate localDate;
+        LocalDate remoteDate;
+        try {
+            localDate = LocalDate.parse(localVersion);
+            remoteDate = LocalDate.parse(remoteVersions.database);
+        } catch (Exception e) {
+            Logger.error("Failed to parse dates {} and/or {}", localVersion, remoteVersions.database);
+            return null;
+        }
+
+        if (remoteDate.isAfter(localDate)) {
+            return remoteVersions.database;
+        }
+
+        return null;
+    }
+
+    public static @Nullable AppUpdate getAppUpdate() throws IOException {
         // This version has no update capabilities.
-        if (VERSION.contains("-DEBUG")) return null;
+        if (VERSION.contains("-DEBUG") || isBeta()) return null;
 
         if (Boolean.parseBoolean(KaizoyuApplication.getContext().getString(R.string.is_fdroid)))
             return null;
 
-        final boolean isBeta = isBeta();
-        final LatestCDNReleases latestReleaseCDN = getLatestReleases();
+        final RemoteVersions remoteVersions = RemoteVersions.latest();
 
-        if (latestReleaseCDN == null || (!isBeta && latestReleaseCDN.latest_release == null) || (isBeta && latestReleaseCDN.latest_beta == null))
-            return null;
+        if (remoteVersions == null) return null;
 
         float latestVersion;
         float currentVersion;
 
         try {
             latestVersion = Float.parseFloat(
-                    isBeta ? latestReleaseCDN.latest_beta : latestReleaseCDN.latest_release
+                    remoteVersions.app
             );
             currentVersion = Float.parseFloat(
-                    isBeta ? VERSION.replace("-BETA", "") : VERSION
+                    VERSION
             );
         } catch (NumberFormatException e) {
-            throw new ParseException("Couldn't parse latest version TAG", 0);
+            throw new IOException("Couldn't parse latest version TAG");
         }
 
         if (Float.compare(latestVersion, currentVersion) <= 0) {
             return null;
         }
 
-        GithubRelease latestRelease = getVersion(
-                isBeta ? latestReleaseCDN.latest_beta : latestReleaseCDN.latest_release
-        );
+        GitHubLatestRelease latestRelease = GitHubLatestRelease.latest();
 
-        if (latestRelease == null || latestRelease.assets == null || latestRelease.assets.length == 0)
+        if (latestRelease == null)
             return null;
 
         final String desiredVersion = String.format(
-                "app-%s-%s.apk",
-                Build.SUPPORTED_ABIS[0],
-                isBeta ? "beta" : "release"
+                "app-mainline-%s-release.apk",
+                Build.SUPPORTED_ABIS[0]
         );
 
-        for (GithubReleaseAsset releaseAsset : latestRelease.assets) {
-            if (releaseAsset.name.equals(desiredVersion)) {
-                return new LatestUpdate(
-                        releaseAsset,
-                        latestRelease.tag_name,
-                        latestRelease.body
+        for (String releaseAbi : RELEASE_ABI) {
+            if (releaseAbi.equals(desiredVersion)) {
+                return new AppUpdate(
+                        String.format(
+                                Locale.US,
+                                "https://github.com/astarivi/Kaizoyu/releases/latest/download/%s",
+                                releaseAbi
+                        ),
+                        latestRelease.body,
+                        String.valueOf(latestVersion)
                 );
             }
         }
 
-        return null;
-    }
-
-    @ThreadedOnly
-    private @Nullable LatestCDNReleases getLatestReleases() {
-        String body = WebAdapter.getJSON(
-                new HttpUrl.Builder()
-                        .scheme("https")
-                        .host("raw.githubusercontent.com")
-                        .addPathSegments("astarivi/KaizoDelivery/main/data/latest_release.json")
-                        .build()
+        return new AppUpdate(
+                "https://github.com/astarivi/Kaizoyu/releases/latest/download/app-mainline-universal-release.apk",
+                latestRelease.body,
+                String.valueOf(latestVersion)
         );
-
-        if (body == null) return null;
-
-        LatestCDNReleases latestCDNReleases;
-
-        try {
-            latestCDNReleases = new ObjectMapper().readValue(body, LatestCDNReleases.class);
-        } catch (JsonProcessingException e) {
-            Logger.error("Failed to decode Github KaizoDelivery latest releases");
-            return null;
-        }
-
-        return latestCDNReleases;
     }
 
-    @ThreadedOnly
-    private @Nullable GithubRelease getVersion(@NotNull final String tag) {
-        String body = WebAdapter.getJSON(
-                new HttpUrl.Builder()
-                        .scheme("https")
-                        .host("api.github.com")
-                        .addPathSegments("repos/astarivi/KaizoDelivery/releases/tags")
-                        .addPathSegment(tag)
-                        .build()
-        );
+    @Getter
+    @AllArgsConstructor
+    public static class AppUpdate implements Parcelable {
+        private String URL;
+        private String body;
+        private String version;
 
-        if (body == null) return null;
-
-        GithubRelease latestRelease;
-
-        try {
-            latestRelease = new ObjectMapper().readValue(body, GithubRelease.class);
-        } catch (JsonProcessingException e) {
-            Logger.error("Failed to decode Github latest release");
-            return null;
-        }
-
-        return latestRelease;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class LatestCDNReleases {
-        public String latest_release;
-        public String latest_beta;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class GithubRelease {
-        public String tag_name;
-        public String published_at;
-        public String name;
-        public String body;
-        public GithubReleaseAsset[] assets;
-
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class GithubReleaseAsset {
-        public String url;
-        public String name;
-        public double size;
-        public String browser_download_url;
-        public String created_at;
-    }
-
-    public static class LatestUpdate implements Parcelable {
-        public String version;
-        public String name;
-        public double size;
-        public Date releaseDate;
-        public String downloadUrl;
-        public String body;
-
-        public LatestUpdate(@NotNull GithubReleaseAsset releaseAsset, String version, String body) throws ParseException {
-            Calendar calendar = Calendar.getInstance(
-                    TimeZone.getTimeZone(
-                            ZoneId.systemDefault()
-                    )
-            );
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.UK);
-            sdf.setCalendar(calendar);
-            try {
-                calendar.setTime(
-                        Objects.requireNonNull(sdf.parse(
-                                releaseAsset.created_at
-                        ))
-                );
-            } catch(NullPointerException ex) {
-                throw new ParseException("The parsed date was null", 0);
-            }
-
-            this.releaseDate = calendar.getTime();
-            this.name = releaseAsset.name;
-            this.size = releaseAsset.size;
-            this.downloadUrl = releaseAsset.browser_download_url;
-            this.version = version;
-            this.body = body;
-        }
-
-        // Parcelable implementation
-        protected LatestUpdate(@NotNull Parcel parcel) {
-            version = parcel.readString();
-            name = parcel.readString();
-            size = parcel.readDouble();
-            releaseDate = new Date(parcel.readLong());
-            downloadUrl = parcel.readString();
+        protected AppUpdate(Parcel parcel) {
+            URL = parcel.readString();
             body = parcel.readString();
+            version = parcel.readString();
         }
 
-        public static final Parcelable.Creator<LatestUpdate> CREATOR = new Parcelable.Creator<LatestUpdate>() {
+        public static final Parcelable.Creator<AppUpdate> CREATOR = new Parcelable.Creator<>() {
             @Override
-            public LatestUpdate createFromParcel(Parcel parcel) {
-                return new LatestUpdate(parcel);
+            public AppUpdate createFromParcel(Parcel parcel) {
+                return new AppUpdate(parcel);
             }
 
             @Override
-            public LatestUpdate[] newArray(int size) {
-                return new LatestUpdate[size];
+            public AppUpdate[] newArray(int size) {
+                return new AppUpdate[size];
             }
         };
 
@@ -235,12 +165,74 @@ public class UpdateManager {
 
         @Override
         public void writeToParcel(@NonNull Parcel dest, int flags) {
-            dest.writeString(version);
-            dest.writeString(name);
-            dest.writeDouble(size);
-            dest.writeLong(releaseDate.getTime());
-            dest.writeString(downloadUrl);
+            dest.writeString(URL);
             dest.writeString(body);
+            dest.writeString(version);
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private static class GitHubLatestRelease {
+        public String body;
+
+        /**
+         * @noinspection unused
+         */
+        public GitHubLatestRelease() {
+        }
+
+        @Nullable
+        protected static GitHubLatestRelease latest() throws IOException {
+            Request.Builder getRequestBuilder = new Request.Builder();
+
+            getRequestBuilder.url(
+                    new HttpUrl.Builder()
+                            .scheme("https")
+                            .host("api.github.com")
+                            .addPathSegments("repos/astarivi/Kaizoyu/releases/latest")
+                            .build()
+            );
+
+            CommonHeaders.addTo(getRequestBuilder, CommonHeaders.JSON_HEADERS);
+
+            String body = HttpMethodsV2.executeRequest(getRequestBuilder.build());
+
+            if (body == null) return null;
+
+            return JsonMapper.deserializeGeneric(body, GitHubLatestRelease.class);
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private static class RemoteVersions {
+        public String app;
+        public String database;
+
+        /**
+         * @noinspection unused
+         */
+        public RemoteVersions() {
+        }
+
+        @Nullable
+        protected static RemoteVersions latest() throws IOException {
+            Request.Builder getRequestBuilder = new Request.Builder();
+
+            getRequestBuilder.url(
+                    new HttpUrl.Builder()
+                            .scheme("https")
+                            .host("raw.githubusercontent.com")
+                            .addPathSegments("astar-workspace/k.delivery/refs/heads/main/metadata/versions.json")
+                            .build()
+            );
+
+            CommonHeaders.addTo(getRequestBuilder, CommonHeaders.TEXT_HEADERS);
+
+            String body = HttpMethodsV2.executeRequest(getRequestBuilder.build());
+
+            if (body == null) return null;
+
+            return JsonMapper.deserializeGeneric(body, RemoteVersions.class);
         }
     }
 }

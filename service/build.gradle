@@ -4,23 +4,23 @@ plugins {
 }
 
 group 'com.astarivi.kaizolib'
-version '1.9'
+version '2.0'
 
 java {
-    sourceCompatibility 1.8
-    targetCompatibility 1.8
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
 }
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation 'org.tinylog:tinylog-api:2.6.2'
-    runtimeOnly 'org.tinylog:tinylog-impl:2.6.2'
-    runtimeOnly 'org.tinylog:slf4j-tinylog:2.6.2'
-
-    implementation 'org.jetbrains:annotations:24.0.1'
+    // Logging
+    implementation 'org.tinylog:tinylog-api:2.7.0'
+    runtimeOnly 'org.tinylog:tinylog-impl:2.7.0'
+    runtimeOnly 'org.tinylog:slf4j-tinylog:2.7.0'
 
     // Jackson
     //noinspection GradleDependency
@@ -31,10 +31,19 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.5'
     //noinspection GradleDependency
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.5'
+    //noinspection GradleDependency
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.5'
+    implementation 'com.fasterxml.woodstox:woodstox-core:6.6.2'
+    implementation 'javax.xml.stream:stax-api:1.0-2'
+    implementation 'org.codehaus.woodstox:stax2-api:4.2.2'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    // Misc
+    implementation 'org.jsoup:jsoup:1.17.2'
+    implementation 'org.jetbrains:annotations:26.0.2'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.12.2'
 }
 
 test {

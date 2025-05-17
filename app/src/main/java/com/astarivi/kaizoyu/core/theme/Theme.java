@@ -13,12 +13,15 @@ import org.tinylog.Logger;
 import java.io.File;
 import java.io.IOException;
 
+import lombok.Getter;
+
 
 public enum Theme {
     HIGH_CONTRAST(0, R.style.HighContrast, R.string.theme_high_contrast, R.string.theme_high_contrast_description),
     DYNAMIC_COLORS(1, R.style.AppTheme, R.string.theme_dynamic_colors, R.string.theme_dynamic_colors_description),
     LOW_CONTRAST(2, R.style.AppTheme, R.string.theme_low_contrast, R.string.theme_low_contrast_description);
 
+    @Getter
     private final int id;
     private final int appTheme;
     private final int title;
@@ -29,10 +32,6 @@ public enum Theme {
         appTheme = theme;
         title = t;
         description = d;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public int getTheme() {

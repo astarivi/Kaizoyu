@@ -1,51 +1,41 @@
 package com.astarivi.kaizolib.nibl;
 
-import com.astarivi.kaizolib.common.network.UserHttpClient;
-import com.astarivi.kaizolib.common.util.ResponseToString;
+import com.astarivi.kaizolib.common.network.HttpMethodsV2;
 import com.astarivi.kaizolib.nibl.model.NiblBot;
 import com.astarivi.kaizolib.nibl.model.NiblBotsResults;
 import com.astarivi.kaizolib.nibl.model.NiblResult;
 import com.astarivi.kaizolib.nibl.model.NiblSearchResults;
 import com.astarivi.kaizolib.nibl.parser.ParseJson;
-import okhttp3.HttpUrl;
-import okhttp3.Request;
-import okhttp3.Response;
+
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import okhttp3.HttpUrl;
+import okhttp3.Request;
+
 
 public class Nibl {
-    private final UserHttpClient client;
-
-    public Nibl(UserHttpClient client) {
-        this.client = client;
-    }
-    public Nibl() {
-        client = new UserHttpClient();
+    public static @Nullable List<NiblResult> searchAnimeEpisode(int limit, String anime, int episode) {
+        return fetchResults(NiblUtils.buildEpisodeSearchUri(limit, anime, episode));
     }
 
-    public @Nullable List<NiblResult> searchAnimeEpisode(int limit, String anime, int episode) {
-        return this.fetchResults(NiblUtils.buildEpisodeSearchUri(limit, anime, episode));
+    public static @Nullable List<NiblResult> searchAnime(int limit, String search) {
+        return fetchResults(NiblUtils.buildSearchUri(limit, search));
     }
 
-    public @Nullable List<NiblResult> searchAnime(int limit, String search) {
-        return this.fetchResults(NiblUtils.buildSearchUri(limit, search));
+    public static @Nullable List<NiblResult> getLatest(int limit) {
+        return fetchResults(NiblUtils.buildLatestAnimeUri(limit));
     }
 
-    public @Nullable List<NiblResult> getLatest(int limit) {
-        return this.fetchResults(NiblUtils.buildLatestAnimeUri(limit));
+    public static @Nullable List<NiblBot> getBots() {
+        return fetchBots();
     }
 
-    public @Nullable List<NiblBot> getBots() {
-        return this.fetchBots();
-    }
-
-    public @Nullable Properties getBotsMap(@Nullable Properties botProperties) {
-        List<NiblBot> bots = this.fetchBots();
+    public static @Nullable Properties getBotsMap(@Nullable Properties botProperties) {
+        List<NiblBot> bots = fetchBots();
 
         if (bots == null) return null;
 
@@ -61,8 +51,8 @@ public class Nibl {
         return botProperties;
     }
 
-    private @Nullable List<NiblBot> fetchBots() {
-        String fetchResult = this.fetch(NiblUtils.buildBotsUri());
+    private static @Nullable List<NiblBot> fetchBots() {
+        String fetchResult = fetch(NiblUtils.buildBotsUri());
 
         if (fetchResult == null) return null;
 
@@ -73,8 +63,8 @@ public class Nibl {
         return botsResults.content;
     }
 
-    private @Nullable List<NiblResult> fetchResults(HttpUrl url) {
-        String responseContent = this.fetch(url);
+    private static @Nullable List<NiblResult> fetchResults(HttpUrl url) {
+        String responseContent = fetch(url);
 
         if (responseContent == null) return null;
 
@@ -85,37 +75,22 @@ public class Nibl {
         return result.content;
     }
 
-    public @Nullable String fetch(HttpUrl url) {
+    public static @Nullable String fetch(HttpUrl url) {
         Request.Builder getRequestBuilder = new Request.Builder();
 
         getRequestBuilder.url(url);
         getRequestBuilder.addHeader("Accept", "application/json");
         getRequestBuilder.addHeader("Content-Type", "application/json");
-        Response response;
+        String responseContent;
 
         try {
-            response = client.executeRequest(
+            responseContent = HttpMethodsV2.executeRequest(
                     getRequestBuilder.build()
             );
         } catch (IOException e) {
             return null;
         }
 
-        int responseCode = response.code();
-        final String responseContent = ResponseToString.read(response);
-        if (responseContent == null) {
-            return null;
-        }
-
-        switch(responseCode) {
-            case 304:
-            case 200:
-                return responseContent;
-            default:
-                Logger.error("Couldn't connect to Kitsu, or the request was denied when fetching.");
-                break;
-        }
-
-        return null;
+        return responseContent;
     }
 }

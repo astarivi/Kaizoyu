@@ -6,21 +6,26 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
+import androidx.core.graphics.Insets;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.modal.GenericModalBottomSheet;
 import com.astarivi.kaizoyu.core.adapters.modal.ModalOption;
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
+import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.core.theme.Theme;
 import com.astarivi.kaizoyu.core.threading.workers.EpisodePeriodicWorker;
 import com.astarivi.kaizoyu.core.threading.workers.UpdatePeriodicWorker;
@@ -30,6 +35,7 @@ import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.materialswitch.MaterialSwitch;
+import com.startapp.sdk.adsbase.StartAppSDK;
 
 import java.io.File;
 
@@ -47,6 +53,58 @@ public class SettingsActivity extends AppCompatActivityTheme {
         setContentView(binding.getRoot());
 
         binding.settingsMainContainer.getLayoutTransition().setAnimateParentHierarchy(false);
+
+        binding.internalToolbar.setNavigationOnClickListener(v -> finish());
+
+        WindowCompatUtils.setWindowFullScreen(getWindow());
+
+        binding.statusBarScrim.setBackgroundColor(
+                Colors.getSemiTransparentStatusBar(
+                        binding.getRoot(),
+                        R.attr.colorSurfaceVariant
+                )
+        );
+
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
+                binding.statusBarScrim,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+
+                    ViewGroup.LayoutParams params = v.getLayoutParams();
+                    params.height = insets.top;
+                    v.setLayoutParams(params);
+
+                    return windowInsets;
+                }
+        );
+
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
+                binding.settingsScrollContainer,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+
+                    v.setPadding(
+                            0,
+                            (int) Utils.convertDpToPixel(4, this),
+                            0,
+                            insets.bottom + (int) Utils.convertDpToPixel(4, this)
+                    );
+
+                    return windowInsets;
+                }
+        );
+
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
+                binding.internalToolbar,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+
+                    v.setPadding(0, insets.top, 0, 0);
+
+                    return windowInsets;
+                }
+        );
+
         binding.developerSection.setVisibility(View.GONE);
 
         binding.openLogs.setOnClickListener(v -> {
@@ -107,6 +165,16 @@ public class SettingsActivity extends AppCompatActivityTheme {
         binding.strictModeValue.setOnCheckedChangeListener(this::triggerSave);
         binding.autoMoveValue.setOnCheckedChangeListener(this::triggerSave);
         binding.xdccValue.setOnCheckedChangeListener(this::triggerSave);
+        binding.gdprValue.setOnCheckedChangeListener((v, val) -> {
+            StartAppSDK.setUserConsent (
+                    this,
+                    "pas",
+                    System.currentTimeMillis(),
+                    val
+            );
+
+            this.saveSettings();
+        });
 
         binding.themeTrigger.setOnClickListener(v -> {
             ThemeSelectionModalBottomSheet modalBottomSheet = new ThemeSelectionModalBottomSheet(theme -> {
@@ -275,6 +343,18 @@ public class SettingsActivity extends AppCompatActivityTheme {
                 binding.strictModeValue.isChecked()
         );
 
+        config.setBooleanProperty(
+                "gdpr_consent",
+                binding.gdprValue.isChecked()
+        );
+
+        StartAppSDK.setUserConsent(
+                this,
+                "pas",
+                System.currentTimeMillis(),
+                binding.gdprValue.isChecked()
+        );
+
         config.save();
 
         Data.reloadProperties();
@@ -334,6 +414,10 @@ public class SettingsActivity extends AppCompatActivityTheme {
 
         binding.advancedSearch.setChecked(
                 config.getBooleanProperty("advanced_search", false)
+        );
+
+        binding.gdprValue.setChecked(
+                config.getBooleanProperty("gdpr_consent", false)
         );
 
         // IPv6 stuff

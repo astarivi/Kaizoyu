@@ -7,18 +7,17 @@ import androidx.annotation.StringRes;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.astarivi.kaizolib.common.network.UserHttpClient;
-import com.astarivi.kaizolib.kitsu.Kitsu;
-import com.astarivi.kaizolib.kitsu.KitsuSearchParams;
-import com.astarivi.kaizolib.kitsu.model.KitsuAnime;
+import com.astarivi.kaizolib.ann.ANN;
+import com.astarivi.kaizolib.ann.model.ANNItem;
+import com.astarivi.kaizolib.kitsuv2.model.KitsuAnime;
+import com.astarivi.kaizolib.kitsuv2.public_api.KitsuPublic;
+import com.astarivi.kaizolib.kitsuv2.public_api.SearchParams;
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.rss.RssFetcher;
+import com.astarivi.kaizoyu.core.models.anime.AnimeMapper;
+import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
 import com.astarivi.kaizoyu.databinding.FragmentHomeBinding;
 import com.astarivi.kaizoyu.gui.home.recycler.recommendations.MainCategoryContainer;
-import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
-import com.rometools.rome.feed.synd.SyndEntry;
 
 import org.tinylog.Logger;
 
@@ -26,22 +25,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import lombok.Getter;
+
 
 public class HomeViewModel extends ViewModel {
+    @Getter
     private final MutableLiveData<ArrayList<MainCategoryContainer>> containers = new MutableLiveData<>();
-    private final MutableLiveData<List<SyndEntry>> news = new MutableLiveData<>();
+    @Getter
+    private final MutableLiveData<List<ANNItem>> news = new MutableLiveData<>();
     private Future<?> reloadFuture = null;
+    private Future<?> rssFuture = null;
 
-    public MutableLiveData<ArrayList<MainCategoryContainer>> getContainers() {
-        return containers;
-    }
-
-    public MutableLiveData<List<SyndEntry>> getNews() {
-        return news;
-    }
-
-    public void reloadHome(FragmentHomeBinding binding) {
-        if (reloadFuture != null && !reloadFuture.isDone()) return;
+    public boolean reloadHome(FragmentHomeBinding binding) {
+        if (reloadFuture != null && !reloadFuture.isDone()) return false;
+        if (rssFuture != null && !rssFuture.isDone()) return false;
         binding.newsRecycler.setVisibility(View.INVISIBLE);
         binding.itemsLayout.setVisibility(View.INVISIBLE);
         binding.loadingBar.setVisibility(View.VISIBLE);
@@ -52,29 +49,28 @@ public class HomeViewModel extends ViewModel {
         containers.postValue(new ArrayList<>());
 
         fetchHome();
+
+        return true;
     }
 
     private void fetchHome() {
+        rssFuture = Threading.instant(() -> {
+            try {
+                news.postValue(
+                        ANN.getANNFeed()
+                );
+            } catch (Exception e) {
+                news.postValue(null);
+                Logger.error(e);
+            }
+        });
+
         reloadFuture = Threading.submitTask(
                 Threading.TASK.INSTANT,
                 () -> {
-                    UserHttpClient httpClient = Data.getUserHttpClient();
-
-                    try {
-                        news.postValue(
-                                RssFetcher.getANNFeed()
-                        );
-                    } catch (Exception e) {
-                        news.postValue(null);
-                        Logger.error(e);
-                    }
-
-                    Kitsu kitsu = new Kitsu(httpClient);
-
                     fetchCategory(
-                            kitsu,
                             R.string.popular_anime,
-                            new KitsuSearchParams().
+                            new SearchParams().
                                     setLimit(
                                             15
                                     ).
@@ -85,9 +81,8 @@ public class HomeViewModel extends ViewModel {
                     );
 
                     fetchCategory(
-                            kitsu,
                             R.string.home_beloved,
-                            new KitsuSearchParams().
+                            new SearchParams().
                                     setLimit(
                                             15
                                     ).
@@ -102,9 +97,8 @@ public class HomeViewModel extends ViewModel {
                     );
 
                     fetchCategory(
-                            kitsu,
                             R.string.home_seinen,
-                            new KitsuSearchParams().
+                            new SearchParams().
                                     setLimit(
                                             15
                                     ).
@@ -123,9 +117,8 @@ public class HomeViewModel extends ViewModel {
                     );
 
                     fetchCategory(
-                            kitsu,
                             R.string.popular_airing,
-                            new KitsuSearchParams().
+                            new SearchParams().
                                     setLimit(
                                             15
                                     ).
@@ -144,9 +137,8 @@ public class HomeViewModel extends ViewModel {
                     );
 
                     fetchCategory(
-                            kitsu,
                             R.string.popular_upcoming,
-                            new KitsuSearchParams().
+                            new SearchParams().
                                     setLimit(
                                             15
                                     ).
@@ -165,9 +157,8 @@ public class HomeViewModel extends ViewModel {
                     );
 
                     fetchCategory(
-                            kitsu,
                             R.string.trash_anime,
-                            new KitsuSearchParams().
+                            new SearchParams().
                                     setLimit(
                                             15
                                     ).
@@ -190,9 +181,8 @@ public class HomeViewModel extends ViewModel {
                     );
 
                     fetchCategory(
-                            kitsu,
                             R.string.shoujo_anime,
-                            new KitsuSearchParams().
+                            new SearchParams().
                                     setLimit(
                                             15
                                     ).
@@ -215,9 +205,8 @@ public class HomeViewModel extends ViewModel {
                     );
 
                     fetchCategory(
-                            kitsu,
                             R.string.shounen_anime,
-                            new KitsuSearchParams().
+                            new SearchParams().
                                     setLimit(
                                             20
                                     ).
@@ -244,19 +233,20 @@ public class HomeViewModel extends ViewModel {
                     if (items == null || items.isEmpty()) {
                         containers.postValue(null);
                     }
-                }
-        );
+        });
     }
 
-    private void fetchCategory(Kitsu kitsu, @StringRes int titleResourceId, KitsuSearchParams params) {
+    private void fetchCategory(@StringRes int titleResourceId, SearchParams query) {
         List<KitsuAnime> anime;
         try {
-            anime = kitsu.searchAnime(params);
-        } catch (Exception ignored) {
+            anime = KitsuPublic.advancedSearch(query);
+        } catch (Exception e) {
+            Logger.debug(e);
             return;
         }
 
-        List<Anime> fetchedAnime = new Anime.BulkAnimeBuilder(anime).build();
+        List<RemoteAnime> fetchedAnime = AnimeMapper.bulkRemoteFromKitsu(anime);
+        // Free it up, although, this is mostly useless.
         anime.clear();
         addItemToMutable(new MainCategoryContainer(
                 titleResourceId,

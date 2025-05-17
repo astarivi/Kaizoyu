@@ -13,6 +13,8 @@ import com.astarivi.kaizoyu.databinding.ItemAdvancedBinding;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Setter;
+
 
 public class AdvancedRecyclerAdapter extends RecyclerView.Adapter<AdvancedRecyclerAdapter.AdvancedResultViewHolder> {
     private final ArrayList<Result> items = new ArrayList<>();
@@ -69,7 +71,9 @@ public class AdvancedRecyclerAdapter extends RecyclerView.Adapter<AdvancedRecycl
 
     public static class AdvancedResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final ItemAdvancedBinding binding;
+        @Setter
         private ItemClickListener itemClickListener;
+        @Setter
         private Result result;
 
         public AdvancedResultViewHolder(@NonNull ItemAdvancedBinding binding) {
@@ -79,19 +83,11 @@ public class AdvancedRecyclerAdapter extends RecyclerView.Adapter<AdvancedRecycl
             binding.getRoot().setOnClickListener(this);
         }
 
-        public void setItemClickListener(ItemClickListener itemClickListener) {
-            this.itemClickListener = itemClickListener;
-        }
-
         @Override
         public void onClick(View v) {
             if (itemClickListener == null) return;
 
             itemClickListener.onItemClick(result);
-        }
-
-        public void setResult(Result result) {
-            this.result = result;
         }
     }
 

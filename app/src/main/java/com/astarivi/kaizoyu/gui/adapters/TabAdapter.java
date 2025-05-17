@@ -19,16 +19,12 @@ public class TabAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch(position) {
-            case 0:
-                return new HomeFragment();
-            case 1:
-                return new ScheduleFragment();
-            case 2:
-                return new LibraryFragment();
-            default:
-                return new MoreFragment();
-        }
+        return switch (position) {
+            case 0 -> new HomeFragment();
+            case 1 -> new ScheduleFragment();
+            case 2 -> new LibraryFragment();
+            default -> new MoreFragment();
+        };
     }
 
     @Override

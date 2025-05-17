@@ -34,7 +34,7 @@ public class KitsuTest {
 
     @BeforeAll
     static void setup() {
-        userHttpClient = new UserHttpClient();
+        userHttpClient = UserHttpClient.getInstance();
         kitsu = new Kitsu(userHttpClient);
         relations = new KitsuRelations(userHttpClient);
     }

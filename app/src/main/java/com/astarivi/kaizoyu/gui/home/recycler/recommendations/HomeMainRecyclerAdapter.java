@@ -4,9 +4,11 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Consumer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
 import com.astarivi.kaizoyu.databinding.FragmentHomeItemBinding;
 import com.astarivi.kaizoyu.utils.Data;
 import com.google.android.material.carousel.CarouselLayoutManager;
@@ -16,10 +18,10 @@ import java.util.ArrayList;
 
 public class HomeMainRecyclerAdapter extends RecyclerView.Adapter<HomeMainRecyclerAdapter.HomeMainViewHolder> {
     private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
-    private final HomeRecyclerAdapter.ItemClickListener itemClickListener;
+    private final Consumer<RemoteAnime> itemClickListener;
     private final ArrayList<MainCategoryContainer> items = new ArrayList<>();
 
-    public HomeMainRecyclerAdapter(HomeRecyclerAdapter.ItemClickListener itemClickListener) {
+    public HomeMainRecyclerAdapter(Consumer<RemoteAnime> itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
@@ -90,7 +92,7 @@ public class HomeMainRecyclerAdapter extends RecyclerView.Adapter<HomeMainRecycl
         notifyDataSetChanged();
     }
 
-    static class HomeMainViewHolder extends RecyclerView.ViewHolder {
+    public static class HomeMainViewHolder extends RecyclerView.ViewHolder {
         public FragmentHomeItemBinding binding;
 
         public HomeMainViewHolder(@NonNull FragmentHomeItemBinding binding) {

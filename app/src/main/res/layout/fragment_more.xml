@@ -164,19 +164,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
+            android:layout_marginBottom="16dp"
             android:orientation="horizontal"
             android:layout_gravity="center"
         >
-            <ImageView
-                android:id="@+id/discord_button"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                app:srcCompat="@drawable/ic_settings_discord"
-                app:tint="?attr/colorPrimary"
-                android:layout_marginEnd="14dp"
-                android:contentDescription="Discord icon"
-                tools:ignore="HardcodedText"
-                />
             <ImageView
                 android:id="@+id/github_button"
                 android:layout_width="38dp"
@@ -186,26 +177,23 @@
                 android:layout_marginEnd="8dp"
                 android:contentDescription="GitHub icon"
                 tools:ignore="HardcodedText"
-                />
+            />
             <ImageView
-                android:id="@+id/donate_button"
+                android:id="@+id/discord_button"
                 android:layout_width="38dp"
                 android:layout_height="38dp"
-                app:srcCompat="@drawable/ic_settings_donate"
+                app:srcCompat="@drawable/ic_settings_discord"
                 app:tint="?attr/colorPrimary"
                 android:layout_marginEnd="8dp"
-                android:contentDescription="Donate icon"
+                android:contentDescription="Discord icon"
                 tools:ignore="HardcodedText"
-                />
-            <ImageView
-                android:id="@+id/homepage_button"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                app:srcCompat="@drawable/ic_main_home_alt"
-                app:tint="?attr/colorPrimary"
-                android:contentDescription="Homepage icon"
-                tools:ignore="HardcodedText"
-                />
+            />
         </LinearLayout>
+
+        <com.startapp.sdk.ads.banner.Banner
+            android:id="@+id/startAppBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

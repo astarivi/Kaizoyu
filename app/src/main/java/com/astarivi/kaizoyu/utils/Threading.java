@@ -30,6 +30,14 @@ public class Threading {
         }
     }
 
+    public static Future<?> database(Runnable task) {
+        return ThreadingAssistant.getInstance().submitToDatabaseThread(task);
+    }
+
+    public static Future<?> instant(Runnable task) {
+        return ThreadingAssistant.getInstance().submitToInstantThread(task);
+    }
+
     public static ScheduledFuture<?> submitScheduledTask(@NotNull Runnable task, long delay, @NotNull TimeUnit timeUnit) {
         return ThreadingAssistant.getInstance().scheduleToPlayerThread(task, delay, timeUnit);
     }

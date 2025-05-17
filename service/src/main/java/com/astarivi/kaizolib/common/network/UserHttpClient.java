@@ -3,19 +3,22 @@ package com.astarivi.kaizolib.common.network;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 import java.io.IOException;
 
 
 public class UserHttpClient {
+    private static volatile UserHttpClient _instance = null;
     private final OkHttpClient httpClient;
 
-    public UserHttpClient(){
+    private UserHttpClient(){
         httpClient = new OkHttpClient();
     }
 
-    public UserHttpClient(OkHttpClient httpClient){
+    private UserHttpClient(OkHttpClient httpClient){
         this.httpClient = httpClient;
     }
 
@@ -25,6 +28,15 @@ public class UserHttpClient {
 
     public OkHttpClient getHttpClient(){
         return httpClient;
+    }
+
+    public static @NotNull UserHttpClient getInstance() {
+        if (_instance == null) {
+            synchronized (UserHttpClient.class) {
+                if (_instance == null) _instance = new UserHttpClient();
+            }
+        }
+        return _instance;
     }
 
     public void close() {

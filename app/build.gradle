@@ -11,21 +11,20 @@ repositories {
 }
 
 android {
-    compileSdk 33
-    buildToolsVersion = "33.0.1"
+    compileSdk 36
 
     packagingOptions {
         resources {
-            excludes += ['META-INF/DEPENDENCIES', 'mozilla/public-suffix-list.txt', 'META-INF/LICENSE', 'META-INF/LICENSE.txt', 'META-INF/license.txt', 'META-INF/NOTICE', 'META-INF/NOTICE.txt', 'META-INF/notice.txt', 'META-INF/ASL2.0', 'META-INF/*.kotlin_module']
+            excludes += ['META-INF/DEPENDENCIES', 'mozilla/public-suffix-list.txt', 'META-INF/LICENSE', 'META-INF/LICENSE.md', 'META-INF/NOTICE.md','META-INF/LICENSE.txt', 'META-INF/license.txt', 'META-INF/NOTICE', 'META-INF/NOTICE.txt', 'META-INF/notice.txt', 'META-INF/ASL2.0', 'META-INF/*.kotlin_module']
         }
     }
 
     defaultConfig {
         applicationId "com.astarivi.kaizoyu"
         minSdkVersion 23
-        targetSdkVersion 33
-        versionCode 10
-        versionName "0.9"
+        targetSdkVersion 36
+        versionCode 11
+        versionName "1.0"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -78,8 +77,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
         coreLibraryDesugaringEnabled true
     }
 
@@ -106,52 +105,55 @@ dependencies {
 
     // External libraries (third party)
     // Guava solves a dependency issue between ACRA.ch and work-runtime
-    implementation 'com.google.guava:guava:32.1.2-android'
+    implementation 'com.google.guava:guava:33.1.0-android'
     implementation 'com.github.WrichikBasu:AudioFocusController:3.0.2'
-    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.1.0'
     implementation 'com.github.astarivi:Zparc:1.1'
-    //noinspection GradleDependency
+
+    //noinspection NewerVersionAvailable,GradleDependency
     implementation ('org.videolan.android:libvlc-all:4.0.0-eap11') {
         because 'EAP12 HWA chroma blending is broken (RGBA -> ANOP). Subtitles will not work'
     }
-    implementation 'com.airbnb.android:lottie:6.1.0'
+
+    implementation 'com.airbnb.android:lottie:6.6.6'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'com.github.bumptech.glide:recyclerview-integration:4.16.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.16.0'
-    implementation 'org.jetbrains:annotations:24.0.1'
-    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0'
+    implementation 'org.jetbrains:annotations:26.0.2'
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.1'
     implementation 'com.rometools:rome:2.1.0'
 
     // Lombok
     //noinspection AnnotationProcessorOnCompilePath
-    compileOnly 'org.projectlombok:lombok:1.18.28'
-    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    compileOnly 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
     //noinspection AnnotationProcessorOnCompilePath
-    testCompileOnly 'org.projectlombok:lombok:1.18.28'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+    testCompileOnly 'org.projectlombok:lombok:1.18.38'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
 
     // Analytics
-    implementation 'ch.acra:acra-http:5.11.1'
+    implementation 'ch.acra:acra-http:5.12.0'
+    // Ads
+    implementation 'com.startapp:inapp-sdk:5.2.0'
 
     // Android X
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.work:work-runtime:2.8.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.6.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata:2.6.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'androidx.work:work-runtime:2.10.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.9.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.9.0'
     implementation 'androidx.palette:palette:1.0.0'
-    implementation 'androidx.room:room-runtime:2.5.2'
-    annotationProcessor 'androidx.room:room-compiler:2.5.2'
+    implementation 'androidx.room:room-runtime:2.7.1'
+    annotationProcessor 'androidx.room:room-compiler:2.7.1'
 
     // Logger
-    implementation 'org.tinylog:tinylog-api:2.6.2'
-    implementation 'org.tinylog:tinylog-impl:2.6.2'
-    runtimeOnly 'org.tinylog:slf4j-tinylog:2.6.2'
+    implementation 'org.tinylog:tinylog-api:2.7.0'
+    implementation 'org.tinylog:tinylog-impl:2.7.0'
+    runtimeOnly 'org.tinylog:slf4j-tinylog:2.7.0'
 
     // Jackson
     // Don't update to 2.14 as Android minSdk support changes.
-
     //noinspection GradleDependency
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.5'
     //noinspection GradleDependency
@@ -160,11 +162,11 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.5'
 
     // HTTP
-    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 
     // Google others
-    implementation 'com.google.android.material:material:1.9.0'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+    implementation 'com.google.android.material:material:1.12.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
     // Testing? What's that
 }

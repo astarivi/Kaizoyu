@@ -16,7 +16,7 @@ import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.updater.UpdaterActivity;
 import com.astarivi.kaizoyu.utils.Data;
 
-import java.text.ParseException;
+import java.io.IOException;
 
 
 public class UpdatePeriodicWorker extends Worker {
@@ -38,19 +38,17 @@ public class UpdatePeriodicWorker extends Worker {
 
         Context context = getApplicationContext();
 
-        UpdateManager updateManager = new UpdateManager();
-
-        UpdateManager.LatestUpdate latestUpdate;
+        UpdateManager.AppUpdate latestUpdate;
         try {
-            latestUpdate = updateManager.getLatestUpdate();
-        } catch (ParseException e) {
+            latestUpdate = UpdateManager.getAppUpdate();
+        } catch (IOException e) {
             return Result.failure();
         }
 
         String versionToSkip = Data.getProperties(Data.CONFIGURATION.APP)
                 .getProperty("skip_version", "false");
 
-        if (latestUpdate == null || versionToSkip.equals(latestUpdate.version))
+        if (latestUpdate == null || versionToSkip.equals(latestUpdate.getVersion()))
             return Result.success();
 
         Intent intent = new Intent();
@@ -62,7 +60,7 @@ public class UpdatePeriodicWorker extends Worker {
                 .setSmallIcon(R.drawable.ic_stat_name)
                 .setContentTitle(context.getString(R.string.updates_not_title))
                 .setContentText(
-                        String.format(context.getString(R.string.updates_not_desc), latestUpdate.version)
+                        String.format(context.getString(R.string.updates_not_desc), latestUpdate.getVersion())
                 )
                 .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setAutoCancel(true)

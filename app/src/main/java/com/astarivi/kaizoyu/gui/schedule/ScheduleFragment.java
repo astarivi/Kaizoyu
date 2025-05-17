@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,10 +15,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.astarivi.kaizolib.anilist.exception.AniListException;
 import com.astarivi.kaizoyu.BuildConfig;
+import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.tab.TabFragment;
-import com.astarivi.kaizoyu.core.models.base.ModelType;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.databinding.FragmentScheduleBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
@@ -29,6 +31,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import org.tinylog.Logger;
 
+import java.io.IOException;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 
@@ -62,8 +65,7 @@ public class ScheduleFragment extends TabFragment {
 
                     if (getContext() == null) return windowInsets;
 
-                    if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-                        ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+                    if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams p) {
                         p.setMargins(
                                 0,
                                 0,
@@ -145,7 +147,7 @@ public class ScheduleFragment extends TabFragment {
             Intent intent = new Intent();
             intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
             intent.putExtra("anime", anime);
-            intent.putExtra("type", ModelType.Anime.SEASONAL.name());
+            intent.putExtra("type", anime.getType().name());
             startActivity(intent);
         });
 
@@ -178,7 +180,7 @@ public class ScheduleFragment extends TabFragment {
             binding.scheduleAnimeRecycler.setVisibility(View.VISIBLE);
 
             manager.scrollToPosition(0);
-            adapter.replaceData(seasonalAnimeList);
+            adapter.replaceData(new ArrayList<>(seasonalAnimeList));
             adapter.notifyDataSetChanged();
         });
 
@@ -191,6 +193,32 @@ public class ScheduleFragment extends TabFragment {
 
             displaySchedule(daysOfWeek);
             binding.dowTabs.setVisibility(View.VISIBLE);
+        });
+
+        viewModel.getProcessException().observe(getViewLifecycleOwner(), exception -> {
+            if (exception instanceof AniListException) {
+                Toast.makeText(
+                        getActivity(),
+                        R.string.parsing_error,
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
+
+            if (exception instanceof IOException) {
+                Toast.makeText(
+                        getActivity(),
+                        R.string.network_connection_error,
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
+
+            Toast.makeText(
+                    getActivity(),
+                    R.string.no_results_error,
+                    Toast.LENGTH_SHORT
+            ).show();
         });
 
         viewModel.reloadSchedule(binding);

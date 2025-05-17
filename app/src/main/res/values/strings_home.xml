@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="popular_anime">All-time popular</string>
+    <string name="popular_anime">Popular</string>
+    <string name="trending_anime">Trending</string>
+    <string name="best_score_anime">Highest rated</string>
     <string name="home_beloved">Beloved and popular</string>
-    <string name="home_seinen">Best for mature audiences</string>
+    <string name="home_seinen">Best seinen</string>
     <string name="popular_airing">Most popular currently airing</string>
     <string name="popular_upcoming">Most anticipated</string>
     <string name="trash_anime">Dumpster fire</string>
-    <string name="shoujo_anime">Best for feminine audiences</string>
-    <string name="shounen_anime">Best for young audiences</string>
+    <string name="shoujo_anime">Best shojo</string>
+    <string name="shounen_anime">Best shonen</string>
     <string name="first_welcome">Welcome to Kaizoyu!</string>
     <string name="first_welcome_desc">It seems it\'s your first time with us. Before we proceed, please take a minute to review the following information:</string>
     <string name="fw_privacy">Analytics &amp; Tracking</string>
@@ -26,12 +28,18 @@
     <string name="fw_pref_autofav">Would you like to save everything you watch automatically?</string>
     <string name="fw_end">That is all, thanks for your time!\nWe hope you enjoy the app.\n\nIf you experience any issues, or want to provide your valuable feedback to us, you may find our media links at the `More` tab.</string>
     <string name="fw_end_button">Let\'s go</string>
-    <string name="fw_nt_title">Enable Notifications?</string>
+    <string name="fw_nt_title">Enable notifications?</string>
     <string name="fw_nt_description">
         We use notifications to tell you about new releases from shows you\'re following, app updates, report results and more.
         \n\nDon\'t worry, our notifications will never fill your inbox with junk.
     </string>
     <string name="fw_nt_confirm">Sure</string>
     <string name="fw_nt_deny">Nope</string>
+
+    <string name="fw_ad_title">Allow third party data collection?</string>
+    <string name="fw_ad_allow">Yes, allow data collection</string>
+    <string name="fw_ad_allow_desc">Share various collected data with third party ad providers to personalize the ads you see.</string>
+    <string name="fw_ad_deny">No, don\'t share my data</string>
+    <string name="fw_ad_deny_desc">We will limit data collection, and we won\'t share your data with third parties.</string>
 
 </resources>

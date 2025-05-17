@@ -12,8 +12,9 @@ import com.astarivi.kaizoyu.KaizoyuApplication;
 import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.database.AppDatabase;
 import com.astarivi.kaizoyu.core.storage.database.migrations.Migrations;
-import com.astarivi.kaizoyu.core.storage.database.repositories.RepositoryDirectory;
+import com.astarivi.kaizoyu.core.storage.ids.AnimeIdsDatabase;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
+import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 
 import org.acra.ACRA;
@@ -34,8 +35,7 @@ public class PersistenceRepository {
     private final ExtendedProperties appConfiguration;
     private final ExtendedProperties botsConfiguration;
     private final AppDatabase database;
-    private final RepositoryDirectory repositoryDirectory;
-    private final UserHttpClient httpClient = new UserHttpClient();
+    private final UserHttpClient httpClient = UserHttpClient.getInstance();
     private final boolean isDeviceLowSpec;
 
     private PersistenceRepository() {
@@ -71,7 +71,6 @@ public class PersistenceRepository {
         ).build(
         );
 
-        repositoryDirectory = new RepositoryDirectory(database);
         boolean areAnalyticsEnabled = appConfiguration.getBooleanProperty("analytics", false);
 
         AnalyticsClient.isEnabled = areAnalyticsEnabled;
@@ -89,6 +88,9 @@ public class PersistenceRepository {
         );
 
         Logger.info("Starting logging session");
+
+        // Check for ids database updates
+        Threading.instant(AnimeIdsDatabase::tryUpdate);
 
         applyConfigurationChanges();
     }

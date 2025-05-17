@@ -1,286 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:clipToPadding="false"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true"
+    tools:context=".gui.more.settings.SettingsActivity"
 >
-    <LinearLayout
-        android:id="@+id/settingsMainContainer"
-        android:orientation="vertical"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:id="@+id/settingsScrollContainer"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
     >
-        <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="?attr/materialCardViewFilledStyle"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                app:cardBackgroundColor="?attr/colorSecondaryContainer"
+        <LinearLayout
+            android:id="@+id/settingsMainContainer"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
         >
-            <LinearLayout
-                    android:orientation="vertical"
+            <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:padding="18dp"
+                    android:layout_height="wrap_content"
+                    style="?attr/materialCardViewFilledStyle"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="16dp"
+                    app:cardBackgroundColor="?attr/colorSecondaryContainer"
             >
-                <TextView
-                        android:text="@string/fragment_settings_appearance"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:fontFamily="@font/lato_bold"
-                        android:textSize="20sp"
-                />
                 <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:padding="18dp"
+                >
+                    <TextView
+                            android:text="@string/fragment_settings_appearance"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:fontFamily="@font/lato_bold"
+                            android:textSize="20sp"
+                    />
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/nightThemeTrigger"
+                    >
+
+                        <TextView
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:textSize="17sp"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:text="@string/night_theme"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                        />
+
+                        <TextView
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:textSize="13sp"
+                                android:textColor="?attr/colorPrimary"
+                                android:text="@string/night_theme_default"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/nightThemeValue"
+                                android:fontFamily="@font/lato_regular"
+                        />
+                    </LinearLayout>
+
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="6dp"
+                    />
+
+                    <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:gravity="center_vertical"
-                        android:id="@+id/nightThemeTrigger"
-                >
+                        android:id="@+id/themeTrigger"
+                    >
 
-                    <TextView
+                        <TextView
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:textSize="17sp"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:text="@string/night_theme"
+                            android:text="@string/app_theme"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                    />
+                        />
 
-                    <TextView
+                        <TextView
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:textSize="13sp"
                             android:textColor="?attr/colorPrimary"
-                            android:text="@string/night_theme_default"
+                            android:text="@string/theme_high_contrast"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/nightThemeValue"
+                            android:id="@+id/themeValue"
                             android:fontFamily="@font/lato_regular"
-                    />
+                            />
+                    </LinearLayout>
+
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-                <View
-                    style="@style/Divider"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginBottom="6dp"
-                />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:gravity="center_vertical"
-                    android:id="@+id/themeTrigger"
-                >
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/app_theme"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                    />
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorPrimary"
-                        android:text="@string/theme_high_contrast"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/themeValue"
-                        android:fontFamily="@font/lato_regular"
-                        />
-                </LinearLayout>
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="?attr/materialCardViewFilledStyle"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="?attr/colorSecondaryContainer"
-            >
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:padding="18dp"
-                >
-                <TextView
-                    android:text="@string/qol_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:fontFamily="@font/lato_bold"
-                    android:textSize="20sp"
-                    />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    >
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/autofavorite_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="42dp"
-                        android:id="@+id/autoFavoriteValue"
-                        android:fontFamily="@font/lato_regular"
-                        />
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="90dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/autofavorite_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                        />
-                </LinearLayout>
-
-                <View
-                    style="@style/Divider"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    >
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/automove_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="42dp"
-                        android:fontFamily="@font/lato_regular"
-                        android:id="@+id/autoMoveValue"
-                    />
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="90dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/automove_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                    />
-                </LinearLayout>
-
-                <View
-                    style="@style/Divider"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    >
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/preferenglish_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="42dp"
-                        android:id="@+id/preferEnglishValue"
-                        android:fontFamily="@font/lato_regular"
-                        android:checked="true"
-                        />
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="90dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/preferenglish_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                        />
-                </LinearLayout>
-
-                <View
-                    style="@style/Divider"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    >
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/advanced_search_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="42dp"
-                        android:id="@+id/advanced_search"
-                        android:fontFamily="@font/lato_regular"
-                        android:checked="false"
-                        />
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="90dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/advanced_search_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                        />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="?attr/materialCardViewFilledStyle"
@@ -288,130 +130,431 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="16dp"
                 app:cardBackgroundColor="?attr/colorSecondaryContainer"
-        >
-            <LinearLayout
+                >
+                <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:padding="18dp"
-            >
-                <TextView
-                        android:text="@string/fragment_settings_download"
+                    >
+                    <TextView
+                        android:text="@string/qol_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
                         android:fontFamily="@font/lato_bold"
                         android:textSize="20sp"
-                />
+                        />
 
-                <LinearLayout
+                    <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                >
-                    <com.google.android.material.materialswitch.MaterialSwitch
+                        >
+                        <com.google.android.material.materialswitch.MaterialSwitch
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:textSize="17sp"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:text="@string/ipv6_sources"
+                            android:text="@string/autofavorite_title"
                             android:layout_width="match_parent"
                             android:layout_height="42dp"
-                            android:id="@+id/ipv6SorcesValue"
+                            android:id="@+id/autoFavoriteValue"
                             android:fontFamily="@font/lato_regular"
-                    />
-                    <TextView
+                            />
+                        <TextView
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="90dp"
                             android:textSize="13sp"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:text="@string/ipv6_sources_description"
+                            android:text="@string/autofavorite_description"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/textView5"
                             android:fontFamily="@font/lato_regular"
-                    />
-                </LinearLayout>
+                            />
+                    </LinearLayout>
 
-                <View
-                    style="@style/Divider"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                >
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/strict_mode_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="42dp"
-                        android:id="@+id/strictModeValue"
-                        android:fontFamily="@font/lato_regular"
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="10dp"
                     />
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="90dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/strict_mode_description"
+
+                    <LinearLayout
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                    />
-                </LinearLayout>
+                        android:gravity="center_vertical"
+                        >
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="17sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/automove_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="42dp"
+                            android:fontFamily="@font/lato_regular"
+                            android:id="@+id/autoMoveValue"
+                        />
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="90dp"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/automove_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
+                        />
+                    </LinearLayout>
 
-                <View
-                    style="@style/Divider"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                >
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/xdcc_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="42dp"
-                        android:id="@+id/xdccValue"
-                        android:fontFamily="@font/lato_regular"
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="10dp"
                     />
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="90dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/xdcc_description"
+
+                    <LinearLayout
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                    />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                        android:gravity="center_vertical"
+                        >
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="17sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/preferenglish_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="42dp"
+                            android:id="@+id/preferEnglishValue"
+                            android:fontFamily="@font/lato_regular"
+                            android:checked="true"
+                            />
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="90dp"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/preferenglish_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
+                            />
+                    </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="10dp"
+                    />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        >
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="17sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/advanced_search_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="42dp"
+                            android:id="@+id/advanced_search"
+                            android:fontFamily="@font/lato_regular"
+                            android:checked="false"
+                            />
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="90dp"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/advanced_search_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?attr/materialCardViewFilledStyle"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="16dp"
+                    app:cardBackgroundColor="?attr/colorSecondaryContainer"
+            >
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:padding="18dp"
+                >
+                    <TextView
+                            android:text="@string/fragment_settings_download"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:fontFamily="@font/lato_bold"
+                            android:textSize="20sp"
+                    />
+
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                    >
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:textSize="17sp"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:text="@string/ipv6_sources"
+                                android:layout_width="match_parent"
+                                android:layout_height="42dp"
+                                android:id="@+id/ipv6SorcesValue"
+                                android:fontFamily="@font/lato_regular"
+                        />
+                        <TextView
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="90dp"
+                                android:textSize="13sp"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:text="@string/ipv6_sources_description"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/textView5"
+                                android:fontFamily="@font/lato_regular"
+                        />
+                    </LinearLayout>
+
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="10dp"
+                    />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                    >
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="17sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/strict_mode_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="42dp"
+                            android:id="@+id/strictModeValue"
+                            android:fontFamily="@font/lato_regular"
+                        />
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="90dp"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/strict_mode_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
+                        />
+                    </LinearLayout>
+
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="10dp"
+                    />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                    >
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="17sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/xdcc_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="42dp"
+                            android:id="@+id/xdccValue"
+                            android:fontFamily="@font/lato_regular"
+                        />
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="90dp"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/xdcc_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
+                        />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?attr/materialCardViewFilledStyle"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="16dp"
+                    app:cardBackgroundColor="?attr/colorSecondaryContainer"
+            >
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:padding="18dp"
+                >
+                    <TextView
+                        android:id="@+id/miscTitle"
+                        android:text="@string/fragment_settings_misc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:fontFamily="@font/lato_bold"
+                        android:textSize="20sp"
+                    />
+
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                    >
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:textSize="17sp"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:text="@string/analytics"
+                                android:layout_width="match_parent"
+                                android:layout_height="42dp"
+                                android:id="@+id/analyticsValue"
+                                android:fontFamily="@font/lato_regular"
+                                android:checked="false"/>
+                        <TextView
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="90dp"
+                                android:textSize="13sp"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:text="@string/analytics_description"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/lato_regular"
+                        />
+                    </LinearLayout>
+
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="10dp"
+                        />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        >
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="17sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/gdpr_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="42dp"
+                            android:id="@+id/gdprValue"
+                            android:fontFamily="@font/lato_regular"
+                            />
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="90dp"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/grp_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
+                            />
+                    </LinearLayout>
+
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="10dp"
+                    />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        >
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="17sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/autoupdate"
+                            android:layout_width="match_parent"
+                            android:layout_height="42dp"
+                            android:id="@+id/autoUpdateValue"
+                            android:fontFamily="@font/lato_regular"
+                            android:checked="false"/>
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="90dp"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/autoupdate_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="?attr/materialCardViewFilledStyle"
@@ -419,227 +562,157 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="16dp"
                 app:cardBackgroundColor="?attr/colorSecondaryContainer"
-        >
-            <LinearLayout
+                android:id="@+id/developerSection"
+            >
+                <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:padding="18dp"
-            >
-                <TextView
-                    android:id="@+id/miscTitle"
-                    android:text="@string/fragment_settings_misc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:fontFamily="@font/lato_bold"
-                    android:textSize="20sp"
-                />
+                >
+                    <TextView
+                        android:text="@string/section_dev"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:fontFamily="@font/lato_bold"
+                        android:textSize="20sp"
+                    />
 
-                <LinearLayout
+                    <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                >
-                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/openLogs"
+                    >
+
+                        <TextView
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:textSize="17sp"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:text="@string/analytics"
-                            android:layout_width="match_parent"
-                            android:layout_height="42dp"
-                            android:id="@+id/analyticsValue"
-                            android:fontFamily="@font/lato_regular"
-                            android:checked="false"/>
-                    <TextView
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="90dp"
-                            android:textSize="13sp"
-                            android:textColor="?attr/colorOnSurfaceVariant"
-                            android:text="@string/analytics_description"
+                            android:text="@string/dev_logs_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/lato_regular"
+                        />
+
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/dev_logs_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
+                        />
+                    </LinearLayout>
+
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"
                     />
-                </LinearLayout>
 
-                <View
-                    style="@style/Divider"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    >
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/autoupdate"
-                        android:layout_width="match_parent"
-                        android:layout_height="42dp"
-                        android:id="@+id/autoUpdateValue"
-                        android:fontFamily="@font/lato_regular"
-                        android:checked="false"/>
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="90dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/autoupdate_description"
+                    <LinearLayout
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
+                        android:gravity="center_vertical"
+                        android:id="@+id/testTask"
+                    >
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="17sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/dev_test_task"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
+                            />
+
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/dev_test_task_desc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
                         />
+                    </LinearLayout>
+
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"
+                    />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:id="@+id/hideDevMenu"
+                    >
+
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="17sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/dev_hide_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
+                        />
+
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/dev_hide_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular"
+                        />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+    <View
+        android:id="@+id/status_bar_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_gravity="top"
+        android:background="@color/black"
+        />
 
-
-        <com.google.android.material.card.MaterialCardView
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/externalToolbar"
+    >
+        <com.google.android.material.appbar.MaterialToolbar
+            app:layout_scrollFlags="scroll|enterAlways"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="?attr/materialCardViewFilledStyle"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="?attr/colorSecondaryContainer"
-            android:id="@+id/developerSection"
-        >
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:padding="18dp"
-            >
-                <TextView
-                    android:text="@string/section_dev"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:fontFamily="@font/lato_bold"
-                    android:textSize="20sp"
-                />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:id="@+id/openLogs"
-                >
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/dev_logs_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                    />
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/dev_logs_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                    />
-                </LinearLayout>
-
-                <View
-                    style="@style/Divider"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="12dp"
-                />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:id="@+id/testTask"
-                >
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/dev_test_task"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                        />
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/dev_test_task_desc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                    />
-                </LinearLayout>
-
-                <View
-                    style="@style/Divider"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="12dp"
-                />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:id="@+id/hideDevMenu"
-                >
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="17sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/dev_hide_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                    />
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:textSize="13sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/dev_hide_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lato_regular"
-                    />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
-</ScrollView>
+            app:navigationIcon="@drawable/ic_back_new_small"
+            android:id="@+id/internalToolbar"
+            app:titleTextColor="?attr/colorOnSurfaceVariant"
+            android:background="?attr/colorSurfaceVariant"
+            app:title="Settings"
+        />
+    </com.google.android.material.appbar.AppBarLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

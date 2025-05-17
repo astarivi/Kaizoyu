@@ -7,11 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Consumer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.models.base.ImageSize;
+import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
 import com.astarivi.kaizoyu.databinding.FragmentHomeAnimeBinding;
 import com.astarivi.kaizoyu.utils.Data;
 import com.bumptech.glide.Glide;
@@ -22,10 +23,13 @@ import org.tinylog.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Setter;
+
 
 public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapter.HomeAnimeViewHolder> {
-    private ItemClickListener itemClickListener;
-    private final List<Anime> items = new ArrayList<>();
+    @Setter
+    private Consumer<RemoteAnime> itemClickListener;
+    private final List<RemoteAnime> items = new ArrayList<>();
 
     @NonNull
     @Override
@@ -41,9 +45,9 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
 
     @Override
     public void onBindViewHolder(@NonNull HomeAnimeViewHolder holder, int position) {
-        final Anime anime = getEpisodeFromPosition(position);
+        final RemoteAnime anime = getEpisodeFromPosition(position);
         holder.setAnime(anime);
-        holder.binding.posterHomeTitle.setText(anime.getDisplayTitle());
+        holder.binding.posterHomeTitle.setText(anime.getPreferredTitle());
         holder.fetchImages();
 
         holder.binding.getRoot().setOnMaskChangedListener(maskRect -> {
@@ -70,13 +74,9 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
         notifyItemRangeChanged(0, totalSize);
     }
 
-    public void replaceData(List<Anime> anime) {
+    public void replaceData(List<RemoteAnime> anime) {
         items.clear();
         items.addAll(anime);
-    }
-
-    public void setItemClickListener(ItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
     }
 
     @Override
@@ -84,13 +84,13 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
         return items.size();
     }
 
-    private Anime getEpisodeFromPosition(int position) {
+    private RemoteAnime getEpisodeFromPosition(int position) {
         return items.get(position);
     }
 
     public class HomeAnimeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final FragmentHomeAnimeBinding binding;
-        private Anime anime;
+        private RemoteAnime anime;
         private boolean isCoverVisible = false;
 
         public HomeAnimeViewHolder(@NonNull FragmentHomeAnimeBinding binding) {
@@ -106,10 +106,10 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
                 return;
             }
 
-            itemClickListener.onItemClick(this.anime);
+            itemClickListener.accept(this.anime);
         }
 
-        public void setAnime(Anime anime) {
+        public void setAnime(RemoteAnime anime) {
             this.anime = anime;
             isCoverVisible = false;
         }
@@ -119,7 +119,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
                 if (isCoverVisible) return;
                 isCoverVisible = true;
                 Glide.with(binding.getRoot().getContext())
-                        .load(anime.getThumbnailUrl(false))
+                        .load(anime.getImageURL(AnimeBasicInfo.ImageType.POSTER, AnimeBasicInfo.ImageSize.TINY))
                         .skipMemoryCache(true)
                         .placeholder(R.drawable.ic_general_placeholder)
                         .into(binding.popupPoster);
@@ -138,9 +138,9 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
 
             String imageUrl;
             if (Data.isDeviceLowSpec()) {
-                imageUrl = anime.getImageUrlFromSize(ImageSize.TINY, true);
+                imageUrl = anime.getImageURL(AnimeBasicInfo.ImageType.COVER, AnimeBasicInfo.ImageSize.TINY);
             } else {
-                imageUrl = anime.getImageUrlFromSizeWithFallback(ImageSize.MEDIUM, true);
+                imageUrl = anime.getImageURLorFallback(AnimeBasicInfo.ImageType.COVER, AnimeBasicInfo.ImageSize.MEDIUM);
             }
 
             if (imageUrl == null) {
@@ -158,9 +158,5 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
                     .placeholder(R.drawable.ic_general_placeholder)
                     .into(binding.animeCover);
         }
-    }
-
-    public interface ItemClickListener {
-        void onItemClick(Anime anime);
     }
 }

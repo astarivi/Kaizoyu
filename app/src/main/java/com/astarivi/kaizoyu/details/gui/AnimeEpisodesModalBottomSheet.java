@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.util.Consumer;
 
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.models.Result;
@@ -32,7 +33,7 @@ public class AnimeEpisodesModalBottomSheet extends BottomSheetDialogFragment {
     public static String TAG = "EpisodesBottomModalSheet";
     private BottomSheetEpisodesBinding binding;
     private final TreeMap<VideoQuality, List<Result>> episodes;
-    private final ResultListener resultListener;
+    private final Consumer<Result> resultListener;
     private Future<?> reOrderFuture = null;
 
     public AnimeEpisodesModalBottomSheet() {
@@ -40,7 +41,7 @@ public class AnimeEpisodesModalBottomSheet extends BottomSheetDialogFragment {
         episodes = null;
     }
 
-    public AnimeEpisodesModalBottomSheet(TreeMap<VideoQuality, List<Result>> ep, ResultListener resultListener) {
+    public AnimeEpisodesModalBottomSheet(TreeMap<VideoQuality, List<Result>> ep, Consumer<Result> resultListener) {
         episodes = ep;
         this.resultListener = resultListener;
     }
@@ -132,7 +133,7 @@ public class AnimeEpisodesModalBottomSheet extends BottomSheetDialogFragment {
 
                 reBinding.getRoot().setOnClickListener(v -> {
                     dismiss();
-                    if (resultListener != null) resultListener.onResultSelected(result);
+                    if (resultListener != null) resultListener.accept(result);
                 });
 
                 if (isPreferredBot) {

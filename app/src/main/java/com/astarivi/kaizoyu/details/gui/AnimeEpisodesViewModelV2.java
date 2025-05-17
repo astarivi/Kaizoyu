@@ -3,63 +3,58 @@ package com.astarivi.kaizoyu.details.gui;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.astarivi.kaizolib.kitsu.Kitsu;
 import com.astarivi.kaizolib.kitsu.exception.KitsuExceptionManager;
-import com.astarivi.kaizolib.kitsu.model.KitsuEpisode;
+import com.astarivi.kaizolib.kitsuv2.model.KitsuEpisode;
+import com.astarivi.kaizolib.kitsuv2.public_api.KitsuPublic;
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.models.Episode;
 import com.astarivi.kaizoyu.core.models.Result;
-import com.astarivi.kaizoyu.core.search.AssistedResultSearcher;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
+import com.astarivi.kaizoyu.core.models.base.EpisodeBasicInfo;
+import com.astarivi.kaizoyu.core.models.episode.EpisodeMapper;
+import com.astarivi.kaizoyu.core.models.episode.RemoteEpisode;
+import com.astarivi.kaizoyu.core.search.ManagedEpisodeSearch;
 import com.astarivi.kaizoyu.core.search.Organizer;
 import com.astarivi.kaizoyu.core.search.SearchEnhancer;
 import com.astarivi.kaizoyu.core.video.VideoQuality;
 import com.astarivi.kaizoyu.databinding.FragmentAnimeEpisodesBinding;
-import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.Future;
+
+import lombok.Getter;
 
 
 public class AnimeEpisodesViewModelV2 extends ViewModel {
-    private final MutableLiveData<TreeSet<Episode>> episodes = new MutableLiveData<>(null);
+    @Getter
+    private final MutableLiveData<Set<RemoteEpisode>> episodes = new MutableLiveData<>(null);
+    @Getter
     private final MutableLiveData<KitsuExceptionManager.FailureCode> exceptionHandler = new MutableLiveData<>();
+    @Getter
     private int currentPage = -1;
     private Future<?> fetchingFuture = null;
-    private int animeId = -1;
+    private AnimeBasicInfo anime = null;
     private int episodeCount = -1;
     private boolean isSearching = false;
 
-    public MutableLiveData<TreeSet<Episode>> getEpisodes() {
-        return episodes;
-    }
-
-    public MutableLiveData<KitsuExceptionManager.FailureCode> getExceptionHandler() {
-        return exceptionHandler;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void initialize(int animeId, int episodeCount) {
+    public void initialize(AnimeBasicInfo anime, int episodeCount) {
         if (currentPage != -1 || (fetchingFuture != null && !fetchingFuture.isDone())) return;
         this.episodeCount = episodeCount;
-        this.animeId = animeId;
+        this.anime = anime;
 
         fetchPage(1);
     }
 
     public void reload() {
-        if (episodeCount == -1 || animeId == -1 || isFetching()) {
+        if (episodeCount == -1 || anime == null || isFetching()) {
             return;
         }
 
@@ -70,7 +65,7 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
 
     public void setPage(int page) {
         // Already there, or not initialized yet.
-        if (currentPage == page || episodeCount == -1 || animeId == -1) {
+        if (currentPage == page || episodeCount == -1 || anime == null) {
             return;
         }
 
@@ -84,17 +79,13 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
     }
 
     private void fetchPage(int page) {
-        fetchingFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            Kitsu kitsu = new Kitsu(
-                    Data.getUserHttpClient()
-            );
-
+        fetchingFuture = Threading.instant(() -> {
             int[] pagination = Utils.paginateNumber(page, episodeCount, 20);
 
             List<KitsuEpisode> kitsuEpisodes;
             try {
-                kitsuEpisodes = kitsu.getEpisodesRange(
-                        this.animeId,
+                kitsuEpisodes = KitsuPublic.getEpisodesRange(
+                        anime.getKitsuId(),
                         pagination[0],
                         pagination[1],
                         episodeCount
@@ -113,17 +104,17 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
             currentPage = page;
 
             episodes.postValue(
-                    new Episode.BulkEpisodeBuilder(kitsuEpisodes, this.animeId).build()
+                    EpisodeMapper.bulkRemoteSetFromKitsu(kitsuEpisodes, anime.getKitsuId())
             );
         });
     }
 
-    public void searchEpisodeAndDisplayResults(Episode episode,
-                                               Anime anime,
+    public void searchEpisodeAndDisplayResults(EpisodeBasicInfo episode,
+                                               AnimeBasicInfo anime,
                                                @Nullable SearchEnhancer searchEnhancer,
                                                FragmentAnimeEpisodesBinding binding,
                                                FragmentActivity context,
-                                               AnimeEpisodesModalBottomSheet.ResultListener listener) {
+                                               Consumer<Result> listener) {
         if (isSearching) {
             Toast.makeText(
                     context,
@@ -137,11 +128,10 @@ public class AnimeEpisodesViewModelV2 extends ViewModel {
         isSearching = true;
 
         Threading.submitTask(Threading.TASK.INSTANT,() -> {
-                List<Result> results = AssistedResultSearcher.searchEpisode(
-                        searchEnhancer,
-                        episode.getAnimeId(),
-                        anime.getDefaultTitle(),
-                        episode.getKitsuEpisode().attributes.number
+            List<Result> results = ManagedEpisodeSearch.search(
+                    anime,
+                    episode.getNumber(),
+                    searchEnhancer
                 );
 
                 if (results == null) {

@@ -25,8 +25,7 @@ public class StringPair {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof StringPair) {
-            final StringPair that = (StringPair) obj;
+        if (obj instanceof StringPair that) {
             return this.name.equalsIgnoreCase(that.name) && Objects.equals(this.value, that.value);
         }
         return false;

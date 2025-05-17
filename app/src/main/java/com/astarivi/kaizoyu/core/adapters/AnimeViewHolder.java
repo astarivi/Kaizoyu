@@ -7,14 +7,15 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.models.Anime;
-import com.astarivi.kaizoyu.core.storage.database.data.seen.SeenAnime;
+import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
+import com.astarivi.kaizoyu.core.storage.database.repo.SavedShowRepo;
+import com.astarivi.kaizoyu.core.storage.database.tables.saved_anime.SavedAnime;
 import com.astarivi.kaizoyu.databinding.ItemAnimeBinding;
-import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Threading;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -25,12 +26,16 @@ import com.google.android.material.color.MaterialColors;
 
 import org.tinylog.Logger;
 
+import lombok.Setter;
 
-public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+public class AnimeViewHolder<A extends AnimeBasicInfo> extends RecyclerView.ViewHolder implements View.OnClickListener {
     public final ItemAnimeBinding binding;
     protected final boolean canCheckFavorite;
+    @Setter
     protected A anime;
-    protected ItemClickListener<A> itemClickListener;
+    @Setter
+    protected Consumer<A> itemClickListener;
     private static int baseColor = Color.BLUE;
     private static int favoriteColor = Color.GREEN;
 
@@ -56,10 +61,6 @@ public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder im
             );
     }
 
-    public void setItemClickListener(ItemClickListener<A> itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }
-
     @Override
     public void onClick(View v) {
         if (itemClickListener == null) {
@@ -67,41 +68,28 @@ public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder im
             return;
         }
 
-        itemClickListener.onItemClick(anime);
-    }
-
-    public void setAnime(A anime) {
-        this.anime = anime;
+        itemClickListener.accept(anime);
     }
 
     // region Favorite implementation
-
     public void checkFavorite() {
         if (!canCheckFavorite) return;
 
         Threading.submitTask(Threading.TASK.DATABASE, () -> {
-            SeenAnime seenAnime = Data.getRepositories()
-                    .getSeenAnimeRepository()
-                    .getSeenAnimeDao()
-                    .getFromKitsuId(
-                            Integer.parseInt(
-                                    anime.getKitsuAnime().id
-                            )
-                    );
+            SavedAnime savedAnime = SavedShowRepo.getAnimeDao().getByKitsuId(anime.getKitsuId());
 
-            if (seenAnime == null || !seenAnime.isRelated()) {
+            if (savedAnime == null || savedAnime.list == AnimeBasicInfo.LocalList.NOT_TRACKED.getValue()) {
                 return;
             }
 
-            Threading.runOnUiThread(this::markFavorite);
+            Threading.runOnUiThread(() -> {
+                //noinspection ConstantValue
+                if (!canCheckFavorite) return;
+
+                binding.getRoot().setCardBackgroundColor(favoriteColor);
+                binding.episodeCardFavIc.setVisibility(View.VISIBLE);
+            });
         });
-    }
-
-    public void markFavorite() {
-        if (!canCheckFavorite) return;
-
-        binding.getRoot().setCardBackgroundColor(favoriteColor);
-        binding.episodeCardFavIc.setVisibility(View.VISIBLE);
     }
 
     public void removeFavorite() {
@@ -125,13 +113,13 @@ public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder im
         // Would it even be possible for binding to be null?
         if (anime == null || binding == null) return;
 
-        String coverUrl = anime.getThumbnailUrl(true);
-        String posterUrl = anime.getThumbnailUrl(false);
+        String coverUrl = anime.getOptimizedImageURLFor(AnimeBasicInfo.ImageType.COVER);
+        String posterUrl = anime.getOptimizedImageURLFor(AnimeBasicInfo.ImageType.POSTER);
 
         if (posterUrl != null) {
             Glide.with(binding.getRoot().getContext())
                     .load(posterUrl)
-                    .listener(new RequestListener<Drawable>() {
+                    .listener(new RequestListener<>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             return false;
@@ -189,10 +177,5 @@ public class AnimeViewHolder<A extends Anime> extends RecyclerView.ViewHolder im
         Glide.with(binding.getRoot().getContext())
                 .clear(binding.imagePoster);
     }
-
     // endregion
-
-    public interface ItemClickListener<B> {
-        void onItemClick(B anime);
-    }
 }

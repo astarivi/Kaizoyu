@@ -1,6 +1,8 @@
 package com.astarivi.kaizoyu.core.storage.database.migrations;
 
 import androidx.annotation.NonNull;
+import androidx.room.DeleteTable;
+import androidx.room.migration.AutoMigrationSpec;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
@@ -18,4 +20,12 @@ public class Migrations {
             database.execSQL("ALTER TABLE seen_episode ADD COLUMN notified INTEGER NOT NULL DEFAULT 0");
         }
     };
+
+    @DeleteTable.Entries({
+            @DeleteTable(tableName = "favorite_anime"),
+            @DeleteTable(tableName = "seen_episode"),
+            @DeleteTable(tableName = "seen_anime")
+    })
+    public static class AUTO_MIGRATION_3_4 implements AutoMigrationSpec {
+    }
 }

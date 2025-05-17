@@ -4,15 +4,20 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.astarivi.kaizoyu.R;
+import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.storage.database.io.Manager;
+import com.astarivi.kaizoyu.core.storage.database.repo.SearchHistoryRepo;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
+import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.ActivityStorageBinding;
-import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -80,7 +85,59 @@ public class StorageActivity extends AppCompatActivityTheme {
 
         setContentView(binding.getRoot());
 
+        binding.internalToolbar.setNavigationOnClickListener(v -> finish());
+
         binding.storageMainContainer.getLayoutTransition().setAnimateParentHierarchy(false);
+
+        WindowCompatUtils.setWindowFullScreen(getWindow());
+
+        binding.statusBarScrim.setBackgroundColor(
+                Colors.getSemiTransparentStatusBar(
+                        binding.getRoot(),
+                        R.attr.colorSurfaceVariant
+                )
+        );
+
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
+                binding.statusBarScrim,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+
+                    ViewGroup.LayoutParams params = v.getLayoutParams();
+                    params.height = insets.top;
+                    v.setLayoutParams(params);
+
+                    return windowInsets;
+                }
+        );
+
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
+                binding.storageScrollContainer,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+
+                    v.setPadding(
+                            0,
+                            (int) Utils.convertDpToPixel(4, this),
+                            0,
+                            insets.bottom + (int) Utils.convertDpToPixel(4, this)
+                    );
+
+                    return windowInsets;
+                }
+        );
+
+        WindowCompatUtils.setOnApplyWindowInsetsListener(
+                binding.internalToolbar,
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+
+                    v.setPadding(0, insets.top, 0, 0);
+
+                    return windowInsets;
+                }
+        );
+
         binding.loadingBar.setProgressCompat(0, false);
         binding.currentOperationContainer.setVisibility(View.GONE);
 
@@ -90,7 +147,7 @@ public class StorageActivity extends AppCompatActivityTheme {
         });
 
         binding.clearSearchTrigger.setOnClickListener(v -> {
-            Data.getRepositories().getSearchHistoryRepository().deleteAllAsync();
+            SearchHistoryRepo.deleteAllAsync();
             Toast.makeText(this, getString(R.string.history_toast), Toast.LENGTH_SHORT).show();
         });
 

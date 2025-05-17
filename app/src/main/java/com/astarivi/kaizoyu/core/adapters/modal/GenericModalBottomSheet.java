@@ -15,11 +15,14 @@ import com.astarivi.kaizoyu.databinding.BottomSheetGenericBinding;
 import com.astarivi.kaizoyu.databinding.ItemSheetGenericBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import lombok.Setter;
+
 
 public class GenericModalBottomSheet extends BottomSheetDialogFragment {
     public static String TAG = "GenericModalBottomSheet";
     private BottomSheetGenericBinding binding;
     private final ResultListener listener;
+    @Setter
     private CancelListener cancelListener;
     private final ModalOption[] options;
     private final String title;
@@ -34,10 +37,6 @@ public class GenericModalBottomSheet extends BottomSheetDialogFragment {
         listener = l;
         this.options = options;
         this.title = title;
-    }
-
-    public void setCancelListener(CancelListener listener) {
-        cancelListener = listener;
     }
 
     @Override
