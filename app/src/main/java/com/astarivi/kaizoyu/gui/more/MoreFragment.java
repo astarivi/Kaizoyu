@@ -71,8 +71,11 @@ public class MoreFragment extends TabFragment {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/astarivi/Kaizoyu")))
         );
 
-        binding.donateButton.setOnClickListener(v ->
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.buymeacoffee.com/astarivi")))
+        binding.discordButton.setOnClickListener(v ->
+                        //FIXME: Add discord link here.
+                {
+                }
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.buymeacoffee.com/astarivi")))
         );
 
         binding.openSettings.setOnClickListener(v -> {

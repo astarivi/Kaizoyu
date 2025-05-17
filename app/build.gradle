@@ -11,8 +11,7 @@ repositories {
 }
 
 android {
-    compileSdk 35
-    buildToolsVersion = "33.0.1"
+    compileSdk 36
 
     packagingOptions {
         resources {
@@ -23,7 +22,7 @@ android {
     defaultConfig {
         applicationId "com.astarivi.kaizoyu"
         minSdkVersion 23
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode 11
         versionName "1.0"
         javaCompileOptions {
@@ -111,42 +110,42 @@ dependencies {
     implementation 'com.google.android.gms:play-services-oss-licenses:17.1.0'
     implementation 'com.github.astarivi:Zparc:1.1'
 
-    //noinspection GradleDependency
+    //noinspection NewerVersionAvailable,GradleDependency
     implementation ('org.videolan.android:libvlc-all:4.0.0-eap11') {
         because 'EAP12 HWA chroma blending is broken (RGBA -> ANOP). Subtitles will not work'
     }
 
-    implementation 'com.airbnb.android:lottie:6.4.0'
+    implementation 'com.airbnb.android:lottie:6.6.6'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'com.github.bumptech.glide:recyclerview-integration:4.16.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.16.0'
-    implementation 'org.jetbrains:annotations:24.1.0'
-    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0'
+    implementation 'org.jetbrains:annotations:26.0.2'
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.1'
     implementation 'com.rometools:rome:2.1.0'
 
     // Lombok
     //noinspection AnnotationProcessorOnCompilePath
-    compileOnly 'org.projectlombok:lombok:1.18.34'
-    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    compileOnly 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
     //noinspection AnnotationProcessorOnCompilePath
-    testCompileOnly 'org.projectlombok:lombok:1.18.34'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+    testCompileOnly 'org.projectlombok:lombok:1.18.38'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
 
     // Analytics
-    implementation 'ch.acra:acra-http:5.11.3'
+    implementation 'ch.acra:acra-http:5.12.0'
     // Ads
-    implementation 'com.startapp:inapp-sdk:5.1.0'
+    implementation 'com.startapp:inapp-sdk:5.2.0'
 
     // Android X
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.work:work-runtime:2.9.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.7.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata:2.7.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'androidx.work:work-runtime:2.10.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.9.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.9.0'
     implementation 'androidx.palette:palette:1.0.0'
-    implementation 'androidx.room:room-runtime:2.6.1'
-    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+    implementation 'androidx.room:room-runtime:2.7.1'
+    annotationProcessor 'androidx.room:room-compiler:2.7.1'
 
     // Logger
     implementation 'org.tinylog:tinylog-api:2.7.0'
@@ -155,7 +154,6 @@ dependencies {
 
     // Jackson
     // Don't update to 2.14 as Android minSdk support changes.
-
     //noinspection GradleDependency
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.5'
     //noinspection GradleDependency
@@ -167,8 +165,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 
     // Google others
-    implementation 'com.google.android.material:material:1.11.0'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    implementation 'com.google.android.material:material:1.12.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
     // Testing? What's that
 }
