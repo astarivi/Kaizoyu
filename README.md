@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/astarivi/KaizoDelivery/releases"><img src="https://img.shields.io/badge/download-363d80?logo=android&logoColor=white&style=for-the-badge" alt="Download badge"></a>
+    <a href="https://github.com/astarivi/Kaizoyu/releases/latest/download/app-mainline-universal-release.apk"><img src="https://img.shields.io/badge/download-363d80?logo=android&logoColor=white&style=for-the-badge" alt="Download badge"></a>
 </p>
 
 Kaizoyu is an Android exclusive anime streaming platform¹. Watch anime for free
@@ -13,8 +13,8 @@ without any torrents, web-scraping, or highly compressed online video files.
 
 # Features
 
+- High quality sources (see [comparison](media/comparison.png), left is Kaizoyu)
 - Simple interface, with high, and low contrast themes included
-- Stream anime freely with the included XDCC player
 - Multiple video qualities available
 - Weekly schedule for new anime episode launches
 - Add your favorite shows to multiple lists, and find them later easily
@@ -25,10 +25,10 @@ without any torrents, web-scraping, or highly compressed online video files.
 # Preview
 
 <p align="justify">
-    <img src="https://i.ibb.co/9sBQpWM/1.png" width="24%" />
-    <img src="https://i.ibb.co/P9fg1hn/2.png" width="24%" />
-    <img src="https://i.ibb.co/0s7Xc5q/3.png" width="24%" />
-    <img src="https://i.ibb.co/Dgm0mNP/4.png" width="24%" />
+    <img src="media/1.png" width="24%" />
+    <img src="media/2.png" width="24%" />
+    <img src="media/3.png" width="24%" />
+    <img src="media/4.png" width="24%" />
 </p>
 
 # Development
