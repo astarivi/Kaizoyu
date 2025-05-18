@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -159,6 +160,24 @@ public class MainActivity extends AppCompatActivityTheme {
         if (!isFirstTime) {
             checkForGDPR();
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+
+            @Override
+            public void handleOnBackPressed() {
+                int position = tabLayout.getSelectedTabPosition();
+
+                if (position != 0) {
+                    tabLayout.selectTab(
+                            tabLayout.getTabAt(0)
+                    );
+                    return;
+                }
+
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
     }
 
     @Override
@@ -178,20 +197,6 @@ public class MainActivity extends AppCompatActivityTheme {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-
-    @Override
-    public void onBackPressed() {
-        int position = tabLayout.getSelectedTabPosition();
-
-        if (position != 0) {
-            tabLayout.selectTab(
-                    tabLayout.getTabAt(0)
-            );
-            return;
-        }
-
-        super.onBackPressed();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
