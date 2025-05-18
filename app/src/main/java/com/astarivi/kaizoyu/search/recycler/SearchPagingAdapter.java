@@ -6,16 +6,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
-import com.astarivi.kaizoyu.core.adapters.AnimeRecyclerAdapter;
+import com.astarivi.kaizoyu.core.adapters.AnimePagingAdapter;
 import com.astarivi.kaizoyu.core.adapters.AnimeViewHolder;
 import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
 import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
 
 
-@Deprecated
-public class SearchRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<RemoteAnime>, RemoteAnime> {
-    public SearchRecyclerAdapter(Consumer<RemoteAnime> itemClickListener) {
+public class SearchPagingAdapter extends AnimePagingAdapter<AnimeViewHolder<RemoteAnime>, RemoteAnime> {
+    public SearchPagingAdapter(Consumer<RemoteAnime> itemClickListener) {
         super(itemClickListener);
     }
 

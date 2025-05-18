@@ -1,5 +1,8 @@
 package com.astarivi.kaizoyu.core.threading;
 
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ExecutorService;
@@ -19,6 +22,7 @@ public class ThreadingAssistant {
     private static volatile ThreadingAssistant _instance = null;
     private final ExecutorService databaseThread = Executors.newSingleThreadExecutor();
     private final ExecutorService instantThread = Executors.newCachedThreadPool();
+    private final ListeningExecutorService guavaExecutor = MoreExecutors.listeningDecorator(instantThread);
     private final ScheduledExecutorService scheduledThread = Executors.newSingleThreadScheduledExecutor();
 
     private ThreadingAssistant() {

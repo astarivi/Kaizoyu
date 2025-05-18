@@ -6,8 +6,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.LoadState;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,8 +24,9 @@ import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.databinding.ActivitySearchBinding;
 import com.astarivi.kaizoyu.databinding.FragmentSearchSuggestionBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
-import com.astarivi.kaizoyu.search.recycler.SearchRecyclerAdapter;
+import com.astarivi.kaizoyu.search.recycler.SearchPagingAdapter;
 import com.astarivi.kaizoyu.utils.Threading;
+import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.search.SearchBar;
 import com.google.android.material.search.SearchView;
 
@@ -34,8 +37,7 @@ import java.util.List;
 public class SearchActivity extends AppCompatActivityTheme {
     private ActivitySearchBinding binding;
     private SearchViewModel viewModel;
-    private SearchRecyclerAdapter adapter;
-    private LinearLayoutManager recyclerLayoutManager;
+    private SearchPagingAdapter adapter;
     private boolean isInsideSearchView;
 
     @Override
@@ -55,17 +57,49 @@ public class SearchActivity extends AppCompatActivityTheme {
 
         // RecyclerView
         RecyclerView recyclerView = binding.searchResults;
-        recyclerLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager recyclerLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerLayoutManager);
         recyclerView.setHasFixedSize(true);
 
-        adapter = new SearchRecyclerAdapter(anime -> {
+        adapter = new SearchPagingAdapter(anime -> {
             Intent intent = new Intent();
             intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
             intent.putExtra("anime", anime);
             intent.putExtra("type", AnimeBasicInfo.AnimeType.REMOTE.name());
             startActivity(intent);
         });
+
+        adapter.addLoadStateListener(loadState -> {
+            LoadState refresh = loadState.getRefresh();
+            if (refresh instanceof LoadState.Loading) {
+                binding.searchResults.setVisibility(View.GONE);
+                binding.noResultsPrompt.setVisibility(View.GONE);
+                binding.loadingBar.setVisibility(View.VISIBLE);
+            } else if (refresh instanceof LoadState.Error) {
+                binding.noResultsPrompt.setVisibility(View.GONE);
+                binding.loadingBar.setVisibility(View.GONE);
+                binding.searchResults.setVisibility(View.GONE);
+
+                Utils.makeToastRegardless(
+                        SearchActivity.this,
+                        R.string.parsing_error,
+                        Toast.LENGTH_SHORT
+                );
+            } else if (refresh instanceof LoadState.NotLoading) {
+                if (adapter.getItemCount() == 0) {
+                    binding.noResultsPrompt.setVisibility(View.VISIBLE);
+                    binding.loadingBar.setVisibility(View.GONE);
+                    binding.searchResults.setVisibility(View.GONE);
+                } else {
+                    binding.loadingBar.setVisibility(View.GONE);
+                    binding.noResultsPrompt.setVisibility(View.GONE);
+                    binding.searchResults.setVisibility(View.VISIBLE);
+                }
+            }
+
+            return kotlin.Unit.INSTANCE;
+        });
+
         recyclerView.setAdapter(adapter);
 
         viewModel.getResults().observe(this, results -> {
@@ -74,19 +108,7 @@ public class SearchActivity extends AppCompatActivityTheme {
                 return;
             }
 
-            if (results == null) {
-                binding.noResultsPrompt.setVisibility(View.VISIBLE);
-                binding.loadingBar.setVisibility(View.GONE);
-                binding.searchResults.setVisibility(View.GONE);
-                return;
-            }
-
-            recyclerLayoutManager.scrollToPosition(0);
-            binding.loadingBar.setVisibility(View.GONE);
-            binding.searchResults.setVisibility(View.VISIBLE);
-
-            adapter.replaceData(results);
-            adapter.notifyDataSetChanged();
+            adapter.submitData(getLifecycle(), results);
         });
 
         SearchBar searchBar = binding.searchBar;
@@ -140,7 +162,7 @@ public class SearchActivity extends AppCompatActivityTheme {
                 }
 
                 SearchHistoryRepo.saveAsync(search);
-                viewModel.searchAnime(search, binding, this);
+                viewModel.searchAnime(search);
             }
 
             return false;
@@ -152,6 +174,28 @@ public class SearchActivity extends AppCompatActivityTheme {
             binding.searchView.clearText();
             getIntent().removeExtra("openSearch");
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (isInsideSearchView) {
+                    binding.searchView.hide();
+                    isInsideSearchView = false;
+                    return;
+                }
+
+                if (
+                        (binding.searchResults.getVisibility() == View.VISIBLE && viewModel != null && viewModel.hasSearch()) ||
+                                (binding.noResultsPrompt.getVisibility() == View.VISIBLE)
+                ) {
+                    optOutOfSearch();
+                    return;
+                }
+
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
     }
 
     private void displaySearchHistory() {
@@ -216,38 +260,7 @@ public class SearchActivity extends AppCompatActivityTheme {
         binding.searchView.setText(search);
         binding.searchView.hide();
         binding.searchBar.setText(search);
-        viewModel.searchAnime(search, binding, this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (isInsideSearchView) {
-            binding.searchView.hide();
-            isInsideSearchView = false;
-
-            return;
-        }
-
-        // Look at that indentation, damn
-        if (
-                (
-                    viewModel != null && viewModel.checkIfHasSearchAndCancel()
-                )
-                ||
-                (
-                    binding.searchResults.getVisibility() == View.VISIBLE &&
-                    viewModel != null && viewModel.hasSearch()
-                )
-                ||
-                (
-                    binding.noResultsPrompt.getVisibility() == View.VISIBLE
-                )
-        ) {
-            optOutOfSearch();
-            return;
-        }
-
-        super.onBackPressed();
+        viewModel.searchAnime(search);
     }
 
     private void optOutOfSearch() {

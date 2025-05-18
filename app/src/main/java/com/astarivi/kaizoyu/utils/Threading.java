@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.astarivi.kaizoyu.core.threading.ThreadingAssistant;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +37,14 @@ public class Threading {
 
     public static Future<?> instant(Runnable task) {
         return ThreadingAssistant.getInstance().submitToInstantThread(task);
+    }
+
+    public static ListenableFuture<?> guava(Runnable task) {
+        return ThreadingAssistant.getInstance().getGuavaExecutor().submit(task);
+    }
+
+    public static <T extends Object> ListenableFuture<T> guava(Callable<T> task) {
+        return ThreadingAssistant.getInstance().getGuavaExecutor().submit(task);
     }
 
     public static ScheduledFuture<?> submitScheduledTask(@NotNull Runnable task, long delay, @NotNull TimeUnit timeUnit) {
