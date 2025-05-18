@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.graphics.Insets;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.LoadState;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,17 +23,19 @@ import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Colors;
 import com.astarivi.kaizoyu.databinding.ActivitySharedLibraryBinding;
 import com.astarivi.kaizoyu.details.AnimeDetailsActivity;
-import com.astarivi.kaizoyu.gui.library.watching.adapter.SharedLibraryRecyclerAdapter;
+import com.astarivi.kaizoyu.gui.library.watching.adapter.SharedLibraryPagingAdapter;
 import com.astarivi.kaizoyu.utils.Data;
 import com.astarivi.kaizoyu.utils.Utils;
 
 import org.tinylog.Logger;
 
+import java.util.Locale;
+
 
 public class SharedLibraryActivity extends AppCompatActivityTheme {
     private ActivitySharedLibraryBinding binding;
     private SharedLibraryViewModel viewModel;
-    private SharedLibraryRecyclerAdapter adapter;
+    private SharedLibraryPagingAdapter adapter;
     private AnimeBasicInfo.LocalList localAnimeType;
 
     public SharedLibraryActivity() {
@@ -80,7 +84,7 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
             default -> R.string.d_favorite_list;
         };
 
-        binding.internalToolbar.setTitle(title);
+        binding.internalToolbar.setTitle(String.format(Locale.US, "Kaizoyu: %s", getString(title)));
 
         WindowCompatUtils.setWindowFullScreen(getWindow());
 
@@ -137,7 +141,7 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
 
-        adapter = new SharedLibraryRecyclerAdapter(anime -> {
+        adapter = new SharedLibraryPagingAdapter(anime -> {
             Intent intent = new Intent();
             intent.setClassName(BuildConfig.APPLICATION_ID, AnimeDetailsActivity.class.getName());
             intent.putExtra("anime", anime);
@@ -147,23 +151,42 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
 
         recyclerView.setAdapter(adapter);
 
-        viewModel.getAnimeList().observe(this, localAnime -> {
-            if (localAnime == null) {
-                binding.emptyLibraryPopup.setVisibility(View.VISIBLE);
-                binding.loadingBar.setVisibility(View.GONE);
+        adapter.addLoadStateListener(loadState -> {
+            LoadState refresh = loadState.getRefresh();
+
+            if (refresh instanceof LoadState.Loading) {
                 binding.libraryContents.setVisibility(View.INVISIBLE);
-                return;
+                binding.emptyLibraryPopup.setVisibility(View.GONE);
+                binding.loadingBar.setVisibility(View.VISIBLE);
+            } else if (refresh instanceof LoadState.Error) {
+                binding.libraryContents.setVisibility(View.INVISIBLE);
+                binding.emptyLibraryPopup.setVisibility(View.GONE);
+                binding.loadingBar.setVisibility(View.GONE);
+
+                Utils.makeToastRegardless(
+                        SharedLibraryActivity.this,
+                        R.string.db_error,
+                        Toast.LENGTH_LONG
+                );
+            } else if (refresh instanceof LoadState.NotLoading) {
+                if (adapter.getItemCount() == 0) {
+                    binding.libraryContents.setVisibility(View.INVISIBLE);
+                    binding.emptyLibraryPopup.setVisibility(View.VISIBLE);
+                    binding.loadingBar.setVisibility(View.GONE);
+                } else {
+                    binding.libraryContents.setVisibility(View.VISIBLE);
+                    binding.emptyLibraryPopup.setVisibility(View.GONE);
+                    binding.loadingBar.setVisibility(View.GONE);
+                }
             }
 
-            manager.scrollToPosition(0);
-            binding.loadingBar.setVisibility(View.GONE);
-            binding.libraryContents.setVisibility(View.VISIBLE);
-
-            adapter.replaceData(localAnime);
-            adapter.notifyDataSetChanged();
+            return kotlin.Unit.INSTANCE;
         });
 
-        viewModel.fetchFavorites(binding, localAnimeType);
+        viewModel.getResults().observe(this, localAnime ->
+                adapter.submitData(getLifecycle(), localAnime));
+
+        viewModel.fetchFavorites(localAnimeType);
     }
 
     @Override
@@ -178,7 +201,6 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        adapter.clear();
     }
 
     private void checkForRefresh() {
@@ -187,7 +209,7 @@ public class SharedLibraryActivity extends AppCompatActivityTheme {
         if (switches.isPendingFavoritesRefresh()) {
             switches.setPendingFavoritesRefresh(false);
 
-            viewModel.fetchFavorites(binding, localAnimeType);
+            viewModel.fetchFavorites(localAnimeType);
         }
     }
 }

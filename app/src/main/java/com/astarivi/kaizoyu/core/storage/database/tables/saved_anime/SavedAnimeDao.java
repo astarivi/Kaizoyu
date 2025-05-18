@@ -1,5 +1,6 @@
 package com.astarivi.kaizoyu.core.storage.database.tables.saved_anime;
 
+import androidx.paging.PagingSource;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -33,7 +34,6 @@ public interface SavedAnimeDao {
     SavedAnime getByKitsuId(long id);
     @Query("SELECT * FROM saved_anime ORDER BY updateDate DESC")
     List<SavedAnime> getAll();
-
     @Query("SELECT * FROM saved_anime WHERE list=:list ORDER BY updateDate DESC")
     List<SavedAnime> getAllByType(int list);
     @Query("SELECT * FROM saved_anime ORDER BY updateDate DESC LIMIT :limit")
@@ -52,4 +52,7 @@ public interface SavedAnimeDao {
     @Transaction
     @Query("SELECT * FROM saved_anime WHERE list=:list")
     List<SavedAnimeWithEpisodes> getRelationFromType(int list);
+
+    @Query("SELECT * FROM saved_anime WHERE list=:list ORDER BY updateDate DESC")
+    PagingSource<Integer, SavedAnime> pageAllByType(int list);
 }

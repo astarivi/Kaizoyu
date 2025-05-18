@@ -148,6 +148,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata:2.9.0'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.room:room-runtime:2.7.1'
+    implementation 'androidx.room:room-paging:2.7.1'
     annotationProcessor 'androidx.room:room-compiler:2.7.1'
 
     // Logger

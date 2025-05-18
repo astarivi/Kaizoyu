@@ -25,18 +25,6 @@ public class SearchViewModel extends ViewModel {
     private final MutableLiveData<String> queryLiveData = new MutableLiveData<>();
     private boolean isSearchActive = false;
 
-    public boolean hasSearch() {
-        return results.getValue() != null;
-    }
-
-    public boolean hasOptedOutOfSearch() {
-        return !isSearchActive;
-    }
-
-    public void optOutOfSearch() {
-        isSearchActive = false;
-    }
-
     public SearchViewModel() {
         results = Transformations.switchMap(queryLiveData, query -> {
             CoroutineScope viewModelScope = ViewModelKt.getViewModelScope(this);
@@ -49,6 +37,18 @@ public class SearchViewModel extends ViewModel {
 
             return PagingLiveData.cachedIn(PagingLiveData.getLiveData(pager), viewModelScope);
         });
+    }
+
+    public boolean hasSearch() {
+        return results.getValue() != null;
+    }
+
+    public boolean hasOptedOutOfSearch() {
+        return !isSearchActive;
+    }
+
+    public void optOutOfSearch() {
+        isSearchActive = false;
     }
 
     public void searchAnime(@NotNull String search) {
