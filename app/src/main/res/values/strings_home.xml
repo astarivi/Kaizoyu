@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="popular_anime">Popular</string>
-    <string name="trending_anime">Trending</string>
-    <string name="best_score_anime">Highest rated</string>
-    <string name="home_beloved">Beloved and popular</string>
-    <string name="home_seinen">Best seinen</string>
-    <string name="popular_airing">Most popular currently airing</string>
-    <string name="popular_upcoming">Most anticipated</string>
-    <string name="trash_anime">Dumpster fire</string>
-    <string name="shoujo_anime">Best shojo</string>
-    <string name="shounen_anime">Best shonen</string>
+    <string name="home_popular">Popular</string>
+    <string name="home_trending">Trending</string>
+    <string name="home_beloved">Legends</string>
+    <string name="home_seinen">Seinen</string>
+    <string name="home_airing">Airing</string>
+    <string name="home_upcoming">Upcoming</string>
+    <string name="home_trash">Trash</string>
+    <string name="home_shojo">Shojo</string>
+    <string name="home_shonen">Shonen</string>
     <string name="first_welcome">Welcome to Kaizoyu!</string>
     <string name="first_welcome_desc">It seems it\'s your first time with us. Before we proceed, please take a minute to review the following information:</string>
     <string name="fw_privacy">Analytics &amp; Tracking</string>

@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.search.recycler;
+package com.astarivi.kaizoyu.gui.home.recycler.recommendations;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,17 +19,16 @@ import lombok.AllArgsConstructor;
 
 
 @AllArgsConstructor
-public class SearchFuturePagingSource extends ListenableFuturePagingSource<Integer, RemoteAnime> {
-    private final String search;
+public class HomeFuturePagingSource extends ListenableFuturePagingSource<Integer, RemoteAnime> {
+    private final SearchParams searchParams;
 
     @NonNull
     @Override
     public ListenableFuture<LoadResult<Integer, RemoteAnime>> loadFuture(@NonNull LoadParams<Integer> params) {
         int page = Objects.requireNonNullElse(params.getKey(), 1);
 
-        SearchParams search = new SearchParams()
-                .setTitle(this.search)
-                .setPageSize(params.getLoadSize())
+        SearchParams search = searchParams.clone();
+        search.setPageSize(params.getLoadSize())
                 .setPageNumber(page);
 
         return Threading.guava(() -> {

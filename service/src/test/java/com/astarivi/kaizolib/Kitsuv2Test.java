@@ -35,7 +35,6 @@ public class Kitsuv2Test {
         List<KitsuAnime> anime = KitsuPublic.advancedSearch(
                 new SearchParams()
                         .setTitle("Attack on Titan")
-                        .setLimit(20)
                         .setCustomParameter("sort", "popularityRank")
         );
 
