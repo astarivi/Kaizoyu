@@ -28,7 +28,7 @@
         app:indicatorSize="150dp"
         app:trackThickness="15dp"
         app:trackCornerRadius="10dp"
-        app:indicatorColor="@color/branding_accent"
+        app:indicatorColor="?attr/colorPrimary"
         android:layout_gravity="center"
     />
 
@@ -143,7 +143,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:animateLayoutChanges="true"
-                        app:singleSelection="true"></com.google.android.material.chip.ChipGroup>
+                        app:singleSelection="true" />
                 </HorizontalScrollView>
             </LinearLayout>
 

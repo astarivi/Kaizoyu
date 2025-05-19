@@ -77,16 +77,35 @@
     <color name="hc_dark_scrim">#000000</color>
     <color name="hc_primary">#51879E</color>
     <color name="hc_onPrimary">#E174AF</color>
-    <color name="hc_primaryContainer">#1D3039</color>
-    <color name="hc_onPrimaryContainer">#2E4C5A</color>
+    <color name="hc_primaryContainer">#0F0F0F</color>
+    <color name="hc_onPrimaryContainer">#CCCCCC</color>
     <color name="hc_surfaceVariant">#202020</color>
     <color name="hc_onSurfaceVariant">#FFFFFF</color>
     <color name="hc_secondary">#222222</color>
-    <color name="hc_onSecondary">#2E2E2E</color>
+    <color name="hc_onSecondary">#CCCCCC</color>
     <color name="hc_secondaryContainer">#171717</color>
-    <color name="hc_onSecondaryContainer">#191919</color>
+    <color name="hc_onSecondaryContainer">#CCCCCC</color>
     <color name="hc_tertiary">#292929</color>
     <color name="hc_onTertiary">#333333</color>
     <color name="hc_tertiaryContainer">#1B1B1B</color>
     <color name="hc_onTertiaryContainer">#272727</color>
+
+    <!-- Kitsune takeover color palette -->
+    <color name="kt_background">#EBEBEB</color>
+    <color name="kt_onSurface">#282828</color>
+    <color name="kt_dark_scrim">#332532</color>
+    <color name="kt_primary">#fd755c</color>
+    <color name="kt_onPrimary">#16a085</color>
+    <color name="kt_primaryContainer">#177865</color>
+    <color name="kt_onPrimaryContainer">#DCDCDC</color>
+    <color name="kt_surfaceVariant">#402f3f</color>
+    <color name="kt_onSurfaceVariant">#DCDCDC</color>
+    <color name="kt_secondary">#222222</color>
+    <color name="kt_onSecondary">#2E2E2E</color>
+    <color name="kt_secondaryContainer">#FFFFFF</color>
+    <color name="kt_onSecondaryContainer">#191919</color>
+    <color name="kt_tertiary">#292929</color>
+    <color name="kt_onTertiary">#333333</color>
+    <color name="kt_tertiaryContainer">#1B1B1B</color>
+    <color name="kt_onTertiaryContainer">#272727</color>
 </resources>

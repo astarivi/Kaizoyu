@@ -45,6 +45,8 @@
     <string name="theme_dynamic_colors_description">Brings your own custom color palette to the app. If you haven\'t defined one, the default color palette for your Android version will be used.</string>
     <string name="theme_low_contrast">Low Contrast</string>
     <string name="theme_low_contrast_description">Smooth color changes, easy to follow, easy on your eyes.</string>
+    <string name="theme_kitsune_takeover">Kitsune Takeover</string>
+    <string name="theme_kitsune_takeover_description">A certain Kitsune takes over your phone!</string>
     <string name="advanced_search_title">Show Advanced Search</string>
     <string name="advanced_search_description">Shows advanced search icon in the home search bar</string>
     <string name="section_storage">Storage</string>

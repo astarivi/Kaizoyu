@@ -114,7 +114,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:trackCornerRadius="10dp"
             app:trackThickness="15dp"
-            app:indicatorColor="@color/branding_accent"
+            app:indicatorColor="?attr/colorPrimary"
         />
 
         <LinearLayout

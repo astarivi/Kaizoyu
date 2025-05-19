@@ -19,7 +19,8 @@ import lombok.Getter;
 public enum Theme {
     HIGH_CONTRAST(0, R.style.HighContrast, R.string.theme_high_contrast, R.string.theme_high_contrast_description),
     DYNAMIC_COLORS(1, R.style.AppTheme, R.string.theme_dynamic_colors, R.string.theme_dynamic_colors_description),
-    LOW_CONTRAST(2, R.style.AppTheme, R.string.theme_low_contrast, R.string.theme_low_contrast_description);
+    LOW_CONTRAST(2, R.style.AppTheme, R.string.theme_low_contrast, R.string.theme_low_contrast_description),
+    KITSUNE_TAKEOVER(3, R.style.KitsuneTakeover, R.string.theme_kitsune_takeover, R.string.theme_kitsune_takeover_description);
 
     @Getter
     private final int id;
@@ -36,6 +37,14 @@ public enum Theme {
 
     public int getTheme() {
         return appTheme;
+    }
+
+    public static Theme fromId(int id) {
+        for (Theme theme : Theme.values()) {
+            if (theme.id == id) return theme;
+        }
+
+        throw new IllegalArgumentException("Tried to get invalid Theme from id");
     }
 
     public @NotNull String getTitle(@NotNull Context context) {
