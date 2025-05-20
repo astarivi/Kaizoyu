@@ -5,8 +5,16 @@
     <string name="st_db_operation_done">Operation finished successfully</string>
     <string name="st_db_backup_operation">Performing database backup</string>
     <string name="st_db_import_operation">Performing database import</string>
-    <string name="section_database">Database</string>
+    <string name="section_database">Kaizoyu Database</string>
+    <string name="section_database_description">Kaizoyu maintains an internal database that stores your lists, settings, watched episode progress, and more.</string>
+    <string name="section_ids_database">Relational Database</string>
+    <string name="section_ids_database_description">Kaizoyu uses a relational database to connect multiple tracking services, enabling the app to access and manage external lists seamlessly.</string>
+    <string name="ids_database_update">Check for Update</string>
+    <string name="ids_database_update_desc">Check for relational database updates. Current version: %s</string>
+    <string name="ids_database_force">Force Update</string>
+    <string name="ids_database_force_now">Force a relational database update right now, regardless of version. An stable internet connection is required.</string>
     <string name="section_temporary">Temporary</string>
+    <string name="section_temporary_description">Even when you are only streaming a show, Kaizoyu needs to download the entire file to app storage. These files are considered temporary and are managed automatically by the app, requiring no user intervention.</string>
     <string name="backup_database">Backup</string>
     <string name="backup_database_desc">Export a copy of your database. This includes lists (saved shows) and settings.</string>
     <string name="restore_database">Restore</string>
@@ -16,4 +24,9 @@
     <string name="restore_positive">I\'m ready</string>
     <string name="restore_negative">Cancel</string>
     <string name="backup_io_failure">Failed to read/write to the specified folder</string>
+    <string name="ids_force_dialog">Are you sure?</string>
+    <string name="ids_force_dialog_description">This will invalidate your local relational database, and try to replace it with another. Keep in mind that if you do not have an stable internet connection, you will be left without a relational database until connection is restored and the app is restarted.</string>
+    <string name="ids_update_undergoing">Updating relational database</string>
+    <string name="ids_update_no_upd">No update available, we have latest version</string>
+    <string name="ids_update_failed">Could not fetch latest version. Are we online?</string>
 </resources>

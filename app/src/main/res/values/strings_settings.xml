@@ -11,7 +11,7 @@
     <string name="autoupdate">Automatic Updates</string>
     <string name="autoupdate_description">Check for updates automatically and notify when a new update is found</string>
     <string name="clear_cache">Clear Cache</string>
-    <string name="clear_cache_repository">Erase the stored cache files manually</string>
+    <string name="clear_cache_repository">Manually trigger a cache cleanup. Aka, the placebo button.</string>
     <string name="clear_search_history">Clear Search History</string>
     <string name="clear_search_history_descriptions">Erase your stored search history</string>
     <string name="night_theme">Night Theme</string>
