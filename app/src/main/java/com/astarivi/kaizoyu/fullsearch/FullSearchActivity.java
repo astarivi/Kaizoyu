@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -172,6 +173,31 @@ public class FullSearchActivity extends AppCompatActivityTheme {
                     })
                     .show();
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (isInsideSearchView) {
+                    binding.searchView.hide();
+                    isInsideSearchView = false;
+                    return;
+                }
+
+                boolean shouldOptOut =
+                        (viewModel != null && viewModel.checkIfHasSearchAndCancel()) ||
+                                (binding.searchResults.getVisibility() == View.VISIBLE &&
+                                        viewModel != null && viewModel.hasSearch()) ||
+                                (binding.noResultsPrompt.getVisibility() == View.VISIBLE);
+
+                if (shouldOptOut) {
+                    optOutOfSearch();
+                    return;
+                }
+
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
     }
 
     private void displaySearchHistory() {
@@ -231,36 +257,6 @@ public class FullSearchActivity extends AppCompatActivityTheme {
         binding.searchView.hide();
         binding.searchBar.setText(search);
         viewModel.searchAnime(search, binding, this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (isInsideSearchView) {
-            binding.searchView.hide();
-            isInsideSearchView = false;
-
-            return;
-        }
-
-        if (
-                (
-                        viewModel != null && viewModel.checkIfHasSearchAndCancel()
-                )
-                ||
-                (
-                        binding.searchResults.getVisibility() == View.VISIBLE &&
-                                viewModel != null && viewModel.hasSearch()
-                )
-                ||
-                (
-                        binding.noResultsPrompt.getVisibility() == View.VISIBLE
-                )
-        ) {
-            optOutOfSearch();
-            return;
-        }
-
-        super.onBackPressed();
     }
 
     private void optOutOfSearch() {

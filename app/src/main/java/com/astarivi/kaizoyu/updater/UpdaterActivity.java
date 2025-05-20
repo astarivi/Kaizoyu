@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
@@ -95,6 +96,22 @@ public class UpdaterActivity extends AppCompatActivityTheme {
                 installUpdate(updateFile)
             );
         });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                new MaterialAlertDialogBuilder(UpdaterActivity.this)
+                        .setTitle(getString(R.string.update_cancel_title))
+                        .setMessage(getString(R.string.update_cancel_description))
+                        .setPositiveButton(getString(R.string.update_cancel_accept), (dialog, which) -> {
+                            downloadingFuture.cancel(true);
+                            AnalyticsClient.logBreadcrumb("Update has been canceled willingly");
+                            finish();
+                        })
+                        .setNegativeButton(getString(R.string.update_cancel_deny), null)
+                        .show();
+            }
+        });
     }
 
     private void installUpdate(File updateFile) {
@@ -139,18 +156,5 @@ public class UpdaterActivity extends AppCompatActivityTheme {
             } catch (Exception ignored) {
             }
         }, 5000);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(getString(R.string.update_cancel_title))
-                .setMessage(getString(R.string.update_cancel_description))
-                .setPositiveButton(getString(R.string.update_cancel_accept), (dialog, which) -> {
-                    downloadingFuture.cancel(true);
-                    AnalyticsClient.logBreadcrumb("Update has been canceled willingly");
-                    finish();
-                }).setNegativeButton(getString(R.string.update_cancel_deny), null).show();
     }
 }
