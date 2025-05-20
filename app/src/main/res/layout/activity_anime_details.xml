@@ -261,6 +261,7 @@
                 android:layout_marginBottom="48dp"
                 app:layout_collapseMode="pin"
                 app:navigationIcon="@drawable/ic_back_new_small"
+                app:navigationIconTint="?attr/colorOnSurface"
                 android:background="@drawable/bg_details_upper_fade"
             />
             <com.google.android.material.tabs.TabLayout
@@ -268,6 +269,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_gravity="bottom"
+                app:tabTextColor="?attr/colorOnSecondaryContainer"
                 app:tabMode="fixed"
             >
                 <com.google.android.material.tabs.TabItem
@@ -309,7 +311,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_back_new"
-            app:tint="?attr/colorOnSurfaceVariant"
+            app:tint="?attr/colorOnSurface"
             android:contentDescription="@string/go_back_desc"
         />
 
@@ -325,7 +327,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:trackCornerRadius="10dp"
             app:trackThickness="15dp"
-            app:indicatorColor="@color/branding_accent"
+            app:indicatorColor="?attr/colorPrimary"
         />
 
         <TextView
@@ -334,6 +336,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/d_loading_hint"
+            android:textColor="?attr/colorOnSurface"
             android:fontFamily="@font/lato_regular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

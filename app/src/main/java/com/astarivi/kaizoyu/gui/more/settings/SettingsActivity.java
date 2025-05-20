@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,6 @@ import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.adapters.modal.GenericModalBottomSheet;
 import com.astarivi.kaizoyu.core.adapters.modal.ModalOption;
-import com.astarivi.kaizoyu.core.common.AnalyticsClient;
 import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Colors;
@@ -38,6 +38,7 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import com.startapp.sdk.adsbase.StartAppSDK;
 
 import java.io.File;
+import java.util.ArrayList;
 
 
 public class SettingsActivity extends AppCompatActivityTheme {
@@ -177,22 +178,45 @@ public class SettingsActivity extends AppCompatActivityTheme {
         });
 
         binding.themeTrigger.setOnClickListener(v -> {
-            ThemeSelectionModalBottomSheet modalBottomSheet = new ThemeSelectionModalBottomSheet(theme -> {
-                AnalyticsClient.logBreadcrumb("Theme changed to " + theme.getTitle(this));
+            ArrayList<ModalOption> modalOptions = new ArrayList<>();
 
-                Theme.setTheme(theme, this);
+            Theme currentTheme = Theme.getCurrentTheme();
+            for (Theme theme : Theme.values()) {
+                if (theme == Theme.DYNAMIC_COLORS && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                    continue;
+                }
 
-                Context ctx = getApplicationContext();
-                PackageManager pm = ctx.getPackageManager();
-                Intent intent = pm.getLaunchIntentForPackage(ctx.getPackageName());
-                if (intent == null) return;
-                ComponentName componentName = intent.getComponent();
-                if (componentName == null) return;
-                Intent mainIntent = Intent.makeRestartActivityTask(componentName);
-                ctx.startActivity(mainIntent);
-                Runtime.getRuntime().exit(0);
-            });
-            modalBottomSheet.show(getSupportFragmentManager(), ThemeSelectionModalBottomSheet.TAG);
+                modalOptions.add(
+                        new ModalOption(
+                                theme.getTitle(SettingsActivity.this),
+                                theme.getDescription(SettingsActivity.this),
+                                theme == currentTheme
+                        )
+                );
+            }
+
+            GenericModalBottomSheet modalDialog = new GenericModalBottomSheet(
+                    getString(R.string.app_theme_context),
+                    modalOptions.toArray(new ModalOption[0]),
+                    (index, selected) -> {
+                        if (selected) return;
+
+                        Theme theme = Theme.fromId(index);
+                        Theme.setTheme(theme, SettingsActivity.this);
+
+                        Context ctx = getApplicationContext();
+                        PackageManager pm = ctx.getPackageManager();
+                        Intent intent = pm.getLaunchIntentForPackage(ctx.getPackageName());
+                        if (intent == null) return;
+                        ComponentName componentName = intent.getComponent();
+                        if (componentName == null) return;
+                        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+                        ctx.startActivity(mainIntent);
+                        Runtime.getRuntime().exit(0);
+                    }
+            );
+
+            modalDialog.show(getSupportFragmentManager(), GenericModalBottomSheet.TAG);
         });
 
         binding.testTask.setOnClickListener(v -> {

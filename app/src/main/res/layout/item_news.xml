@@ -38,6 +38,7 @@
                 android:fontFamily="@font/lato_bold"
                 android:text=""
                 android:textSize="13sp"
+                android:textColor="?attr/colorOnSurfaceVariant"
             />
 
             <TextView
@@ -49,6 +50,7 @@
                 android:fontFamily="@font/lato_regular"
                 android:text=""
                 android:textSize="11sp"
+                android:textColor="?attr/colorOnSurfaceVariant"
             />
         </LinearLayout>
     </FrameLayout>

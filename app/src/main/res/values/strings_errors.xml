@@ -3,4 +3,5 @@
     <string name="no_results_error">No results found for your request, please try again later</string>
     <string name="network_connection_error">There was a network error while processing your request, please try again later</string>
     <string name="parsing_error">There was an error reading the response for your request, please try again later</string>
+    <string name="db_error">There is something wrong with your lists database. Back it up asap.</string>
 </resources>

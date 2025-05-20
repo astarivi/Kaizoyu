@@ -15,13 +15,21 @@ import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.core.adapters.gui.WindowCompatUtils;
 import com.astarivi.kaizoyu.core.storage.database.io.Manager;
 import com.astarivi.kaizoyu.core.storage.database.repo.SearchHistoryRepo;
+import com.astarivi.kaizoyu.core.storage.ids.AnimeIdsDatabase;
+import com.astarivi.kaizoyu.core.storage.properties.ExtendedProperties;
 import com.astarivi.kaizoyu.core.theme.AppCompatActivityTheme;
 import com.astarivi.kaizoyu.core.theme.Colors;
+import com.astarivi.kaizoyu.core.updater.UpdateManager;
 import com.astarivi.kaizoyu.databinding.ActivityStorageBinding;
+import com.astarivi.kaizoyu.utils.Data;
+import com.astarivi.kaizoyu.utils.Threading;
 import com.astarivi.kaizoyu.utils.Utils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.tinylog.Logger;
+
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -182,6 +190,46 @@ public class StorageActivity extends AppCompatActivityTheme {
                         )
                     )
                     .show()
+        );
+
+        ExtendedProperties config = Data.getProperties(Data.CONFIGURATION.APP);
+        String localVersion = config.getProperty("idsVersion", "MISSING DATABASE");
+
+        binding.idsUpdateDesc.setText(
+                String.format(getString(R.string.ids_database_update_desc), localVersion)
+        );
+
+        binding.idsUpdateTrigger.setOnClickListener(v ->
+                Threading.instant(() -> {
+                    String remoteVersion;
+                    try {
+                        remoteVersion = UpdateManager.databaseUpdateAvailable();
+                    } catch (IOException e) {
+                        Utils.makeToastRegardless(StorageActivity.this, R.string.ids_update_failed, Toast.LENGTH_SHORT);
+                        Logger.info("Failed to fetch ids database, {}", e);
+                        return;
+                    }
+
+                    if (remoteVersion == null) {
+                        Utils.makeToastRegardless(StorageActivity.this, R.string.ids_update_no_upd, Toast.LENGTH_SHORT);
+                    } else {
+                        Utils.makeToastRegardless(StorageActivity.this, R.string.ids_update_undergoing, Toast.LENGTH_SHORT);
+                        AnimeIdsDatabase.tryFetchRemote(remoteVersion);
+                    }
+                })
+        );
+
+        binding.idsForceTrigger.setOnClickListener(v ->
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle(R.string.ids_force_dialog)
+                        .setMessage(R.string.ids_force_dialog_description)
+                        .setNegativeButton(R.string.restore_negative, null)
+                        .setPositiveButton(R.string.restore_positive, (dialog, which) -> {
+                            Utils.makeToastRegardless(StorageActivity.this, R.string.ids_update_undergoing, Toast.LENGTH_SHORT);
+                            config.remove("idsVersion");
+                            Threading.instant(AnimeIdsDatabase::tryUpdate);
+                        })
+                        .show()
         );
 
         Manager.subscribe(callback);

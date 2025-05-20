@@ -1,6 +1,7 @@
 package com.astarivi.kaizoyu.core.adapters.modal;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +9,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.astarivi.kaizoyu.R;
 import com.astarivi.kaizoyu.databinding.BottomSheetGenericBinding;
 import com.astarivi.kaizoyu.databinding.ItemSheetGenericBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.color.MaterialColors;
 
 import lombok.Setter;
 
@@ -74,7 +75,20 @@ public class GenericModalBottomSheet extends BottomSheetDialogFragment {
             reBinding.itemDescription.setText(option.getValue());
 
             if (option.shouldHighlight()) {
-                reBinding.getRoot().setStrokeColor(ContextCompat.getColor(requireContext(), R.color.branding_alternate));
+                reBinding.getRoot().setStrokeColor(
+                        MaterialColors.getColor(reBinding.getRoot(), R.attr.colorPrimary, Color.BLUE)
+                );
+                reBinding.getRoot().setCardBackgroundColor(
+                        MaterialColors.getColor(reBinding.getRoot(), R.attr.colorPrimaryContainer, Color.BLUE)
+                );
+
+                reBinding.itemTitle.setTextColor(
+                        MaterialColors.getColor(reBinding.getRoot(), R.attr.colorOnPrimaryContainer, Color.WHITE)
+                );
+
+                reBinding.itemDescription.setTextColor(
+                        MaterialColors.getColor(reBinding.getRoot(), R.attr.colorOnPrimaryContainer, Color.WHITE)
+                );
             }
 
             int finalIndex = index;

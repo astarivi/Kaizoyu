@@ -25,6 +25,7 @@
             android:layout_marginEnd="8dp"
             android:id="@+id/episode_name"
             android:layout_marginBottom="6dp"
+            android:textColor="?attr/colorOnSecondaryContainer"
         />
         <LinearLayout
             android:layout_width="wrap_content"
@@ -39,6 +40,7 @@
                 android:textSize="13sp"
                 android:layout_marginEnd="8dp"
                 android:text=""
+                android:textColor="?attr/colorOnSecondaryContainer"
                 />
 
             <TextView
@@ -49,6 +51,7 @@
                 android:textSize="13sp"
                 android:layout_marginEnd="8dp"
                 android:text=""
+                android:textColor="?attr/colorOnSecondaryContainer"
                 />
         </LinearLayout>
     </LinearLayout>

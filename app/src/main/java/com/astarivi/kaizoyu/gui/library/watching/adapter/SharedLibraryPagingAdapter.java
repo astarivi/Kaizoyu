@@ -6,14 +6,14 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
-import com.astarivi.kaizoyu.core.adapters.AnimeRecyclerAdapter;
+import com.astarivi.kaizoyu.core.adapters.AnimePagingAdapter;
 import com.astarivi.kaizoyu.core.adapters.AnimeViewHolder;
 import com.astarivi.kaizoyu.core.models.anime.LocalAnime;
 import com.astarivi.kaizoyu.utils.Translation;
 
 
-public class SharedLibraryRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<LocalAnime>, LocalAnime> {
-    public SharedLibraryRecyclerAdapter(Consumer<LocalAnime> itemClickListener) {
+public class SharedLibraryPagingAdapter extends AnimePagingAdapter<AnimeViewHolder<LocalAnime>, LocalAnime> {
+    public SharedLibraryPagingAdapter(Consumer<LocalAnime> itemClickListener) {
         super(itemClickListener);
     }
 

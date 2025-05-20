@@ -38,14 +38,15 @@
                     android:fontFamily="@font/lato_bold"
                     android:textSize="20sp"
                     android:layout_marginBottom="4dp"
+                    android:textColor="?attr/colorOnSecondaryContainer"
                 />
                 <TextView
                     android:textSize="13sp"
-                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:text="@string/settings_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato_regular"
+                    android:textColor="?attr/colorOnSecondaryContainer"
                     />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -74,14 +75,15 @@
                     android:fontFamily="@font/lato_bold"
                     android:textSize="20sp"
                     android:layout_marginBottom="4dp"
+                    android:textColor="?attr/colorOnSecondaryContainer"
                 />
                 <TextView
                     android:textSize="13sp"
-                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:text="@string/storage_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato_regular"
+                    android:textColor="?attr/colorOnSecondaryContainer"
                 />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -110,14 +112,15 @@
                     android:fontFamily="@font/lato_bold"
                     android:textSize="20sp"
                     android:layout_marginBottom="4dp"
+                    android:textColor="?attr/colorOnSecondaryContainer"
                 />
                 <TextView
                     android:textSize="13sp"
-                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:text="@string/licenses_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato_regular"
+                    android:textColor="?attr/colorOnSecondaryContainer"
                 />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -146,15 +149,16 @@
                     android:fontFamily="@font/lato_bold"
                     android:textSize="20sp"
                     android:layout_marginBottom="4dp"
+                    android:textColor="?attr/colorOnSecondaryContainer"
                     />
                 <TextView
                     android:id="@+id/updateSettingDescription"
                     android:textSize="13sp"
-                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:text="@string/updatecheck_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato_regular"
+                    android:textColor="?attr/colorOnSecondaryContainer"
                 />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

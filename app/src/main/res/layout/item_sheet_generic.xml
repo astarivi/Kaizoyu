@@ -25,6 +25,7 @@
             android:layout_marginEnd="8dp"
             android:id="@+id/item_title"
             android:layout_marginBottom="6dp"
+            android:textColor="?attr/colorOnSecondaryContainer"
         />
         <TextView
             android:id="@+id/item_description"
@@ -34,6 +35,7 @@
             android:textSize="13sp"
             android:layout_marginEnd="8dp"
             android:text=""
+            android:textColor="?attr/colorOnSecondaryContainer"
         />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

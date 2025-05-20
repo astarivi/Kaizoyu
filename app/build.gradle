@@ -23,8 +23,8 @@ android {
         applicationId "com.astarivi.kaizoyu"
         minSdkVersion 23
         targetSdkVersion 36
-        versionCode 11
-        versionName "1.0"
+        versionCode 12
+        versionName "1.1"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -105,7 +105,7 @@ dependencies {
 
     // External libraries (third party)
     // Guava solves a dependency issue between ACRA.ch and work-runtime
-    implementation 'com.google.guava:guava:33.1.0-android'
+    implementation 'com.google.guava:guava:33.4.8-android'
     implementation 'com.github.WrichikBasu:AudioFocusController:3.0.2'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.1.0'
     implementation 'com.github.astarivi:Zparc:1.1'
@@ -137,6 +137,9 @@ dependencies {
     implementation 'com.startapp:inapp-sdk:5.2.0'
 
     // Android X
+    implementation 'androidx.paging:paging-runtime:3.3.6'
+    implementation 'androidx.paging:paging-guava:3.3.6'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-beta01'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
@@ -145,6 +148,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata:2.9.0'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.room:room-runtime:2.7.1'
+    implementation 'androidx.room:room-paging:2.7.1'
     annotationProcessor 'androidx.room:room-compiler:2.7.1'
 
     // Logger

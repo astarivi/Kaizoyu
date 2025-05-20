@@ -1,6 +1,6 @@
 <resources>
     <style name="BaseTheme" parent="Theme.Material3.Light.NoActionBar">
-
+        <item name="materialAlertDialogTheme">@style/CustomMaterialAlertDialogTheme</item>
     </style>
 
     <!-- Base application theme. -->
@@ -38,8 +38,8 @@
 
     <!-- High Contrast theme. -->
     <style name="HighContrast" parent="BaseTheme">
-        <item name="colorPrimary">@color/hc_primary</item>
-        <item name="colorOnPrimary">@color/hc_onPrimary</item>
+        <item name="colorPrimary">@color/hc_onPrimary</item>
+        <item name="colorOnPrimary">@color/hc_primary</item>
         <item name="colorPrimaryContainer">@color/hc_primaryContainer</item>
         <item name="colorOnPrimaryContainer">@color/hc_onPrimaryContainer</item>
         <item name="colorSecondary">@color/hc_secondary</item>
@@ -69,6 +69,42 @@
         <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
         <item name="android:statusBarColor">@color/hc_background</item>
         <item name="android:navigationBarColor">@color/hc_surfaceVariant</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Kitsune Takeover theme. -->
+    <style name="KitsuneTakeover" parent="BaseTheme">
+        <item name="colorPrimary">@color/kt_primary</item>
+        <item name="colorOnPrimary">@color/kt_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/kt_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/kt_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/kt_secondary</item>
+        <item name="colorOnSecondary">@color/kt_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/kt_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/kt_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/kt_tertiary</item>
+        <item name="colorOnTertiary">@color/kt_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/kt_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/kt_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_dark_error</item>
+        <item name="colorErrorContainer">@color/md_theme_dark_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_dark_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_dark_onErrorContainer</item>
+        <item name="android:colorBackground">@color/kt_background</item>
+        <item name="android:textColor">@color/kt_onSurface</item>
+        <item name="android:listDivider">@color/kt_onTertiary</item>
+        <item name="colorControlNormal">@color/kt_onSurface</item>
+        <item name="colorOnBackground">@color/kt_onSurface</item>
+        <item name="colorSurface">@color/kt_background</item>
+        <item name="colorOnSurface">@color/kt_onSurface</item>
+        <item name="colorSurfaceVariant">@color/kt_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/kt_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_dark_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
+        <item name="android:statusBarColor">@color/kt_background</item>
+        <item name="android:navigationBarColor">@color/kt_surfaceVariant</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

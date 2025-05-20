@@ -10,10 +10,10 @@ import java.util.List;
 import okhttp3.HttpUrl;
 
 
-public class SearchParams {
+public class SearchParams implements Cloneable {
     private final List<StringPair> customParameters;
-    private int limit = 20;
-    private int offset = 0;
+    private int pageSize = 20;
+    private int pageNumber = 0;
     private String animeTitle = null;
     private int seasonYear = 0;
     private SearchParams.Seasons season = null;
@@ -21,6 +21,10 @@ public class SearchParams {
 
     public SearchParams(){
         customParameters = new ArrayList<>();
+    }
+
+    protected SearchParams(List<StringPair> params) {
+        customParameters = params;
     }
 
     public SearchParams setCustomParameter(@NotNull String key, @NotNull String value) {
@@ -40,13 +44,13 @@ public class SearchParams {
         return this;
     }
 
-    public SearchParams setLimit(int limit) {
-        this.limit = limit;
+    public SearchParams setPageSize(int limit) {
+        this.pageSize = limit;
         return this;
     }
 
-    public SearchParams setOffset(int offset) {
-        this.offset = offset;
+    public SearchParams setPageNumber(int page) {
+        this.pageNumber = page;
         return this;
     }
 
@@ -69,8 +73,8 @@ public class SearchParams {
         HttpUrl.Builder queryUrl = new HttpUrl.Builder();
         queryUrl.scheme("https").host("kitsu.app").addPathSegments("api/edge/anime");
 
-        queryUrl.addQueryParameter("page[limit]", Integer.toString(limit));
-        queryUrl.addQueryParameter("page[offset]", Integer.toString(offset));
+        queryUrl.addQueryParameter("page[size]", Integer.toString(pageSize));
+        queryUrl.addQueryParameter("page[number]", Integer.toString(pageNumber));
 
         if (animeTitle != null) queryUrl.addQueryParameter("filter[text]", animeTitle);
 
@@ -87,6 +91,24 @@ public class SearchParams {
         }
 
         return queryUrl.build();
+    }
+
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
+    public SearchParams clone() {
+        List<StringPair> copiedParams = new ArrayList<>();
+        for (StringPair pair : this.customParameters) {
+            copiedParams.add(new StringPair(pair.getName(), pair.getValue()));
+        }
+        SearchParams clone = new SearchParams(copiedParams);
+
+        clone.pageSize = this.pageSize;
+        clone.pageNumber = this.pageNumber;
+        clone.animeTitle = this.animeTitle;
+        clone.seasonYear = this.seasonYear;
+        clone.season = this.season;
+        clone.status = this.status;
+
+        return clone;
     }
 
     public enum Seasons {

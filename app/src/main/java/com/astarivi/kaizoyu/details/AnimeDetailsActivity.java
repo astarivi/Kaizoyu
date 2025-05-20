@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ShareCompat;
@@ -618,6 +619,23 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
             modalDialog.show(getSupportFragmentManager(), GenericModalBottomSheet.TAG);
         });
 
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                int position = binding.informationViewPager.getCurrentItem();
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag("f" + position);
+
+                if (fragment instanceof BackInterceptAdapter) {
+                    if (((BackInterceptAdapter) fragment).shouldFragmentInterceptBack()) {
+                        return;
+                    }
+                }
+
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
+
         binding.loadingScreen.setVisibility(View.GONE);
     }
 
@@ -673,24 +691,6 @@ public class AnimeDetailsActivity extends AppCompatActivityTheme {
                 }
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        int position = binding.informationViewPager.getCurrentItem();
-
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("f" + position);
-
-        if (fragment == null) {
-            super.onBackPressed();
-            return;
-        }
-
-        if (fragment instanceof BackInterceptAdapter && ((BackInterceptAdapter) fragment).shouldFragmentInterceptBack()) {
-            return;
-        }
-
-        super.onBackPressed();
     }
 
     public void setCurrentFragment(int index) {

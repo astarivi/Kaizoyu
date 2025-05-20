@@ -1,36 +1,43 @@
 package com.astarivi.kaizoyu.search;
 
-import android.content.Context;
-import android.view.View;
-import android.widget.Toast;
-
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelKt;
+import androidx.paging.Pager;
+import androidx.paging.PagingConfig;
+import androidx.paging.PagingData;
+import androidx.paging.PagingLiveData;
 
-import com.astarivi.kaizolib.kitsuv2.exception.KitsuException;
-import com.astarivi.kaizolib.kitsuv2.exception.ParsingError;
-import com.astarivi.kaizolib.kitsuv2.model.KitsuAnime;
-import com.astarivi.kaizolib.kitsuv2.public_api.KitsuPublic;
-import com.astarivi.kaizoyu.R;
-import com.astarivi.kaizoyu.core.models.anime.AnimeMapper;
 import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
-import com.astarivi.kaizoyu.databinding.ActivitySearchBinding;
-import com.astarivi.kaizoyu.utils.Threading;
-import com.astarivi.kaizoyu.utils.Utils;
+import com.astarivi.kaizoyu.search.recycler.SearchFuturePagingSource;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.concurrent.Future;
-
+import kotlinx.coroutines.CoroutineScope;
 import lombok.Getter;
 
 
 public class SearchViewModel extends ViewModel {
     @Getter
-    private final MutableLiveData<List<RemoteAnime>> results = new MutableLiveData<>();
-    private Future<?> searchingFuture = null;
+    private final LiveData<PagingData<RemoteAnime>> results;
+    private final MutableLiveData<String> queryLiveData = new MutableLiveData<>();
     private boolean isSearchActive = false;
+
+    public SearchViewModel() {
+        results = Transformations.switchMap(queryLiveData, query -> {
+            CoroutineScope viewModelScope = ViewModelKt.getViewModelScope(this);
+            PagingConfig pagingConfig = new PagingConfig(20, 20, true, 20);
+
+            Pager<Integer, RemoteAnime> pager = new Pager<>(
+                    pagingConfig,
+                    () -> new SearchFuturePagingSource(query)
+            );
+
+            return PagingLiveData.cachedIn(PagingLiveData.getLiveData(pager), viewModelScope);
+        });
+    }
 
     public boolean hasSearch() {
         return results.getValue() != null;
@@ -44,65 +51,8 @@ public class SearchViewModel extends ViewModel {
         isSearchActive = false;
     }
 
-    public boolean checkIfHasSearchAndCancel() {
-        if (searchingFuture != null && !searchingFuture.isDone()) {
-            searchingFuture.cancel(true);
-            return true;
-        }
-
-        return false;
-    }
-
-    public void searchAnime(
-            @NotNull String search,
-            @NotNull ActivitySearchBinding binding,
-            @NotNull Context context
-    ) {
-        if (searchingFuture != null && !searchingFuture.isDone()) {
-            Toast.makeText(
-                    context,
-                    context.getString(R.string.anime_busy),
-                    Toast.LENGTH_SHORT
-            ).show();
-            return;
-        }
-
-        binding.searchResults.setVisibility(View.GONE);
-        binding.noResultsPrompt.setVisibility(View.GONE);
-        binding.loadingBar.setVisibility(View.VISIBLE);
-
-        searchingFuture = Threading.submitTask(Threading.TASK.INSTANT, () -> {
-            List<KitsuAnime> searchResults;
-            try {
-                searchResults = KitsuPublic.search(search);
-            } catch (KitsuException | ParsingError e) {
-                if (e instanceof ParsingError) {
-                    Utils.makeToastRegardless(
-                            context,
-                            R.string.parsing_error,
-                            Toast.LENGTH_SHORT
-                    );
-                    return;
-                }
-
-                Utils.makeToastRegardless(
-                        context,
-                        R.string.network_connection_error,
-                        Toast.LENGTH_SHORT
-                );
-                return;
-            }
-
-            if (searchResults.isEmpty()) {
-                results.postValue(null);
-                return;
-            }
-
-            isSearchActive = true;
-
-            results.postValue(
-                    AnimeMapper.bulkRemoteFromKitsu(searchResults)
-            );
-        });
+    public void searchAnime(@NotNull String search) {
+        isSearchActive = true;
+        queryLiveData.postValue(search);
     }
 }

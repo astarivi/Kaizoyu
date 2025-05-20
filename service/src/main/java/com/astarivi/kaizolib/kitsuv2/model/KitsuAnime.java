@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -189,6 +190,12 @@ public class KitsuAnime {
     @JsonIgnoreProperties(ignoreUnknown = true)
     private static class SearchResults {
         public List<KitsuAnime> data;
+        public Meta meta;
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public static class Meta {
+            public long count;
+        }
     }
 
     public static @NotNull KitsuAnime deserializeOne(String serialized) throws ParsingError {
@@ -205,5 +212,18 @@ public class KitsuAnime {
         } catch (IOException | NullPointerException e) {
             throw new ParsingError(e);
         }
+    }
+
+    @Contract("_ -> new")
+    public static RawResults deserializeRawSearch(String serialized) throws ParsingError {
+        SearchResults sr;
+
+        try {
+            sr = JsonMapper.deserializeGeneric(serialized, SearchResults.class);
+        } catch (IOException | NullPointerException e) {
+            throw new ParsingError(e);
+        }
+
+        return new RawResults(sr.data, sr.meta.count);
     }
 }

@@ -1,49 +1,57 @@
 package com.astarivi.kaizoyu.gui.library.watching;
 
-import android.view.View;
-
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelKt;
+import androidx.paging.Pager;
+import androidx.paging.PagingConfig;
+import androidx.paging.PagingData;
+import androidx.paging.PagingDataTransforms;
+import androidx.paging.PagingLiveData;
 
 import com.astarivi.kaizoyu.core.models.anime.AnimeMapper;
 import com.astarivi.kaizoyu.core.models.anime.LocalAnime;
 import com.astarivi.kaizoyu.core.models.base.AnimeBasicInfo;
 import com.astarivi.kaizoyu.core.storage.database.repo.SavedShowRepo;
 import com.astarivi.kaizoyu.core.storage.database.tables.saved_anime.SavedAnime;
-import com.astarivi.kaizoyu.databinding.ActivitySharedLibraryBinding;
-import com.astarivi.kaizoyu.utils.Threading;
+import com.astarivi.kaizoyu.core.threading.ThreadingAssistant;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-
+import kotlinx.coroutines.CoroutineScope;
 import lombok.Getter;
 
 
-@Getter
+
 public class SharedLibraryViewModel extends ViewModel {
-    private final MutableLiveData<List<LocalAnime>> animeList = new MutableLiveData<>();
+    @Getter
+    private final LiveData<PagingData<LocalAnime>> results;
+    private final MutableLiveData<AnimeBasicInfo.LocalList> queryType = new MutableLiveData<>();
 
-    public void fetchFavorites(@NotNull ActivitySharedLibraryBinding binding, AnimeBasicInfo.LocalList type) {
-        binding.emptyLibraryPopup.setVisibility(View.GONE);
-        binding.loadingBar.setVisibility(View.VISIBLE);
-        binding.libraryContents.setVisibility(View.INVISIBLE);
+    public SharedLibraryViewModel() {
+        results = Transformations.switchMap(queryType, query -> {
+            CoroutineScope viewModelScope = ViewModelKt.getViewModelScope(this);
+            PagingConfig pagingConfig = new PagingConfig(20, 20, true, 20);
 
-        Threading.database(() -> {
-            List<SavedAnime> savedAnime = SavedShowRepo.getAnimeDao().getAllByType(
-                    type.getValue()
+            Pager<Integer, SavedAnime> pager = new Pager<>(
+                    pagingConfig,
+                    () -> SavedShowRepo.getAnimeDao().pageAllByType(query.getValue())
             );
 
-            if (savedAnime.isEmpty()) {
-                animeList.postValue(null);
-                return;
-            }
-
-            Threading.instant(() ->
-                animeList.postValue(
-                        AnimeMapper.bulkLocalFromSaved(savedAnime)
-                )
+            LiveData<PagingData<LocalAnime>> liveData = Transformations.map(
+                    PagingLiveData.getLiveData(pager),
+                    pagingData -> PagingDataTransforms.map(
+                            pagingData,
+                            ThreadingAssistant.getInstance().getGuavaExecutor(),
+                            AnimeMapper::localFromSaved
+                    )
             );
+
+            return PagingLiveData.cachedIn(liveData, viewModelScope);
         });
+    }
+
+    public void fetchFavorites(AnimeBasicInfo.LocalList type) {
+        queryType.postValue(type);
     }
 }

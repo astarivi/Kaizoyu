@@ -39,15 +39,15 @@ public abstract class AnimeBasicInfo implements Parcelable {
         boolean preferEnglish = Data.getProperties(Data.CONFIGURATION.APP)
                 .getBooleanProperty("prefer_english", true);
 
-        if (preferEnglish) {
-            final String englishTitle = getTitleEn();
+        final String englishTitle = getTitleEn();
 
-            if (englishTitle != null) return englishTitle;
-        }
+        if (preferEnglish && englishTitle != null) return englishTitle;
 
         final String romajiTitle = getTitleEnJp();
 
         if (romajiTitle != null) return romajiTitle;
+
+        if (englishTitle != null) return englishTitle;
 
         final String jpTitle = getTitleJp();
 

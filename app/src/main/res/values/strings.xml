@@ -36,10 +36,10 @@
     <string name="update_choice_install">Install</string>
     <string name="update_no_description">No description was included in this release.</string>
     <string name="update_error">Whoops, something went wrong while updating</string>
-    <string name="update_cancel_title">You sure, bud?</string>
-    <string name="update_cancel_description">You\'re about to cancel the update and go back. All download progress will be lost.</string>
-    <string name="update_cancel_accept">Hell yeah</string>
-    <string name="update_cancel_deny">I\'ll stay</string>
+    <string name="update_cancel_title">About to cancel update</string>
+    <string name="update_cancel_description">You are about to cancel the update and go back. All download progress will be lost.</string>
+    <string name="update_cancel_accept">Yes, cancel</string>
+    <string name="update_cancel_deny">No, I\'ll stay</string>
     <string name="update_already_latest">No updates available</string>
     <string name="search_history_icon_desc">Search history icon</string>
     <string name="anime_cover_image_desc">Anime cover image</string>

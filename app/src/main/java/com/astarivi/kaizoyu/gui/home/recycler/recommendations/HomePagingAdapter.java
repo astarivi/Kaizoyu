@@ -1,4 +1,4 @@
-package com.astarivi.kaizoyu.search.recycler;
+package com.astarivi.kaizoyu.gui.home.recycler.recommendations;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -6,15 +6,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
-import com.astarivi.kaizoyu.core.adapters.AnimeRecyclerAdapter;
+import com.astarivi.kaizoyu.core.adapters.AnimePagingAdapter;
 import com.astarivi.kaizoyu.core.adapters.AnimeViewHolder;
 import com.astarivi.kaizoyu.core.models.anime.RemoteAnime;
 import com.astarivi.kaizoyu.utils.Translation;
 import com.astarivi.kaizoyu.utils.Utils;
 
 
-public class SearchRecyclerAdapter extends AnimeRecyclerAdapter<AnimeViewHolder<RemoteAnime>, RemoteAnime> {
-    public SearchRecyclerAdapter(Consumer<RemoteAnime> itemClickListener) {
+public class HomePagingAdapter extends AnimePagingAdapter<AnimeViewHolder<RemoteAnime>, RemoteAnime> {
+    public HomePagingAdapter(Consumer<RemoteAnime> itemClickListener) {
         super(itemClickListener);
     }
 

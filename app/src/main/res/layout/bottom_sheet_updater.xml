@@ -22,7 +22,7 @@
         android:textSize="18sp"
         android:layout_marginEnd="14dp"
         android:layout_marginBottom="6dp"
-        android:textColor="@color/branding_accent"
+        android:textColor="?attr/colorPrimary"
     />
 
     <TextView
@@ -35,6 +35,7 @@
         android:fontFamily="@font/lato_regular"
         android:text="@string/update_version_change"
         android:textSize="16sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
     />
 
     <androidx.core.widget.NestedScrollView
@@ -52,6 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""
+            android:textColor="?attr/colorOnSurface"
         />
     </androidx.core.widget.NestedScrollView>
 
@@ -82,7 +84,7 @@
             android:layout_marginStart="6dp"
             android:layout_marginEnd="6dp"
             android:text="@string/update_choice_later"
-            android:textColor="?attr/colorOnSurface"
+            android:textColor="?attr/colorOnSurfaceVariant"
         />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/now_install"
@@ -90,8 +92,8 @@
             android:layout_height="wrap_content"
             style="@style/Widget.Material3.Button"
             android:text="@string/update_choice_install"
-            android:textColor="?attr/colorOnSurface"
-            android:backgroundTint="@color/branding_accent"
+            android:textColor="?attr/colorOnPrimary"
+            android:backgroundTint="?attr/colorPrimary"
         />
     </LinearLayout>
 </LinearLayout>

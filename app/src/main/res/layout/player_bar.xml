@@ -20,7 +20,7 @@
         android:progressBackgroundTint="@color/player_outline"
         android:progressTint="@color/player_item"
         android:secondaryProgress="60"
-        android:secondaryProgressTint="@color/branding_accent"
+        android:secondaryProgressTint="?attr/colorPrimary"
         android:splitTrack="false"
         android:thumb="@drawable/seekbar_thumb"
         android:thumbTint="@color/player_item"

@@ -6,6 +6,7 @@ import com.astarivi.kaizolib.kitsuv2.exception.KitsuException;
 import com.astarivi.kaizolib.kitsuv2.exception.ParsingError;
 import com.astarivi.kaizolib.kitsuv2.model.KitsuAnime;
 import com.astarivi.kaizolib.kitsuv2.model.KitsuEpisode;
+import com.astarivi.kaizolib.kitsuv2.model.RawResults;
 
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
@@ -19,6 +20,12 @@ public class KitsuPublic extends Methods {
     public static @NotNull KitsuAnime get(long id) throws KitsuException, ParsingError {
         return KitsuAnime.deserializeOne(
             idRequest(id)
+        );
+    }
+
+    public static RawResults rawSearch(@NotNull SearchParams params) throws KitsuException, ParsingError {
+        return KitsuAnime.deserializeRawSearch(
+                executeGet(params.buildURI())
         );
     }
 

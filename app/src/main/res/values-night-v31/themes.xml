@@ -3,5 +3,6 @@
     <style name="BaseTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/avd_launch</item>
         <item name="android:windowSplashScreenAnimationDuration">400</item>
+        <item name="materialAlertDialogTheme">@style/CustomMaterialAlertDialogTheme</item>
     </style>
 </resources>

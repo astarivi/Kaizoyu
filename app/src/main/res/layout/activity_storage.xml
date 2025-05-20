@@ -49,6 +49,7 @@
                         android:layout_marginBottom="20dp"
                         android:fontFamily="@font/lato_bold"
                         android:textSize="20sp"
+                        android:textColor="?attr/colorOnSecondaryContainer"
                     />
 
                     <LinearLayout
@@ -71,7 +72,7 @@
                                 app:indicatorSize="100dp"
                                 app:trackThickness="10dp"
                                 app:trackCornerRadius="5dp"
-                                app:indicatorColor="@color/branding_accent"
+                                app:indicatorColor="?attr/colorPrimary"
                                 android:layout_gravity="center"
                             />
                             <TextView
@@ -81,6 +82,7 @@
                                 android:text="0%"
                                 android:layout_gravity="center"
                                 tools:ignore="HardcodedText"
+                                android:textColor="?attr/colorOnSecondaryContainer"
                             />
                         </FrameLayout>
 
@@ -93,12 +95,12 @@
                             <TextView
                                 android:id="@+id/currentTask"
                                 android:textSize="17sp"
-                                android:textColor="?attr/colorOnSurfaceVariant"
                                 android:text="@string/st_db_backup_operation"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/lato_regular"
                                 android:gravity="center_horizontal"
+                                android:textColor="?attr/colorOnSecondaryContainer"
                             />
                             <View
                                 android:layout_width="match_parent"
@@ -138,10 +140,53 @@
                         android:text="@string/section_database"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
                         android:fontFamily="@font/lato_bold"
                         android:textSize="20sp"
+                        android:textColor="?attr/colorOnSecondaryContainer"
                     />
+
+                    <TextView
+                        android:layout_marginBottom="20dp"
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorOnSecondaryContainer"
+                        android:text="@string/section_database_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_regular" />
+
+                    <LinearLayout
+                        android:id="@+id/clearSearchTrigger"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:fontFamily="@font/lato_regular"
+                            android:text="@string/clear_search_history"
+                            android:textColor="?attr/colorOnSecondaryContainer"
+                            android:textSize="17sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:fontFamily="@font/lato_regular"
+                            android:text="@string/clear_search_history_descriptions"
+                            android:textColor="?attr/colorOnSecondaryContainer"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginStart="25dp" />
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -150,12 +195,13 @@
                         android:gravity="center_vertical"
                         android:id="@+id/backupTrigger"
                         android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp"
                     >
                         <TextView
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:textSize="17sp"
-                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textColor="?attr/colorOnSecondaryContainer"
                             android:text="@string/backup_database"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -166,7 +212,7 @@
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:textSize="13sp"
-                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textColor="?attr/colorOnSecondaryContainer"
                             android:text="@string/backup_database_desc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -195,7 +241,7 @@
                             android:layout_marginEnd="10dp"
                             android:fontFamily="@font/lato_regular"
                             android:text="@string/restore_database"
-                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textColor="?attr/colorOnSecondaryContainer"
                             android:textSize="17sp"
                         />
 
@@ -206,7 +252,7 @@
                             android:layout_marginEnd="10dp"
                             android:fontFamily="@font/lato_regular"
                             android:text="@string/restore_database_desc"
-                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textColor="?attr/colorOnSecondaryContainer"
                             android:textSize="13sp"
                         />
                     </LinearLayout>
@@ -217,9 +263,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="?attr/materialCardViewFilledStyle"
+                android:layout_marginTop="16dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginTop="16dp"
                 app:cardBackgroundColor="?attr/colorSecondaryContainer"
                 >
                 <LinearLayout
@@ -230,12 +276,21 @@
                     android:padding="18dp"
                     >
                     <TextView
-                        android:text="@string/section_temporary"
+                        android:text="@string/section_ids_database"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
                         android:fontFamily="@font/lato_bold"
                         android:textSize="20sp"
+                        android:textColor="?attr/colorOnSecondaryContainer" />
+
+                    <TextView
+                        android:layout_marginBottom="20dp"
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorOnSecondaryContainer"
+                        android:text="@string/section_ids_database_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_regular"
                         />
 
                     <LinearLayout
@@ -243,27 +298,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:gravity="center_vertical"
-                        android:id="@+id/clearCacheTrigger"
+                        android:id="@+id/idsUpdateTrigger"
                         android:layout_marginBottom="10dp"
                         >
-
                         <TextView
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:textSize="17sp"
-                            android:textColor="?attr/colorOnSurfaceVariant"
-                            android:text="@string/clear_cache"
+                            android:textColor="?attr/colorOnSecondaryContainer"
+                            android:text="@string/ids_database_update"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/lato_regular"
-                            />
+                            android:fontFamily="@font/lato_regular" />
 
                         <TextView
+                            android:id="@+id/idsUpdateDesc"
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:textSize="13sp"
-                            android:textColor="?attr/colorOnSurfaceVariant"
-                            android:text="@string/clear_cache_repository"
+                            android:textColor="?attr/colorOnSecondaryContainer"
+                            android:text="@string/ids_database_update_desc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/lato_regular"
@@ -277,7 +331,7 @@
                         />
 
                     <LinearLayout
-                        android:id="@+id/clearSearchTrigger"
+                        android:id="@+id/idsForceTrigger"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:layout_marginTop="10dp"
@@ -290,8 +344,8 @@
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:fontFamily="@font/lato_regular"
-                            android:text="@string/clear_search_history"
-                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/ids_database_force"
+                            android:textColor="?attr/colorOnSecondaryContainer"
                             android:textSize="17sp"
                             />
 
@@ -301,9 +355,72 @@
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:fontFamily="@font/lato_regular"
-                            android:text="@string/clear_search_history_descriptions"
-                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:text="@string/ids_database_force_now"
+                            android:textColor="?attr/colorOnSecondaryContainer"
                             android:textSize="13sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?attr/materialCardViewFilledStyle"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="?attr/colorSecondaryContainer">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:text="@string/section_temporary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_bold"
+                        android:textSize="20sp"
+                        android:textColor="?attr/colorOnSecondaryContainer" />
+
+                    <TextView
+                        android:layout_marginBottom="20dp"
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorOnSecondaryContainer"
+                        android:text="@string/section_temporary_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_regular" />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:gravity="center_vertical"
+                        android:id="@+id/clearCacheTrigger">
+
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="17sp"
+                            android:textColor="?attr/colorOnSecondaryContainer"
+                            android:text="@string/clear_cache"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular" />
+
+                        <TextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSecondaryContainer"
+                            android:text="@string/clear_cache_repository"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato_regular" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
