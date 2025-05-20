@@ -29,7 +29,7 @@
         app:indicatorSize="150dp"
         app:trackCornerRadius="10dp"
         app:trackThickness="15dp"
-        app:indicatorColor="@color/branding_accent"
+        app:indicatorColor="?attr/colorPrimary"
         android:layout_gravity="center"
     />
 

@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/item_text"
             android:textSize="14sp"
-            android:textColor="?attr/colorOnSurfaceVariant"
+        android:textColor="?attr/colorOnSurface"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/item_check"

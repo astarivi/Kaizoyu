@@ -1,6 +1,6 @@
 <resources>
     <style name="BaseTheme" parent="Theme.Material3.Light.NoActionBar">
-
+        <item name="materialAlertDialogTheme">@style/CustomMaterialAlertDialogTheme</item>
     </style>
 
     <!-- Base application theme. -->
@@ -38,8 +38,8 @@
 
     <!-- High Contrast theme. -->
     <style name="HighContrast" parent="BaseTheme">
-        <item name="colorPrimary">@color/hc_primary</item>
-        <item name="colorOnPrimary">@color/hc_onPrimary</item>
+        <item name="colorPrimary">@color/hc_onPrimary</item>
+        <item name="colorOnPrimary">@color/hc_primary</item>
         <item name="colorPrimaryContainer">@color/hc_primaryContainer</item>
         <item name="colorOnPrimaryContainer">@color/hc_onPrimaryContainer</item>
         <item name="colorSecondary">@color/hc_secondary</item>

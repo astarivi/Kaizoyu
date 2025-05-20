@@ -52,13 +52,15 @@
                             android:layout_marginEnd="16dp"
                             android:src="@drawable/ic_general_tips"
                             android:contentDescription="@string/tip_icon_desc"
+                            app:tint="?attr/colorOnTertiaryContainer"
                         />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/lato_regular"
-                            android:text="@string/fragment_anime_episodes_tip" />
+                            android:text="@string/fragment_anime_episodes_tip"
+                            android:textColor="?attr/colorOnTertiaryContainer" />
                     </LinearLayout>
 
                     <Button

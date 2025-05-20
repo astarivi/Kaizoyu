@@ -88,7 +88,7 @@
     <color name="hc_tertiary">#292929</color>
     <color name="hc_onTertiary">#333333</color>
     <color name="hc_tertiaryContainer">#1B1B1B</color>
-    <color name="hc_onTertiaryContainer">#272727</color>
+    <color name="hc_onTertiaryContainer">#909090</color>
 
     <!-- Kitsune takeover color palette -->
     <color name="kt_background">#EBEBEB</color>
@@ -105,7 +105,7 @@
     <color name="kt_secondaryContainer">#FFFFFF</color>
     <color name="kt_onSecondaryContainer">#191919</color>
     <color name="kt_tertiary">#292929</color>
-    <color name="kt_onTertiary">#333333</color>
-    <color name="kt_tertiaryContainer">#1B1B1B</color>
-    <color name="kt_onTertiaryContainer">#272727</color>
+    <color name="kt_onTertiary">#E4E4E4</color>
+    <color name="kt_tertiaryContainer">#332532</color>
+    <color name="kt_onTertiaryContainer">#D5D5D5</color>
 </resources>

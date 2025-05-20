@@ -32,7 +32,7 @@
                 android:textSize="22sp"
                 android:layout_marginEnd="14dp"
                 android:layout_marginBottom="6dp"
-                android:textColor="@color/branding_accent"
+                android:textColor="?attr/colorPrimary"
                 android:gravity="center_horizontal"
             />
 
@@ -45,6 +45,7 @@
                 android:fontFamily="@font/lato_regular"
                 android:text="@string/first_welcome_desc"
                 android:textSize="16sp"
+                android:textColor="?attr/colorOnSurfaceVariant"
             />
 
             <TextView
@@ -53,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:fontFamily="@font/lato_bold"
-                android:textColor="@color/branding_accent"
+                android:textColor="?attr/colorPrimary"
                 android:text="@string/fw_privacy"
                 android:textSize="18sp"
                 android:gravity="center_horizontal"
@@ -66,6 +67,7 @@
                 android:fontFamily="@font/lato_regular"
                 android:text="@string/fw_privacy_desc"
                 android:textSize="15sp"
+                android:textColor="?attr/colorOnSurfaceVariant"
             />
 
             <TextView
@@ -76,6 +78,7 @@
                 android:text="@string/fw_privacy_conf"
                 android:textSize="16sp"
                 android:gravity="center_horizontal"
+                android:textColor="?attr/colorOnSurfaceVariant"
             />
 
             <LinearLayout
@@ -91,6 +94,7 @@
                     android:text="@string/fw_privacy_false"
                     android:textSize="18sp"
                     android:layout_marginEnd="40dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                 />
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:layout_width="wrap_content"
@@ -101,7 +105,7 @@
                     app:showText="false"
                 />
                 <TextView
-                    android:textColor="@color/branding_accent"
+                    android:textColor="?attr/colorPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato_regular"
@@ -120,6 +124,7 @@
                 android:text="@string/fw_privacy_updates"
                 android:textSize="16sp"
                 android:gravity="center_horizontal"
+                android:textColor="?attr/colorOnSurfaceVariant"
             />
 
             <LinearLayout
@@ -135,6 +140,7 @@
                     android:text="@string/fw_privacy_false"
                     android:textSize="18sp"
                     android:layout_marginEnd="40dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                 />
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:layout_width="wrap_content"
@@ -145,7 +151,7 @@
                     app:showText="false"
                 />
                 <TextView
-                    android:textColor="@color/branding_accent"
+                    android:textColor="?attr/colorPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato_regular"
@@ -161,7 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:fontFamily="@font/lato_bold"
-                android:textColor="@color/branding_accent"
+                android:textColor="?attr/colorPrimary"
                 android:text="@string/fw_preferences"
                 android:textSize="18sp"
                 android:gravity="center_horizontal"
@@ -174,6 +180,7 @@
                 android:fontFamily="@font/lato_regular"
                 android:text="@string/fw_preferences_desc"
                 android:textSize="15sp"
+                android:textColor="?attr/colorOnSurfaceVariant"
             />
 
             <TextView
@@ -184,6 +191,7 @@
                 android:text="@string/fw_pref_language"
                 android:textSize="16sp"
                 android:gravity="center_horizontal"
+                android:textColor="?attr/colorOnSurfaceVariant"
             />
 
             <LinearLayout
@@ -199,6 +207,7 @@
                     android:text="@string/fw_pref_language_false"
                     android:textSize="18sp"
                     android:layout_marginEnd="40dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                 />
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:layout_width="wrap_content"
@@ -209,7 +218,7 @@
                     app:showText="false"
                 />
                 <TextView
-                    android:textColor="@color/branding_accent"
+                    android:textColor="?attr/colorPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato_regular"
@@ -228,6 +237,7 @@
                 android:text="@string/fw_pref_autofav"
                 android:textSize="16sp"
                 android:gravity="center_horizontal"
+                android:textColor="?attr/colorOnSurfaceVariant"
             />
 
             <LinearLayout
@@ -243,6 +253,7 @@
                     android:text="@string/fw_privacy_false"
                     android:textSize="18sp"
                     android:layout_marginEnd="40dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                 />
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:layout_width="wrap_content"
@@ -253,7 +264,7 @@
                     app:showText="false"
                 />
                 <TextView
-                    android:textColor="@color/branding_accent"
+                    android:textColor="?attr/colorPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato_regular"
@@ -272,6 +283,7 @@
                 android:text="@string/fw_end"
                 android:textSize="15sp"
                 android:gravity="center_horizontal"
+                android:textColor="?attr/colorOnSurfaceVariant"
             />
 
 
@@ -282,8 +294,8 @@
                 android:layout_height="wrap_content"
                 style="@style/Widget.Material3.Button"
                 android:text="@string/fw_end_button"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="@color/branding_accent"
+                android:textColor="?attr/colorOnPrimary"
+                android:backgroundTint="?attr/colorPrimary"
             />
         </LinearLayout>
 

@@ -15,7 +15,7 @@
         app:indicatorSize="150dp"
         app:trackThickness="15dp"
         app:trackCornerRadius="10dp"
-        app:indicatorColor="@color/branding_accent"
+        app:indicatorColor="?attr/colorPrimary"
         android:layout_gravity="center"
     />
 
@@ -83,12 +83,13 @@
                     android:layout_height="28dp"
                     android:layout_marginEnd="16dp"
                     android:contentDescription="@string/tip_icon_desc"
-                    />
+                    app:tint="?attr/colorOnTertiaryContainer" />
                 <TextView
                     android:text="@string/fragment_schedule_tip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato_regular"
+                    android:textColor="?attr/colorOnTertiaryContainer"
                     />
             </LinearLayout>
 
