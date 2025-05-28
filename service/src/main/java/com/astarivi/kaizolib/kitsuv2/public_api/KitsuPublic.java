@@ -8,6 +8,7 @@ import com.astarivi.kaizolib.kitsuv2.model.KitsuAnime;
 import com.astarivi.kaizolib.kitsuv2.model.KitsuEpisode;
 import com.astarivi.kaizolib.kitsuv2.model.RawResults;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
@@ -23,7 +24,9 @@ public class KitsuPublic extends Methods {
         );
     }
 
-    public static RawResults rawSearch(@NotNull SearchParams params) throws KitsuException, ParsingError {
+    @NotNull
+    @Contract("_ -> new")
+    public static RawResults<KitsuAnime> rawSearch(@NotNull SearchParams params) throws KitsuException, ParsingError {
         return KitsuAnime.deserializeRawSearch(
                 executeGet(params.buildURI())
         );

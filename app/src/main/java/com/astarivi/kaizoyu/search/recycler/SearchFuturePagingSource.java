@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.paging.ListenableFuturePagingSource;
 import androidx.paging.PagingState;
 
+import com.astarivi.kaizolib.kitsuv2.model.KitsuAnime;
 import com.astarivi.kaizolib.kitsuv2.model.RawResults;
 import com.astarivi.kaizolib.kitsuv2.public_api.KitsuPublic;
 import com.astarivi.kaizolib.kitsuv2.public_api.SearchParams;
@@ -33,7 +34,7 @@ public class SearchFuturePagingSource extends ListenableFuturePagingSource<Integ
                 .setPageNumber(page);
 
         return Threading.guava(() -> {
-            RawResults results;
+            RawResults<KitsuAnime> results;
             try {
                 results = KitsuPublic.rawSearch(search);
             } catch (Exception e) {

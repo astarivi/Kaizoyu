@@ -198,6 +198,7 @@ public class KitsuAnime {
         }
     }
 
+    @JsonIgnore
     public static @NotNull KitsuAnime deserializeOne(String serialized) throws ParsingError {
         try {
             return JsonMapper.deserializeGeneric(serialized, ResourceResult.class).data;
@@ -206,6 +207,7 @@ public class KitsuAnime {
         }
     }
 
+    @JsonIgnore
     public static List<KitsuAnime> deserializeSearch(String serialized) throws ParsingError {
         try {
             return JsonMapper.deserializeGeneric(serialized, SearchResults.class).data;
@@ -214,8 +216,9 @@ public class KitsuAnime {
         }
     }
 
+    @JsonIgnore
     @Contract("_ -> new")
-    public static RawResults deserializeRawSearch(String serialized) throws ParsingError {
+    public static RawResults<KitsuAnime> deserializeRawSearch(String serialized) throws ParsingError {
         SearchResults sr;
 
         try {
@@ -224,6 +227,6 @@ public class KitsuAnime {
             throw new ParsingError(e);
         }
 
-        return new RawResults(sr.data, sr.meta.count);
+        return new RawResults<>(sr.data, sr.meta.count);
     }
 }

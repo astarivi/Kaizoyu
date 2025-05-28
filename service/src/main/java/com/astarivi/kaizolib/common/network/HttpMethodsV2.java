@@ -1,6 +1,7 @@
 package com.astarivi.kaizolib.common.network;
 
 import com.astarivi.kaizolib.common.exception.NoResponseException;
+import com.astarivi.kaizolib.common.exception.UnexpectedStatusCodeException;
 import com.astarivi.kaizolib.common.util.ResponseToString;
 
 import org.tinylog.Logger;
@@ -34,7 +35,7 @@ public class HttpMethodsV2 {
             case 304, 200 -> responseContent;
             default -> {
                 Logger.error("Remote response code was incorrect, it was {}. (Only 200 and 304 allowed)", responseCode);
-                throw new NoResponseException(String.valueOf(responseCode));
+                throw new UnexpectedStatusCodeException(responseCode);
             }
         };
     }
