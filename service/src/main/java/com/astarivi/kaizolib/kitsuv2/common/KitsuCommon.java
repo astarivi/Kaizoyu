@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public abstract class KitsuCommon {
@@ -28,6 +29,17 @@ public abstract class KitsuCommon {
         try {
             return HttpMethodsV2.executeRequest(
                     request
+            );
+        } catch (IOException e) {
+            throw new KitsuException(e);
+        }
+    }
+
+    protected static String executeWith(Request request, OkHttpClient client) throws KitsuException {
+        try {
+            return HttpMethodsV2.executeRequestWith(
+                    request,
+                    client
             );
         } catch (IOException e) {
             throw new KitsuException(e);

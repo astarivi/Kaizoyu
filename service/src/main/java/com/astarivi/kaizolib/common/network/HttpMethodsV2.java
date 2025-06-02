@@ -4,21 +4,21 @@ import com.astarivi.kaizolib.common.exception.NoResponseException;
 import com.astarivi.kaizolib.common.exception.UnexpectedStatusCodeException;
 import com.astarivi.kaizolib.common.util.ResponseToString;
 
+import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 import java.io.IOException;
 
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-
 public class HttpMethodsV2 {
-    public static String executeRequest(Request request) throws IOException {
+    @NotNull
+    public static String executeRequestWith(@NotNull Request request, @NotNull OkHttpClient client) throws IOException {
         Response response;
         try {
-            response = UserHttpClient.getInstance().executeRequest(
-                    request
-            );
+            response = client.newCall(request).execute();
         } catch (IOException e) {
             Logger.debug("Couldn't reach {}", request.url());
             throw e;
@@ -38,5 +38,10 @@ public class HttpMethodsV2 {
                 throw new UnexpectedStatusCodeException(responseCode);
             }
         };
+    }
+
+    @NotNull
+    public static String executeRequest(@NotNull Request request) throws IOException {
+        return executeRequestWith(request, UserHttpClient.getInstance().getHttpClient());
     }
 }
